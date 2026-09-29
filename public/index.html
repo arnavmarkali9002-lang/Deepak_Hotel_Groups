@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deepak Hotels Group — Online Room &amp; Food Booking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============ DESIGN TOKENS ============ */
+:root{
+  --navy:#16232F;
+  --navy-2:#1F3244;
+  --cream:#FBF6EC;
+  --cream-2:#F3EAD6;
+  --saffron:#E8A33D;
+  --saffron-dark:#C77F1E;
+  --maroon:#7C2D2D;
+  --teal:#2F6E62;
+  --slate:#3A4550;
+  --slate-light:#6B7684;
+  --line:#E4D9C4;
+  --white:#FFFFFF;
+  --radius:14px;
+  --shadow:0 8px 24px rgba(22,35,47,0.10);
+  --shadow-lg:0 20px 50px rgba(22,35,47,0.22);
+  --font-display:'Fraunces', serif;
+  --font-body:'Work Sans', sans-serif;
+  --font-mono:'JetBrains Mono', monospace;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0; font-family:var(--font-body); color:var(--slate);
+  background:var(--cream); line-height:1.5;
+}
+img{max-width:100%; display:block;}
+a{color:inherit;}
+h1,h2,h3,h4{font-family:var(--font-display); color:var(--navy); margin:0 0 .4em;}
+.eyebrow{
+  font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.14em;
+  font-size:.72rem; color:var(--saffron-dark); font-weight:700;
+}
+.wrap{max-width:1180px; margin:0 auto; padding:0 24px;}
+.btn{
+  display:inline-flex; align-items:center; gap:8px; justify-content:center;
+  font-family:var(--font-body); font-weight:600; font-size:.95rem;
+  padding:13px 26px; border-radius:999px; border:2px solid transparent;
+  cursor:pointer; text-decoration:none; transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+}
+.btn:focus-visible{outline:3px solid var(--saffron); outline-offset:2px;}
+.btn-primary{background:var(--saffron); color:var(--navy);}
+.btn-primary:hover{transform:translateY(-2px); box-shadow:0 10px 22px rgba(232,163,61,.35);}
+.btn-ghost{background:transparent; border-color:var(--cream-2); color:var(--cream);}
+.btn-ghost:hover{background:rgba(251,246,236,.1);}
+.btn-outline{background:transparent; border-color:var(--navy); color:var(--navy);}
+.btn-outline:hover{background:var(--navy); color:var(--cream);}
+.btn-sm{padding:9px 18px; font-size:.85rem;}
+.btn[disabled]{opacity:.45; cursor:not-allowed; transform:none !important; box-shadow:none !important;}
+
+/* ============ NAV ============ */
+header.site-nav{
+  position:sticky; top:0; z-index:60; background:var(--navy);
+  border-bottom:1px solid rgba(251,246,236,.08);
+}
+.nav-inner{display:flex; align-items:center; justify-content:space-between; padding:16px 24px; max-width:1180px; margin:0 auto;}
+.brand{display:flex; align-items:center; gap:12px; color:var(--cream); text-decoration:none;}
+.brand-logo-img{height:44px; width:auto; border-radius:6px; object-fit:contain; box-shadow:0 2px 8px rgba(0,0,0,0.25);}
+.brand-name{font-family:var(--font-display); font-size:1.3rem; font-weight:700;}
+.brand-name span{color:var(--saffron);}
+nav.links{display:flex; gap:28px; align-items:center;}
+nav.links a{color:var(--cream); text-decoration:none; font-size:.92rem; font-weight:500; opacity:.85;}
+nav.links a:hover{opacity:1;}
+.nav-toggle{display:none; background:none; border:none; color:var(--cream); font-size:1.6rem; cursor:pointer;}
+@media(max-width:860px){
+  nav.links{position:absolute; top:100%; left:0; right:0; background:var(--navy); flex-direction:column; align-items:flex-start; padding:10px 24px 20px; gap:14px; display:none; border-bottom:1px solid rgba(251,246,236,.1);}
+  nav.links.open{display:flex;}
+  .nav-toggle{display:block;}
+}
+
+/* ============ HERO ============ */
+.hero{
+  background:radial-gradient(120% 140% at 15% 0%, var(--navy-2) 0%, var(--navy) 60%);
+  color:var(--cream); padding:74px 0 60px; position:relative; overflow:hidden;
+}
+.hero::after{
+  content:""; position:absolute; right:-120px; top:-80px; width:420px; height:420px; border-radius:50%;
+  background:radial-gradient(circle, rgba(232,163,61,.18), transparent 70%);
+}
+.hero-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:48px; align-items:center; position:relative;}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr;}}
+.hero h1{color:var(--cream); font-size:clamp(2.1rem,4vw,3.1rem); font-weight:600; line-height:1.08;}
+.hero h1 em{font-style:italic; color:var(--saffron);}
+.hero p.lead{font-size:1.08rem; color:#D9DEE4; max-width:46ch; margin:16px 0 28px;}
+.hero-ctas{display:flex; gap:14px; flex-wrap:wrap;}
+.hero-stats{display:flex; gap:26px; margin-top:36px; flex-wrap:wrap;}
+.hero-stats div{font-family:var(--font-mono);}
+.hero-stats b{display:block; font-size:1.5rem; color:var(--saffron);}
+.hero-stats span{font-size:.76rem; color:#B9C1CA; text-transform:uppercase; letter-spacing:.08em;}
+
+/* directory board — signature element */
+.directory{
+  background:var(--navy-2); border:1px solid rgba(251,246,236,.14); border-radius:18px;
+  padding:22px; box-shadow:var(--shadow-lg);
+}
+.directory h3{color:var(--cream); font-size:.78rem; text-transform:uppercase; letter-spacing:.16em; font-family:var(--font-mono); font-weight:700; margin-bottom:16px; display:flex; align-items:center; gap:8px;}
+.directory h3::before{content:"◆"; color:var(--saffron);}
+.directory-row{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:14px 12px; border-radius:10px; cursor:pointer; text-decoration:none;
+  border-bottom:1px dashed rgba(251,246,236,.14); transition:background .15s ease;
+}
+.directory-row:last-child{border-bottom:none;}
+.directory-row:hover{background:rgba(232,163,61,.08);}
+.directory-row .num{font-family:var(--font-mono); color:var(--saffron); font-weight:700; width:34px;}
+.directory-row .name{color:var(--cream); font-weight:600; flex:1;}
+.directory-row .loc{color:#AEB7C0; font-size:.78rem;}
+.directory-row .arrow{color:var(--saffron); font-size:1.1rem;}
+
+/* ============ SECTION SHELL ============ */
+section{padding:74px 0;}
+.section-head{max-width:640px; margin-bottom:40px;}
+.section-head h2{font-size:clamp(1.7rem,3vw,2.3rem);}
+.section-head p{color:var(--slate-light); font-size:1.02rem;}
+.bg-alt{background:var(--cream-2);}
+.bg-navy{background:var(--navy); color:var(--cream);}
+.bg-navy h2,.bg-navy .section-head h2{color:var(--cream);}
+.bg-navy .section-head p{color:#C6CDD4;}
+
+/* ============ HOW IT WORKS ============ */
+.how-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:20px;}
+@media(max-width:920px){.how-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:560px){.how-grid{grid-template-columns:1fr;}}
+.how-card{background:var(--white); border:1px solid var(--line); border-radius:16px; padding:24px 20px; position:relative; text-align:center; box-shadow:var(--shadow);}
+.how-card .how-num{
+  position:absolute; top:-14px; left:50%; transform:translateX(-50%); width:30px; height:30px; border-radius:50%;
+  background:var(--navy); color:var(--saffron); font-family:var(--font-mono); font-weight:700; font-size:.9rem;
+  display:flex; align-items:center; justify-content:center;
+}
+.how-card .how-ic{font-size:2rem; margin:10px 0 10px;}
+.how-card h4{font-size:1.02rem; margin-bottom:8px;}
+.how-card p{font-size:.86rem; color:var(--slate-light); margin:0;}
+
+/* ============ HOTEL CARDS ============ */
+.hotel-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:26px;}
+@media(max-width:920px){.hotel-grid{grid-template-columns:1fr;}}
+.hotel-card{
+  background:var(--white); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow);
+  border:1px solid var(--line); display:flex; flex-direction:column;
+}
+.hotel-card .img{height:190px; overflow:hidden; position:relative; background:var(--cream-2);}
+.hotel-card .img img{width:100%; height:100%; object-fit:cover;}
+.hotel-card .badge{
+  position:absolute; top:12px; left:12px; background:var(--saffron); color:var(--navy);
+  font-family:var(--font-mono); font-size:.72rem; font-weight:700; padding:4px 10px; border-radius:999px;
+}
+.hotel-card .body{padding:20px 22px 24px; display:flex; flex-direction:column; gap:10px; flex:1;}
+.hotel-card h3{font-size:1.3rem;}
+.hotel-card .loc{font-size:.85rem; color:var(--slate-light); display:flex; gap:6px; align-items:center;}
+.hotel-card p.desc{font-size:.92rem; color:var(--slate); flex:1;}
+.hotel-card .meta{display:flex; gap:16px; font-family:var(--font-mono); font-size:.78rem; color:var(--teal); border-top:1px dashed var(--line); padding-top:12px;}
+
+/* ============ FILTER BAR ============ */
+.filter-bar{
+  display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:28px;
+  background:var(--white); border:1px solid var(--line); border-radius:12px; padding:14px 16px;
+}
+.filter-group{display:flex; gap:6px; flex-wrap:wrap;}
+.chip{
+  font-family:var(--font-mono); font-size:.78rem; font-weight:600; padding:7px 14px; border-radius:999px;
+  border:1px solid var(--line); background:var(--cream); cursor:pointer; color:var(--slate); transition:all .15s;
+}
+.chip.active{background:var(--navy); color:var(--cream); border-color:var(--navy);}
+.filter-label{font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--slate-light); font-family:var(--font-mono); margin-right:4px;}
+
+.mini-legend{font-size:.82rem; color:var(--slate-light); background:var(--cream-2); border:1px dashed var(--line); border-radius:10px; padding:10px 14px; margin-bottom:20px;}
+.mini-legend b{color:var(--navy);}
+
+/* ============ ROOM "KEY TAG" CARDS — signature element ============ */
+.room-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:22px;}
+.keytag{
+  background:var(--white); border:1px solid var(--line); border-radius:16px; overflow:hidden;
+  box-shadow:var(--shadow); position:relative; display:flex; flex-direction:column;
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.keytag:hover{transform:translateY(-4px); box-shadow:var(--shadow-lg);}
+.keytag .hole{
+  position:absolute; top:14px; right:14px; width:20px; height:20px; border-radius:50%;
+  background:var(--cream); border:2px solid var(--navy); z-index:2;
+}
+.keytag .thumb{height:150px; background:var(--cream-2); overflow:hidden;}
+.keytag .thumb img{width:100%; height:100%; object-fit:cover;}
+.keytag .tag-body{padding:16px 18px 20px; display:flex; flex-direction:column; gap:8px; flex:1;}
+.keytag .roomnum{font-family:var(--font-mono); font-size:1.5rem; font-weight:700; color:var(--navy); letter-spacing:.02em;}
+.keytag .cat-row{display:flex; gap:6px; flex-wrap:wrap;}
+.tagpill{font-family:var(--font-mono); font-size:.68rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; padding:4px 9px; border-radius:6px;}
+.tagpill.ac{background:#E4F1EE; color:var(--teal);}
+.tagpill.nonac{background:#F3E7DC; color:var(--saffron-dark);}
+.tagpill.cat{background:#EFE3E3; color:var(--maroon);}
+.keytag .price{margin-top:auto; display:flex; justify-content:space-between; align-items:flex-end; border-top:1px dashed var(--line); padding-top:10px;}
+.keytag .price b{font-family:var(--font-mono); font-size:1.15rem; color:var(--navy);}
+.keytag .price small{display:block; color:var(--slate-light); font-size:.7rem;}
+
+/* ============ GALLERY ============ */
+.gallery-grid{columns:4 220px; column-gap:14px;}
+@media(max-width:700px){.gallery-grid{columns:2 160px;}}
+.gallery-grid figure{margin:0 0 14px; break-inside:avoid; border-radius:10px; overflow:hidden; cursor:pointer; position:relative;}
+.gallery-grid img{width:100%; display:block; transition:transform .3s ease;}
+.gallery-grid figure:hover img{transform:scale(1.05);}
+.gallery-grid figcaption{
+  position:absolute; bottom:0; left:0; right:0; padding:10px 12px; font-size:.72rem;
+  background:linear-gradient(0deg, rgba(22,35,47,.75), transparent); color:#fff; font-family:var(--font-mono);
+}
+.lightbox{position:fixed; inset:0; background:rgba(22,35,47,.92); z-index:200; display:none; align-items:center; justify-content:center; padding:30px;}
+.lightbox.open{display:flex;}
+.lightbox img{max-width:90vw; max-height:85vh; border-radius:10px;}
+.lightbox .close{position:absolute; top:24px; right:30px; color:#fff; font-size:2rem; cursor:pointer; background:none; border:none;}
+
+/* ============ WIZARD ============ */
+.wizard{background:var(--white); border-radius:20px; border:1px solid var(--line); box-shadow:var(--shadow-lg); overflow:hidden;}
+.wizard-steps{display:flex; background:var(--navy); overflow-x:auto;}
+.wizard-step{
+  flex:1; min-width:120px; text-align:center; padding:14px 10px; font-family:var(--font-mono); font-size:.72rem;
+  color:#8FA0AE; border-right:1px dashed rgba(251,246,236,.15); position:relative; text-transform:uppercase; letter-spacing:.05em;
+}
+.wizard-step b{display:block; font-size:1rem; margin-bottom:2px; font-family:var(--font-body);}
+.wizard-step.active{color:var(--saffron); background:var(--navy-2);}
+.wizard-step.done{color:var(--cream);}
+.wizard-body{padding:32px;}
+.step-hint{font-size:.86rem; color:var(--slate-light); background:var(--cream); border-left:3px solid var(--saffron); padding:8px 12px; border-radius:0 8px 8px 0; margin-top:8px;}
+.wiz-breadcrumb{display:flex; flex-wrap:wrap; gap:8px; align-items:center; padding:14px 32px; background:var(--cream-2); border-bottom:1px solid var(--line); font-size:.82rem;}
+.wiz-breadcrumb .crumb{background:var(--white); border:1px solid var(--line); border-radius:999px; padding:5px 12px; display:flex; align-items:center; gap:6px; color:var(--navy); font-weight:600;}
+.wiz-breadcrumb .crumb .dot{width:8px; height:8px; border-radius:50%; display:inline-block;}
+@media(max-width:640px){.wiz-breadcrumb{padding:12px 18px;}}
+@media(max-width:640px){.wizard-body{padding:22px 18px;}}
+.step-pane{display:none;}
+.step-pane.active{display:block;}
+.field-row{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
+@media(max-width:640px){.field-row{grid-template-columns:1fr;}}
+.field{margin-bottom:18px;}
+.field label{display:block; font-size:.82rem; font-weight:600; color:var(--navy); margin-bottom:6px;}
+.field .hint{font-size:.76rem; color:var(--slate-light); margin-top:4px;}
+input[type=text],input[type=tel],input[type=email],input[type=date],input[type=time],input[type=number],select,textarea{
+  width:100%; padding:12px 14px; border:1.5px solid var(--line); border-radius:10px; font-family:var(--font-body);
+  font-size:.95rem; background:var(--cream); color:var(--slate);
+}
+input:focus,select:focus,textarea:focus{outline:none; border-color:var(--saffron);}
+.stay-options{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+@media(max-width:640px){.stay-options{grid-template-columns:1fr;}}
+.stay-card{border:2px solid var(--line); border-radius:14px; padding:20px; cursor:pointer; transition:all .15s;}
+.stay-card:hover{border-color:var(--saffron);}
+.stay-card.selected{border-color:var(--navy); background:var(--cream-2);}
+.stay-card h4{margin-bottom:4px;}
+.stay-card .sub{font-size:.82rem; color:var(--slate-light);}
+.stay-card .badge-select{float:right; font-family:var(--font-mono); font-size:.7rem; background:var(--saffron); color:var(--navy); padding:3px 9px; border-radius:999px; display:none;}
+.stay-card.selected .badge-select{display:inline-block;}
+
+.id-choice{display:flex; flex-direction:column; gap:10px; margin-bottom:16px;}
+.id-choice label{
+  display:flex; gap:10px; align-items:flex-start; border:1.5px solid var(--line); border-radius:10px; padding:14px;
+  cursor:pointer; font-size:.9rem;
+}
+.id-choice label.checked{border-color:var(--navy); background:var(--cream-2);}
+.id-choice input{margin-top:3px;}
+.upload-box{
+  border:2px dashed var(--line); border-radius:12px; padding:22px; text-align:center; background:var(--cream);
+}
+.upload-box input[type=file]{margin-top:10px;}
+.upload-preview{display:flex; gap:12px; margin-top:14px; flex-wrap:wrap;}
+.upload-preview img{width:100px; height:70px; object-fit:cover; border-radius:8px; border:1px solid var(--line);}
+.notice{
+  background:#FBF0DD; border:1px solid #EAD3A0; border-radius:10px; padding:12px 14px; font-size:.82rem; color:#7A5A16; margin-top:10px;
+}
+
+/* menu */
+.food-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px;}
+.food-card{background:var(--navy-2); border:1px solid rgba(251,246,236,.12); border-radius:var(--radius); overflow:hidden; text-align:center;}
+.food-card .fimg{height:140px; background:rgba(251,246,236,.06); display:flex; align-items:center; justify-content:center; font-size:2.6rem;}
+.food-card .fimg img{width:100%; height:100%; object-fit:cover; display:block;}
+.food-card .fbody{padding:14px 12px 18px;}
+.food-card h3{color:var(--cream); font-size:1.02rem; margin:0 0 6px;}
+.food-card .fprice{font-family:var(--font-mono); color:var(--saffron); font-weight:700;}
+.food-empty{text-align:center; padding:30px 10px; color:#C6CDD4;}
+.menu-item .thumb{width:56px; height:56px; border-radius:10px; overflow:hidden; background:var(--cream-2); display:flex; align-items:center; justify-content:center; font-size:1.5rem; flex-shrink:0;}
+.menu-item .thumb img{width:100%; height:100%; object-fit:cover; display:block;}
+.menu-tabs{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px;}
+.menu-cat-block{margin-bottom:22px;}
+.menu-cat-block h4{font-family:var(--font-mono); text-transform:uppercase; font-size:.78rem; letter-spacing:.08em; color:var(--maroon); border-bottom:1px dashed var(--line); padding-bottom:8px; margin-bottom:12px;}
+.menu-item{display:flex; align-items:center; gap:14px; padding:10px 0; border-bottom:1px solid var(--cream-2);}
+.menu-item .emoji{font-size:1.6rem; width:38px; text-align:center;}
+.menu-item .info{flex:1;}
+.menu-item .info b{display:block; font-size:.94rem;}
+.menu-item .info span{font-size:.78rem; color:var(--slate-light);}
+.menu-item .price{font-family:var(--font-mono); font-weight:700; color:var(--navy); width:64px; text-align:right;}
+.qty-control{display:flex; align-items:center; gap:8px;}
+.qty-control button{width:26px; height:26px; border-radius:50%; border:1px solid var(--line); background:var(--white); cursor:pointer; font-weight:700;}
+.qty-control span{font-family:var(--font-mono); min-width:16px; text-align:center;}
+
+.cart-summary{background:var(--cream-2); border-radius:12px; padding:16px 18px; margin-top:10px;}
+.cart-line{display:flex; justify-content:space-between; font-size:.86rem; padding:4px 0;}
+.cart-total{display:flex; justify-content:space-between; font-weight:700; border-top:1px dashed var(--line); margin-top:8px; padding-top:8px; color:var(--navy);}
+
+.review-block{background:var(--cream); border:1px solid var(--line); border-radius:12px; padding:18px 20px; margin-bottom:14px;}
+.review-block h4{font-family:var(--font-mono); font-size:.75rem; text-transform:uppercase; letter-spacing:.07em; color:var(--slate-light); margin-bottom:10px;}
+.review-row{display:flex; justify-content:space-between; font-size:.9rem; padding:4px 0;}
+.review-row b{color:var(--navy);}
+
+.wizard-nav{display:flex; justify-content:space-between; margin-top:26px; gap:12px;}
+.error-text{color:var(--maroon); font-size:.8rem; margin-top:6px; display:none;}
+.field.has-error input, .field.has-error select{border-color:var(--maroon);}
+.field.has-error .error-text{display:block;}
+
+/* confirmation */
+.confirm-card{text-align:center; padding:30px 10px;}
+.confirm-card .stamp{
+  width:78px; height:78px; border-radius:50%; background:var(--teal); color:#fff; display:flex; align-items:center;
+  justify-content:center; font-size:2.1rem; margin:0 auto 18px;
+}
+.booking-id{font-family:var(--font-mono); font-size:1.3rem; background:var(--navy); color:var(--saffron); padding:10px 20px; border-radius:10px; display:inline-block; margin:10px 0 20px; letter-spacing:.06em;}
+.receipt{text-align:left; max-width:460px; margin:0 auto; background:var(--cream); border:1px dashed var(--line); border-radius:12px; padding:20px 22px;}
+.receipt .review-row{font-size:.85rem;}
+
+/* footer */
+footer{background:var(--navy); color:#B9C1CA; padding:50px 0 26px;}
+.footer-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:32px;}
+@media(max-width:760px){.footer-grid{grid-template-columns:1fr;}}
+footer h4{color:var(--cream); font-family:var(--font-mono); font-size:.8rem; text-transform:uppercase; letter-spacing:.08em; margin-bottom:14px;}
+footer p, footer a{font-size:.86rem; color:#AEB7C0; text-decoration:none; line-height:1.9;}
+footer a:hover{color:var(--saffron);}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08); margin-top:34px; padding-top:20px; font-size:.78rem; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+
+/* ============ FAQ ============ */
+.faq-list{max-width:760px;}
+.faq-item{background:var(--white); border:1px solid var(--line); border-radius:12px; margin-bottom:12px; overflow:hidden;}
+.faq-q{width:100%; text-align:left; background:none; border:none; padding:16px 20px; font-family:var(--font-body); font-weight:600; color:var(--navy); font-size:.95rem; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:12px;}
+.faq-q .plus{font-size:1.2rem; color:var(--saffron-dark); transition:transform .2s ease; flex-shrink:0;}
+.faq-item.open .plus{transform:rotate(45deg);}
+.faq-a{max-height:0; overflow:hidden; transition:max-height .25s ease;}
+.faq-a p{padding:0 20px 16px; margin:0; font-size:.88rem; color:var(--slate-light);}
+
+/* ============ STICKY MOBILE BOOK BAR ============ */
+.mobile-book-bar{display:none;}
+@media(max-width:760px){
+  .mobile-book-bar{
+    display:flex; position:fixed; bottom:0; left:0; right:0; z-index:70; background:var(--navy);
+    padding:12px 16px; align-items:center; justify-content:space-between; gap:12px;
+    box-shadow:0 -8px 20px rgba(22,35,47,.25);
+  }
+  .mobile-book-bar span{color:var(--cream); font-size:.82rem;}
+  .mobile-book-bar span b{display:block; color:var(--saffron); font-size:.78rem; font-family:var(--font-mono);}
+  body{padding-bottom:64px;}
+}
+
+.sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0);}
+@media (prefers-reduced-motion: reduce){*{transition:none !important; scroll-behavior:auto !important;}}
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<header class="site-nav">
+  <div class="nav-inner">
+    <a class="brand" href="#top">
+      <img src="/images/deepak-hotels-logo.png" alt="Deepak Hotels Group Logo" class="brand-logo-img">
+      <span class="brand-name">Deepak Hotels <span>Group</span></span>
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">☰</button>
+    <nav class="links" id="navLinks">
+      <a href="#how">How It Works</a>
+      <a href="#hotels">Our Hotels</a>
+      <a href="#rooms">Rooms</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#food">Food &amp; Room Service</a>
+      <a href="#faq">Help / FAQ</a>
+      <a href="#book" class="btn btn-primary btn-sm">Book Now</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<div id="top"></div>
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="eyebrow">Three Properties · One Trusted Name</p>
+      <h1>A comfortable stay, <em>however long you need it.</em></h1>
+      <p class="lead">Hotel Sai View, Hotel Sai Santosh &amp; Hotel Om Sai offer AC and Non‑AC rooms for singles, couples and families — book by the day or for a few hours, order food straight to your room, and check in with minimal fuss.</p>
+      <div class="hero-ctas">
+        <a href="#book" class="btn btn-primary">Book a Room</a>
+        <a href="#rooms" class="btn btn-ghost">Browse Rooms</a>
+      </div>
+      <div class="hero-stats">
+        <div><b id="statRooms">31</b><span>Rooms across 3 hotels</span></div>
+        <div><b>2</b><span>Stay durations</span></div>
+        <div><b>24×7</b><span>Room service</span></div>
+      </div>
+    </div>
+    <div class="directory">
+      <h3>Property Directory</h3>
+      <div id="directoryList"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section id="how" class="bg-alt" style="padding-top:56px; padding-bottom:56px;">
+  <div class="wrap">
+    <div class="section-head" style="margin-bottom:30px;">
+      <p class="eyebrow">New here? Start here</p>
+      <h2>Booking a room takes 4 simple steps</h2>
+      <p>No sign‑up needed. Pick your hotel, tell us when you're coming, share a few details, and you're done — our team calls to confirm.</p>
+    </div>
+    <div class="how-grid">
+      <div class="how-card">
+        <div class="how-num">1</div>
+        <div class="how-ic">🏨</div>
+        <h4>Choose a hotel &amp; room</h4>
+        <p>Pick Hotel Sai View, Hotel Sai Santosh or Hotel Om Sai, then an AC or Non‑AC room — Single, Couple, Family or Suite.</p>
+      </div>
+      <div class="how-card">
+        <div class="how-num">2</div>
+        <div class="how-ic">🕐</div>
+        <h4>Pick your stay length</h4>
+        <p>Full 24‑hour stay, or a short 5–6 hour stay — whichever fits your plan.</p>
+      </div>
+      <div class="how-card">
+        <div class="how-num">3</div>
+        <div class="how-ic">🪪</div>
+        <h4>Share your details</h4>
+        <p>Name, phone number, and Aadhar — upload a photo now or simply show it at the reception desk.</p>
+      </div>
+      <div class="how-card">
+        <div class="how-num">4</div>
+        <div class="how-ic">✅</div>
+        <h4>Confirm &amp; relax</h4>
+        <p>Review your booking, add food if you like, and submit. We'll call to confirm — that's it.</p>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:34px;">
+      <a href="#book" class="btn btn-primary">Start Booking Now →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOTELS ============ -->
+<section id="hotels">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Our Hotels</p>
+      <h2>Three properties, each with its own character</h2>
+      <p>Pick a property to see its rooms, photos and location details.</p>
+    </div>
+    <div class="hotel-grid" id="hotelGrid"></div>
+  </div>
+</section>
+
+<!-- ============ ROOMS ============ -->
+<section id="rooms" class="bg-alt">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Rooms</p>
+      <h2>Find the room that fits</h2>
+      <p>Filter by hotel, AC / Non‑AC and room category. Prices shown are per stay for the duration selected in the filter.</p>
+    </div>
+    <div class="filter-bar">
+      <div class="filter-group"><span class="filter-label">Hotel</span><div id="fHotel"></div></div>
+      <div class="filter-group"><span class="filter-label">Cooling</span><div id="fAc"></div></div>
+      <div class="filter-group"><span class="filter-label">Category</span><div id="fCat"></div></div>
+      <div class="filter-group"><span class="filter-label">Stay</span><div id="fStay"></div></div>
+    </div>
+    <p class="mini-legend">💡 <b>AC</b> = air‑conditioned, <b>Non‑AC</b> = fan cooled · <b>Single</b> for 1 guest, <b>Couple</b> for 2, <b>Family</b> for 3–4, <b>Suite</b> for extra space · tap any room below to jump straight into booking it.</p>
+    <div class="room-grid" id="roomGrid"></div>
+  </div>
+</section>
+
+<!-- ============ GALLERY ============ -->
+<section id="gallery">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Gallery</p>
+      <h2>A look inside our rooms</h2>
+      <p>Real interiors from across all three Deepak Hotels Group properties.</p>
+    </div>
+    <div class="filter-bar">
+      <div class="filter-group"><span class="filter-label">Hotel</span><div id="gHotel"></div></div>
+    </div>
+    <div class="gallery-grid" id="galleryGrid"></div>
+  </div>
+</section>
+
+<!-- ============ FOOD PREVIEW ============ -->
+<section id="food" class="bg-navy">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Room Service</p>
+      <h2>Order food to your room</h2>
+      <p style="color:#C6CDD4">Add items to your order during booking — our kitchen delivers straight to your door. Full menu is shown in step 5 of the booking wizard.</p>
+    </div>
+    <div class="food-grid" id="foodPreview"></div>
+  </div>
+</section>
+
+<!-- ============ BOOKING WIZARD ============ -->
+<section id="book">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Book Now</p>
+      <h2>Reserve your room</h2>
+      <p>Six quick steps — hotel, stay type, room, your details, food (optional), and a final review.</p>
+    </div>
+
+    <div class="wizard">
+      <div class="wizard-steps" id="wizardSteps"></div>
+      <div class="wiz-breadcrumb" id="wizBreadcrumb" style="display:none;"></div>
+      <div class="wizard-body">
+
+        <!-- STEP 1: HOTEL -->
+        <div class="step-pane active" data-step="1">
+          <h3>Step 1 · Choose your hotel</h3>
+          <p class="step-hint">Tap a hotel card below to select it, then use "Continue" at the bottom to move to the next step.</p>
+          <div class="hotel-grid" id="wizHotelGrid" style="margin-top:18px;"></div>
+        </div>
+
+        <!-- STEP 2: STAY TYPE -->
+        <div class="step-pane" data-step="2">
+          <h3>Step 2 · Choose your stay type</h3>
+          <p class="step-hint">Not sure which to pick? Staying overnight or all day → 24‑Hour. Just need the room for a few hours → 5–6 Hour.</p>
+          <div class="stay-options" style="margin-top:14px;">
+            <div class="stay-card" id="stay24" data-stay="24hr">
+              <span class="badge-select">✓ Selected</span>
+              <div style="font-size:1.6rem;">🌙</div>
+              <h4>24‑Hour Stay</h4>
+              <p class="sub">Full day booking, check‑in to check‑in.</p>
+              <p class="sub" style="margin-top:6px;"><b>Best for:</b> families, overnight travel, full‑day rest.</p>
+            </div>
+            <div class="stay-card" id="stay6" data-stay="6hr">
+              <span class="badge-select">✓ Selected</span>
+              <div style="font-size:1.6rem;">🕐</div>
+              <h4>5–6 Hour Stay</h4>
+              <p class="sub">Short stay, in and out the same day.</p>
+              <p class="sub" style="margin-top:6px;"><b>Best for:</b> a quick rest, a meeting, or a day‑use room while travelling.</p>
+            </div>
+          </div>
+          <div class="field-row" style="margin-top:22px;">
+            <div class="field">
+              <label for="checkinDate">Check‑in date</label>
+              <input type="date" id="checkinDate">
+            </div>
+            <div class="field">
+              <label for="checkinTime">Check‑in time</label>
+              <input type="time" id="checkinTime">
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: ROOM -->
+        <div class="step-pane" data-step="3">
+          <h3>Step 3 · Pick a room</h3>
+          <p class="step-hint">Use the filters to narrow down, then tap any room card to select it.</p>
+          <div class="filter-bar" style="margin-top:16px;">
+            <div class="filter-group"><span class="filter-label">Cooling</span><div id="wfAc"></div></div>
+            <div class="filter-group"><span class="filter-label">Category</span><div id="wfCat"></div></div>
+          </div>
+          <div class="room-grid" id="wizRoomGrid"></div>
+        </div>
+
+        <!-- STEP 4: GUEST DETAILS -->
+        <div class="step-pane" data-step="4">
+          <h3>Step 4 · Your details &amp; ID verification</h3>
+          <p class="step-hint">Fields marked * are required. Everything else is optional.</p>
+          <div class="field-row" style="margin-top:18px;">
+            <div class="field" id="fld-name">
+              <label for="gName">Full name *</label>
+              <input type="text" id="gName" placeholder="As on ID">
+              <div class="error-text">Please enter your name.</div>
+            </div>
+            <div class="field" id="fld-phone">
+              <label for="gPhone">Mobile number *</label>
+              <input type="tel" id="gPhone" placeholder="10‑digit mobile number">
+              <div class="error-text">Please enter a valid 10‑digit number.</div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="gEmail">Email (optional)</label>
+              <input type="email" id="gEmail" placeholder="you@example.com">
+            </div>
+            <div class="field">
+              <label for="gGuests">Number of guests *</label>
+              <input type="number" id="gGuests" min="1" max="8" value="1">
+            </div>
+          </div>
+          <div class="field">
+            <label for="gRequests">Special requests (optional)</label>
+            <textarea id="gRequests" rows="2" placeholder="Early check-in, extra bed, etc."></textarea>
+          </div>
+
+          <h4 style="font-family:var(--font-mono); text-transform:uppercase; font-size:.8rem; letter-spacing:.06em; color:var(--maroon); margin:26px 0 12px;">Aadhar Card Verification (required for hotel check‑in)</h4>
+          <div class="id-choice" id="idChoiceGroup">
+            <label id="idLabelUpload">
+              <input type="radio" name="idMethod" value="upload" checked>
+              <span><b>Upload a photo of my Aadhar card now</b><br><span style="color:var(--slate-light); font-size:.82rem;">Front side is enough. This speeds up check‑in at the hotel.</span></span>
+            </label>
+            <label id="idLabelHotel">
+              <input type="radio" name="idMethod" value="hotel">
+              <span><b>I'll show my Aadhar card at the hotel reception</b><br><span style="color:var(--slate-light); font-size:.82rem;">You can skip the upload and present the physical / digital card during check‑in.</span></span>
+            </label>
+          </div>
+          <div class="upload-box" id="uploadBox">
+            <p style="margin:0 0 6px; font-weight:600; color:var(--navy);">📷 Upload Aadhar card photo</p>
+            <p style="margin:0; font-size:.82rem; color:var(--slate-light);">JPG or PNG, front side clearly visible.</p>
+            <input type="file" id="idUpload" accept="image/*">
+            <div class="upload-preview" id="idPreview"></div>
+          </div>
+          <div class="notice">🔒 Your ID photo is only used to verify your identity for this booking and is handled by hotel staff for check‑in purposes, in line with applicable Aadhar / data‑protection rules. It is not shared with any third party.</div>
+        </div>
+
+        <!-- STEP 5: FOOD -->
+        <div class="step-pane" data-step="5">
+          <h3>Step 5 · Add food / room service (optional)</h3>
+          <p style="color:var(--slate-light); font-size:.9rem; margin-top:6px;">Add anything you'd like delivered to your room at check‑in, or skip this step and order later.</p>
+          <div class="menu-tabs" id="menuTabs" style="margin-top:16px;"></div>
+          <div id="menuList"></div>
+          <div class="cart-summary" id="cartSummary" style="display:none;"></div>
+        </div>
+
+        <!-- STEP 6: REVIEW -->
+        <div class="step-pane" data-step="6">
+          <h3>Step 6 · Review &amp; confirm</h3>
+          <div id="reviewArea" style="margin-top:18px;"></div>
+        </div>
+
+      </div>
+      <div class="wizard-body" style="padding-top:0;">
+        <div class="wizard-nav">
+          <button class="btn btn-outline" id="btnBack">← Back</button>
+          <button class="btn btn-primary" id="btnNext">Continue →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONFIRMATION (hidden until booking confirmed) -->
+    <div class="wizard" id="confirmWizard" style="display:none; margin-top:26px;">
+      <div class="wizard-body confirm-card">
+        <div class="stamp">✓</div>
+        <h3>Booking Received!</h3>
+        <p style="color:var(--slate-light);">Our reception team will call you shortly to confirm your booking and payment.</p>
+        <div class="booking-id" id="bookingIdOut"></div>
+        <div class="receipt" id="receiptOut"></div>
+        <div style="margin-top:24px;">
+          <button class="btn btn-outline" id="btnNewBooking">Make Another Booking</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section id="faq" class="bg-alt">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Help</p>
+      <h2>Common questions</h2>
+      <p>Still unsure about something? Here are the answers people ask for most.</p>
+    </div>
+    <div class="faq-list" id="faqList"></div>
+  </div>
+</section>
+
+<!-- ============ LIGHTBOX ============ -->
+<div class="lightbox" id="lightbox">
+  <button class="close" id="lightboxClose">&times;</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap footer-grid">
+    <div>
+      <h4>Deepak Hotels Group</h4>
+      <p>Three sister properties — Hotel Sai View, Hotel Sai Santosh and Hotel Om Sai — offering clean, comfortable AC and Non‑AC rooms with flexible stay durations and in‑room dining.</p>
+    </div>
+    <div>
+      <h4>Quick Links</h4>
+      <p><a href="#hotels">Our Hotels</a><br><a href="#rooms">Rooms</a><br><a href="#gallery">Gallery</a><br><a href="#food">Food &amp; Room Service</a><br><a href="#book">Book Now</a></p>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <p id="footerContact"></p>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span>© <span id="yearNow"></span> Deepak Hotels Group. All rights reserved.</span>
+    <span><a href="/admin" style="color:inherit; text-decoration:underline; opacity:.75;">Staff / Admin Login</a></span>
+  </div>
+</footer>
+
+<!-- ============ MOBILE STICKY BOOK BAR ============ -->
+<div class="mobile-book-bar" id="mobileBookBar">
+  <span>Ready to book?<b>Takes about 2 minutes</b></span>
+  <a href="#book" class="btn btn-primary btn-sm">Book Now →</a>
+</div>
+
+<script>
+/* =========================================================================
+   SAI VIEW HOTELS — booking site logic
+   Everything below is plain JS with no build step, so the hotel owner or a
+   developer can edit hotel/room/menu details directly in this file.
+   NOTE: There is no backend here. Bookings are only kept in memory for this
+   browser tab (see `bookingsLog`) so you can see how the flow works end to
+   end. Before going live you'll want to send this data to a real server,
+   store Aadhar photos securely (encrypted, access-controlled, per Aadhar
+   Act / DPDP Act requirements), and hook up SMS/WhatsApp + payment.
+   ========================================================================= */
+
+/* ---------- Hotel / room / menu data — loaded live from the server ---------- */
+// Static display-only extras (hero images, taglines, accent colors, hero photo)
+// that the booking database doesn't need to store; keyed by hotel id and merged
+// onto the live /api/hotels data once it arrives (see loadLiveDataAndInit below).
+const HOTEL_DISPLAY_EXTRAS = {
+  sv1:{ tag:'The Original',    accent:'#E8A33D', hero:'/images/hotel-sai-view.jpg' },
+  sv2:{ tag:'The Family Wing', accent:'#2F6E62', hero:'/images/hotel-sai-santosh.jpg' },
+  sv3:{ tag:'The Highway Stop',accent:'#7C2D2D', hero:'/images/hotel-om-sai.jpg' }
+};
+let HOTELS = [];
+
+/* Pool of interior photos reused across rooms/gallery (edit freely) */
+const IMG_POOL = [
+  'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=700&q=80',
+  'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=700&q=80',
+  'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=700&q=80',
+  'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=700&q=80',
+  'https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=700&q=80',
+  'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=700&q=80',
+  'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=700&q=80',
+  'https://images.unsplash.com/photo-1595576508898-0ad5c879a061?w=700&q=80'
+];
+
+/* ---------- Room list — loaded live from the server, prices included ---------- */
+let ROOMS = [];
+
+/* ---------- Food menu — loaded live from the server ---------- */
+let MENU = [];
+
+/* ---------- STATE ---------- */
+const state = {
+  hotel:null, stay:null, room:null,
+  filters:{hotel:'all', ac:'all', cat:'all', stay:'24hr'},
+  wizFilters:{ac:'all', cat:'all'},
+  gFilter:'all',
+  cart:{}, // key: "Category::Name" -> qty
+  idMethod:'upload',
+  step:1
+};
+const fmt = n => '₹' + n.toLocaleString('en-IN');
+const hotelOf = id => HOTELS.find(h=>h.id===id);
+const IMG_FALLBACK = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='260'%3E%3Crect width='100%25' height='100%25' fill='%23F3EAD6'/%3E%3Ctext x='50%25' y='50%25' font-family='monospace' font-size='16' fill='%236B7684' text-anchor='middle' dy='.3em'%3ESai View Room%3C/text%3E%3C/svg%3E";
+function withFallback(img){ img.onerror = function(){ this.onerror=null; this.src=IMG_FALLBACK; }; }
+
+/* =========================================================================
+   RENDER: Directory board (hero)
+   ========================================================================= */
+function renderDirectory(){
+  const el = document.getElementById('directoryList');
+  el.innerHTML = HOTELS.map((h,i)=>`
+    <a class="directory-row" href="#rooms" data-hotel="${h.id}" onclick="quickFilterHotel('${h.id}')">
+      <span class="num" style="color:${h.accent};">0${i+1}</span>
+      <span class="name">${h.name}</span>
+      <span class="loc">${h.locality.split(',')[0]}</span>
+      <span class="arrow">→</span>
+    </a>`).join('');
+}
+function quickFilterHotel(id){
+  state.filters.hotel = id;
+  renderRoomFilters(); renderRooms();
+}
+
+/* =========================================================================
+   RENDER: Hotel cards (browse section + wizard step 1)
+   ========================================================================= */
+function hotelCardHTML(h, count, forWizard){
+  const selected = forWizard && state.hotel===h.id;
+  const bg = h.id === 'sv3' ? '#FFFFFF' : (h.id === 'sv1' ? '#000000' : '#0B101D');
+  return `
+  <div class="hotel-card" style="border-top:4px solid ${h.accent}; ${selected?'outline:3px solid var(--saffron);':''}" ${forWizard?`onclick="selectHotel('${h.id}')" role="button" tabindex="0"`:''}>
+    <div class="img" style="background:${bg};"><span class="badge">${h.tag}</span><img src="${h.hero || h.image}" alt="${h.name} image" style="object-fit:contain; width:100%; height:100%; padding:4px;"></div>
+    <div class="body">
+      <h3><span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:${h.accent}; margin-right:7px;"></span>${h.name}</h3>
+      <div class="loc">📍 ${h.locality}</div>
+      <p class="desc">${h.desc}</p>
+      <div class="meta"><span>${count} rooms</span><span>📞 ${h.phone}</span></div>
+      ${forWizard? `<button class="btn btn-sm ${selected?'btn-primary':'btn-outline'}" style="margin-top:8px;">${selected?'✓ Selected':'Select this hotel'}</button>` : `<a href="#rooms" class="btn btn-outline btn-sm" style="margin-top:8px;" onclick="quickFilterHotel('${h.id}')">View Rooms</a>`}
+    </div>
+  </div>`;
+}
+function renderHotels(){
+  document.getElementById('hotelGrid').innerHTML = HOTELS.map(h=>hotelCardHTML(h, ROOMS.filter(r=>r.hotel===h.id).length, false)).join('');
+  document.getElementById('statRooms').textContent = ROOMS.length;
+  document.getElementById('footerContact').innerHTML = HOTELS.map(h=>`${h.name}: ${h.phone}`).join('<br>');
+}
+function renderWizHotels(){
+  document.getElementById('wizHotelGrid').innerHTML = HOTELS.map(h=>hotelCardHTML(h, ROOMS.filter(r=>r.hotel===h.id).length, true)).join('');
+}
+function selectHotel(id){ state.hotel = id; renderWizHotels(); renderBreadcrumb(); }
+
+/* =========================================================================
+   RENDER: Room filters + grid (browse section)
+   ========================================================================= */
+function chipRow(container, options, currentKey, filterKey, onSelectFn){
+  container.innerHTML = options.map(o=>`<button type="button" class="chip ${state[currentKey][filterKey]===o.val?'active':''}" data-val="${o.val}">${o.label}</button>`).join('');
+  [...container.children].forEach(btn=>{
+    btn.onclick = ()=>{ state[currentKey][filterKey]=btn.dataset.val; onSelectFn(); };
+  });
+}
+function renderRoomFilters(){
+  chipRow(document.getElementById('fHotel'), [{val:'all',label:'All'}, ...HOTELS.map(h=>({val:h.id,label:h.name}))], 'filters','hotel', ()=>{renderRoomFilters();renderRooms();});
+  chipRow(document.getElementById('fAc'), [{val:'all',label:'All'},{val:'ac',label:'AC'},{val:'nonac',label:'Non‑AC'}], 'filters','ac', ()=>{renderRoomFilters();renderRooms();});
+  chipRow(document.getElementById('fCat'), [{val:'all',label:'All'},{val:'Single',label:'Single'},{val:'Couple',label:'Couple'},{val:'Family',label:'Family'},{val:'Suite',label:'Suite'}], 'filters','cat', ()=>{renderRoomFilters();renderRooms();});
+  chipRow(document.getElementById('fStay'), [{val:'24hr',label:'24 Hour'},{val:'6hr',label:'5–6 Hour'}], 'filters','stay', ()=>{renderRoomFilters();renderRooms();});
+}
+function roomCardHTML(r, stayKey, mode){
+  // mode: 'wizard' (inside step 3, clicking selects the room) or 'browse' (public grid, clicking jumps into booking)
+  const h = hotelOf(r.hotel);
+  const price = stayKey==='24hr'? r.price24 : r.price6;
+  const label = stayKey==='24hr'? '/ 24 hrs' : '/ 5–6 hrs';
+  const unavailable = mode==='wizard' && state.unavailableRoomIds && state.unavailableRoomIds.includes(r.id);
+  const clickAttr = unavailable ? '' : (mode==='wizard' ? `onclick="pickRoom('${r.id}')" role="button" tabindex="0"` : `onclick="startBookingWithRoom('${r.id}')" role="button" tabindex="0"`);
+  const captionText = unavailable ? 'Already booked for this date' : (mode==='wizard' ? 'Tap to select' : 'Tap to book this room');
+  return `
+  <div class="keytag" ${clickAttr} style="${state.room===r.id?'outline:3px solid var(--saffron);':''} ${unavailable?'opacity:.45; cursor:not-allowed; filter:grayscale(60%);':''}">
+    <div class="hole"></div>
+    <div class="thumb"><img src="${r.img}" alt="Room ${r.num} at ${h.name}"></div>
+    <div class="tag-body">
+      <div style="font-size:.72rem; color:var(--slate-light); font-family:var(--font-mono); text-transform:uppercase; display:flex; align-items:center; gap:6px;"><span style="width:8px; height:8px; border-radius:50%; background:${h.accent}; display:inline-block;"></span>${h.name}</div>
+      <div class="roomnum">Room ${r.num}</div>
+      <div class="cat-row">
+        <span class="tagpill ${r.ac?'ac':'nonac'}">${r.ac?'AC':'Non‑AC'}</span>
+        <span class="tagpill cat">${r.cat}</span>
+      </div>
+      <div class="price">
+        <div><small>${captionText}</small><b>${fmt(price)}</b></div>
+        <small>${label}</small>
+      </div>
+    </div>
+  </div>`;
+}
+function renderRooms(){
+  const f = state.filters;
+  const list = ROOMS.filter(r =>
+    (f.hotel==='all'||r.hotel===f.hotel) &&
+    (f.ac==='all'||(f.ac==='ac'&&r.ac)||(f.ac==='nonac'&&!r.ac)) &&
+    (f.cat==='all'||r.cat===f.cat)
+  );
+  const grid = document.getElementById('roomGrid');
+  grid.innerHTML = list.length? list.map(r=>roomCardHTML(r, f.stay, 'browse')).join('') : `<p style="color:var(--slate-light);">No rooms match those filters — try widening your search.</p>`;
+  grid.querySelectorAll('img').forEach(withFallback);
+}
+
+/* Wizard step-3 room filters (scoped to chosen hotel) */
+function renderWizRoomFilters(){
+  chipRow(document.getElementById('wfAc'), [{val:'all',label:'All'},{val:'ac',label:'AC'},{val:'nonac',label:'Non‑AC'}], 'wizFilters','ac', ()=>{renderWizRoomFilters();renderWizRooms();});
+  chipRow(document.getElementById('wfCat'), [{val:'all',label:'All'},{val:'Single',label:'Single'},{val:'Couple',label:'Couple'},{val:'Family',label:'Family'},{val:'Suite',label:'Suite'}], 'wizFilters','cat', ()=>{renderWizRoomFilters();renderWizRooms();});
+}
+function renderWizRooms(){
+  const f = state.wizFilters;
+  const list = ROOMS.filter(r => r.hotel===state.hotel &&
+    (f.ac==='all'||(f.ac==='ac'&&r.ac)||(f.ac==='nonac'&&!r.ac)) &&
+    (f.cat==='all'||r.cat===f.cat));
+  const grid = document.getElementById('wizRoomGrid');
+  grid.innerHTML = list.length? list.map(r=>roomCardHTML(r, state.stay||'24hr', 'wizard')).join('') : `<p style="color:var(--slate-light);">No rooms match — adjust filters above.</p>`;
+  grid.querySelectorAll('img').forEach(withFallback);
+}
+function pickRoom(id){
+  if(state.unavailableRoomIds && state.unavailableRoomIds.includes(id)) return;
+  state.room = id; renderWizRooms(); renderBreadcrumb();
+}
+async function refreshAvailabilityForSelectedDate(){
+  const date = document.getElementById('checkinDate').value;
+  state.unavailableRoomIds = [];
+  if(!date) return;
+  try{
+    const r = await fetch('/api/availability?date=' + encodeURIComponent(date));
+    const data = await r.json();
+    state.unavailableRoomIds = data.unavailableRoomIds || [];
+    if(state.room && state.unavailableRoomIds.includes(state.room)) state.room = null; // previously picked room just got taken
+  } catch(e){ /* availability check failed silently — booking submission still validates server-side */ }
+}
+
+/* Clicking a room in the public browse grid jumps straight into the booking
+   wizard with that hotel + room already chosen — removes the guesswork of
+   "how do I actually book this room". */
+function startBookingWithRoom(id){
+  const r = ROOMS.find(x=>x.id===id);
+  state.hotel = r.hotel;
+  state.room = id;
+  state.wizFilters = {ac:'all', cat:'all'};
+  renderWizHotels();
+  goToStep(2);
+  document.getElementById('book').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* =========================================================================
+   RENDER: Gallery
+   ========================================================================= */
+function renderGalleryFilters(){
+  const container = document.getElementById('gHotel');
+  const options = [{val:'all',label:'All'}, ...HOTELS.map(h=>({val:h.id,label:h.name}))];
+  container.innerHTML = options.map(o=>`<button type="button" class="chip ${state.gFilter===o.val?'active':''}" data-val="${o.val}">${o.label}</button>`).join('');
+  [...container.children].forEach(btn=>{ btn.onclick = ()=>{ state.gFilter = btn.dataset.val; renderGalleryFilters(); renderGallery(); }; });
+}
+function renderGallery(){
+  const list = ROOMS.filter(r => state.gFilter==='all' || r.hotel===state.gFilter);
+  const grid = document.getElementById('galleryGrid');
+  const shots = [];
+  list.forEach(r=>{
+    const h = hotelOf(r.hotel);
+    shots.push({img:r.img, cap:`${h.name} · Room ${r.num} · ${r.cat}`});
+  });
+  grid.innerHTML = shots.map(s=>`
+    <figure onclick="openLightbox('${s.img}')">
+      <img src="${s.img}" alt="${s.cap}">
+      <figcaption>${s.cap}</figcaption>
+    </figure>`).join('');
+  grid.querySelectorAll('img').forEach(withFallback);
+}
+function openLightbox(src){
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+document.getElementById('lightboxClose').onclick = ()=> document.getElementById('lightbox').classList.remove('open');
+document.getElementById('lightbox').addEventListener('click', e=>{ if(e.target.id==='lightbox') e.currentTarget.classList.remove('open'); });
+
+/* =========================================================================
+   RENDER: Food preview strip (public section)
+   ========================================================================= */
+function esc(v){ return String(v).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function allMenuItems(){ return MENU.flatMap(m=> m.items.map(i=>({...i, cat:m.cat}))); }
+function renderFoodPreview(){
+  const box = document.getElementById('foodPreview');
+  const items = allMenuItems();
+  if(!items.length){
+    box.innerHTML = '<div class="food-empty" style="grid-column:1/-1;">Our room-service menu is being updated — please check back soon.</div>';
+    return;
+  }
+  box.innerHTML = items.map(it=>`
+    <div class="food-card">
+      <div class="fimg">${it.photo ? `<img src="${it.photo}" alt="${esc(it.name)}" loading="lazy">` : '🍽️'}</div>
+      <div class="fbody">
+        <h3>${esc(it.name)}</h3>
+        <div class="fprice">${fmt(it.price)}</div>
+      </div>
+    </div>`).join('');
+}
+async function refreshMenu(){
+  try{
+    const r = await fetch('/api/menu').then(x=>x.json());
+    MENU = r.menu || [];
+    renderFoodPreview();
+  }catch(e){ /* keep the menu we already have */ }
+}
+
+/* =========================================================================
+   WIZARD: step indicator + navigation
+   ========================================================================= */
+const STEP_LABELS = ['Hotel','Stay Type','Room','Your Details','Food','Review'];
+function renderWizardSteps(){
+  document.getElementById('wizardSteps').innerHTML = STEP_LABELS.map((label,i)=>{
+    const n = i+1;
+    const cls = n===state.step ? 'active' : (n<state.step ? 'done' : '');
+    return `<div class="wizard-step ${cls}"><b>${n<state.step?'✓':n}</b>${label}</div>`;
+  }).join('');
+}
+function renderBreadcrumb(){
+  const el = document.getElementById('wizBreadcrumb');
+  const crumbs = [];
+  if(state.hotel){
+    const h = hotelOf(state.hotel);
+    crumbs.push(`<span class="crumb"><span class="dot" style="background:${h.accent};"></span>${h.name}</span>`);
+  }
+  if(state.stay){
+    crumbs.push(`<span class="crumb">${state.stay==='24hr'?'🌙 24‑Hour Stay':'🕐 5–6 Hour Stay'}</span>`);
+  }
+  if(state.room){
+    const r = ROOMS.find(x=>x.id===state.room);
+    crumbs.push(`<span class="crumb">🔑 Room ${r.num} · ${r.cat}</span>`);
+  }
+  if(!crumbs.length){ el.style.display='none'; return; }
+  el.style.display='flex';
+  el.innerHTML = `<span style="color:var(--slate-light); font-family:var(--font-mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.05em;">Your selection:</span>` + crumbs.join('');
+}
+function goToStep(n, skipScroll){
+  state.step = n;
+  document.querySelectorAll('.step-pane').forEach(p=> p.classList.toggle('active', +p.dataset.step===n));
+  renderWizardSteps();
+  renderBreadcrumb();
+  document.getElementById('btnBack').style.visibility = n===1 ? 'hidden' : 'visible';
+  document.getElementById('btnNext').textContent = n===6 ? 'Confirm Booking →' : 'Continue →';
+  if(n===3){ refreshAvailabilityForSelectedDate().then(()=>{ renderWizRoomFilters(); renderWizRooms(); }); renderWizRoomFilters(); renderWizRooms(); }
+  if(n===5){ renderMenu(); renderCart(); refreshMenu().then(()=>{ renderMenu(); renderCart(); }); }
+  if(n===6){ renderReview(); }
+  if(!skipScroll) document.getElementById('book').scrollIntoView({behavior:'smooth', block:'start'});
+}
+function clearFieldError(id){ document.getElementById(id).classList.remove('has-error'); }
+function setFieldError(id){ document.getElementById(id).classList.add('has-error'); }
+
+function validateStep(n){
+  if(n===1){
+    if(!state.hotel){ alert('Please choose a hotel to continue.'); return false; }
+    return true;
+  }
+  if(n===2){
+    if(!state.stay){ alert('Please choose a stay type (24‑hour or 5–6 hour).'); return false; }
+    const d = document.getElementById('checkinDate').value;
+    const t = document.getElementById('checkinTime').value;
+    if(!d || !t){ alert('Please choose your check‑in date and time.'); return false; }
+    return true;
+  }
+  if(n===3){
+    if(!state.room){ alert('Please select a room to continue.'); return false; }
+    return true;
+  }
+  if(n===4){
+    let ok = true;
+    const name = document.getElementById('gName').value.trim();
+    const phone = document.getElementById('gPhone').value.trim();
+    if(!name){ setFieldError('fld-name'); ok=false; } else clearFieldError('fld-name');
+    if(!/^[0-9]{10}$/.test(phone)){ setFieldError('fld-phone'); ok=false; } else clearFieldError('fld-phone');
+    if(!ok) return false;
+    if(state.idMethod==='upload' && !idUploadedFile){
+      if(!confirm("You haven't uploaded an Aadhar photo yet. Continue anyway and show it at the hotel instead?")) return false;
+      state.idMethod = 'hotel';
+    }
+    return true;
+  }
+  return true;
+}
+
+document.getElementById('btnNext').addEventListener('click', ()=>{
+  if(state.step===6){ confirmBooking(); return; }
+  if(!validateStep(state.step)) return;
+  goToStep(Math.min(6, state.step+1));
+});
+document.getElementById('btnBack').addEventListener('click', ()=>{
+  goToStep(Math.max(1, state.step-1));
+});
+
+/* Stay type cards */
+document.getElementById('stay24').addEventListener('click', ()=> selectStay('24hr'));
+document.getElementById('stay6').addEventListener('click', ()=> selectStay('6hr'));
+function selectStay(val){
+  state.stay = val;
+  document.getElementById('stay24').classList.toggle('selected', val==='24hr');
+  document.getElementById('stay6').classList.toggle('selected', val==='6hr');
+  renderBreadcrumb();
+}
+/* default check-in date = today */
+document.getElementById('checkinDate').min = new Date().toISOString().split('T')[0];
+document.getElementById('checkinDate').value = new Date().toISOString().split('T')[0];
+
+/* =========================================================================
+   ID VERIFICATION
+   ========================================================================= */
+let idUploadedFile = null;
+let idPhotoBase64 = null; // sent to the server as part of the booking
+function refreshIdChoiceUI(){
+  document.getElementById('idLabelUpload').classList.toggle('checked', state.idMethod==='upload');
+  document.getElementById('idLabelHotel').classList.toggle('checked', state.idMethod==='hotel');
+  document.getElementById('uploadBox').style.display = state.idMethod==='upload' ? 'block' : 'none';
+}
+document.querySelectorAll('input[name=idMethod]').forEach(r=>{
+  r.addEventListener('change', e=>{ state.idMethod = e.target.value; refreshIdChoiceUI(); });
+});
+document.getElementById('idUpload').addEventListener('change', e=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  idUploadedFile = file;
+  const reader = new FileReader();
+  reader.onload = ev=>{
+    idPhotoBase64 = ev.target.result;
+    document.getElementById('idPreview').innerHTML = `<img src="${ev.target.result}" alt="Uploaded Aadhar preview">`;
+  };
+  reader.readAsDataURL(file);
+});
+refreshIdChoiceUI();
+
+/* =========================================================================
+   FOOD MENU + CART (step 5)
+   ========================================================================= */
+let activeMenuCat = 0;
+function renderMenu(){
+  const tabs = document.getElementById('menuTabs');
+  if(!MENU.length){
+    tabs.innerHTML = '';
+    document.getElementById('menuList').innerHTML = '<p style="color:var(--slate-light); padding:16px 0;">Room-service menu is not available right now — you can skip this step and order at the hotel.</p>';
+    return;
+  }
+  if(activeMenuCat >= MENU.length) activeMenuCat = 0;
+  tabs.innerHTML = MENU.map((m,i)=>`<button type="button" class="chip ${i===activeMenuCat?'active':''}" data-i="${i}">${esc(m.cat)}</button>`).join('');
+  [...tabs.children].forEach(btn=>{
+    btn.onclick = ()=>{
+      [...tabs.children].forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      activeMenuCat = +btn.dataset.i;
+      renderMenuList(activeMenuCat);
+    };
+  });
+  renderMenuList(activeMenuCat);
+}
+function renderMenuList(catIndex){
+  const m = MENU[catIndex];
+  document.getElementById('menuList').innerHTML = `
+    <div class="menu-cat-block">
+      <h4>${esc(m.cat)}</h4>
+      ${m.items.map(it=>{
+        const qty = state.cart[it.id]||0;
+        return `
+        <div class="menu-item">
+          <div class="thumb">${it.photo ? `<img src="${it.photo}" alt="${esc(it.name)}" loading="lazy">` : '🍽️'}</div>
+          <div class="info"><b>${esc(it.name)}</b><span>${fmt(it.price)} each</span></div>
+          <div class="price">${fmt(it.price)}</div>
+          <div class="qty-control">
+            <button type="button" onclick="changeQty('${it.id}',-1)">−</button>
+            <span id="qty-${it.id}">${qty}</span>
+            <button type="button" onclick="changeQty('${it.id}',1)">+</button>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+function changeQty(id, delta){
+  const next = (state.cart[id]||0) + delta;
+  if(next<=0){ delete state.cart[id]; } else { state.cart[id]=next; }
+  const el = document.getElementById('qty-'+id);
+  if(el) el.textContent = state.cart[id]||0;
+  renderCart();
+}
+function cartItems(){
+  const all = allMenuItems();
+  const out = [];
+  Object.keys(state.cart).forEach(id=>{
+    const item = all.find(i=>i.id===id);
+    if(item) out.push({...item, qty: state.cart[id]});
+    else delete state.cart[id]; // dish was removed/disabled by the admin meanwhile
+  });
+  return out;
+}
+function cartTotal(){ return cartItems().reduce((s,i)=> s + i.price*i.qty, 0); }
+function renderCart(){
+  const items = cartItems();
+  const box = document.getElementById('cartSummary');
+  if(!items.length){ box.style.display='none'; return; }
+  box.style.display='block';
+  box.innerHTML = `<b style="font-family:var(--font-mono); text-transform:uppercase; font-size:.75rem; color:var(--slate-light);">Your Food Order</b>` +
+    items.map(i=>`<div class="cart-line"><span>${esc(i.name)} × ${i.qty}</span><span>${fmt(i.price*i.qty)}</span></div>`).join('') +
+    `<div class="cart-total"><span>Food Total</span><span>${fmt(cartTotal())}</span></div>`;
+}
+
+/* =========================================================================
+   REVIEW + CONFIRM (step 6)
+   ========================================================================= */
+function renderReview(){
+  const h = hotelOf(state.hotel);
+  const r = ROOMS.find(x=>x.id===state.room);
+  const roomPrice = state.stay==='24hr' ? r.price24 : r.price6;
+  const foodTotal = cartTotal();
+  const grandTotal = roomPrice + foodTotal;
+  const name = document.getElementById('gName').value.trim();
+  const phone = document.getElementById('gPhone').value.trim();
+  const email = document.getElementById('gEmail').value.trim();
+  const guests = document.getElementById('gGuests').value;
+  const date = document.getElementById('checkinDate').value;
+  const time = document.getElementById('checkinTime').value;
+  const items = cartItems();
+
+  document.getElementById('reviewArea').innerHTML = `
+    <div class="review-block">
+      <h4>Stay</h4>
+      <div class="review-row"><span>Hotel</span><b>${h.name} — ${h.locality}</b></div>
+      <div class="review-row"><span>Room</span><b>Room ${r.num} · ${r.cat} · ${r.ac?'AC':'Non‑AC'}</b></div>
+      <div class="review-row"><span>Stay type</span><b>${state.stay==='24hr'?'24‑Hour Stay':'5–6 Hour Stay'}</b></div>
+      <div class="review-row"><span>Check‑in</span><b>${date} at ${time}</b></div>
+      <div class="review-row"><span>Room charge</span><b>${fmt(roomPrice)}</b></div>
+    </div>
+    <div class="review-block">
+      <h4>Guest Details</h4>
+      <div class="review-row"><span>Name</span><b>${name}</b></div>
+      <div class="review-row"><span>Phone</span><b>${phone}</b></div>
+      ${email?`<div class="review-row"><span>Email</span><b>${email}</b></div>`:''}
+      <div class="review-row"><span>Guests</span><b>${guests}</b></div>
+      <div class="review-row"><span>Aadhar verification</span><b>${state.idMethod==='upload'?'Uploaded online':'Will show at hotel reception'}</b></div>
+    </div>
+    ${items.length? `<div class="review-block">
+      <h4>Food Order</h4>
+      ${items.map(i=>`<div class="review-row"><span>${esc(i.name)} × ${i.qty}</span><b>${fmt(i.price*i.qty)}</b></div>`).join('')}
+      <div class="review-row"><span>Food total</span><b>${fmt(foodTotal)}</b></div>
+    </div>` : ''}
+    <div class="review-block" style="background:var(--navy); color:var(--cream); border-color:var(--navy);">
+      <div class="review-row" style="font-size:1.1rem;"><span>Estimated Total</span><b style="color:var(--saffron);">${fmt(grandTotal)}</b></div>
+    </div>
+  `;
+}
+
+async function confirmBooking(){
+  if(!validateStep(4)) { goToStep(4); return; }
+  const h = hotelOf(state.hotel);
+  const r = ROOMS.find(x=>x.id===state.room);
+  const btnNext = document.getElementById('btnNext');
+  const payload = {
+    hotelRoom: r.id,
+    stay: state.stay,
+    date: document.getElementById('checkinDate').value,
+    time: document.getElementById('checkinTime').value,
+    name: document.getElementById('gName').value.trim(),
+    phone: document.getElementById('gPhone').value.trim(),
+    email: document.getElementById('gEmail').value.trim(),
+    guests: document.getElementById('gGuests').value,
+    requests: document.getElementById('gRequests') ? document.getElementById('gRequests').value.trim() : '',
+    idMethod: state.idMethod,
+    idPhotoBase64: state.idMethod==='upload' ? idPhotoBase64 : null,
+    food: cartItems().map(i=>({id:i.id, name:i.name, qty:i.qty}))
+  };
+
+  btnNext.disabled = true; btnNext.textContent = 'Submitting…';
+  let result;
+  try{
+    const res = await fetch('/api/bookings', {
+      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
+    });
+    result = await res.json();
+    if(!res.ok){
+      if(res.status===409){
+        alert(result.error + ' Taking you back to pick a different room.');
+        await refreshAvailabilityForSelectedDate();
+        state.room = null;
+        goToStep(3);
+      } else {
+        alert(result.error || 'Something went wrong submitting your booking. Please try again.');
+      }
+      return;
+    }
+  } catch(e){
+    alert('Could not reach the server. Please check your connection and try again.');
+    return;
+  } finally {
+    btnNext.disabled = false; btnNext.textContent = 'Confirm Booking →';
+  }
+
+  const booking = {
+    bookingId: result.bookingId, hotel:h.name, room:r.num, category:r.cat, ac:r.ac, stay:state.stay,
+    date: payload.date, time: payload.time, name: payload.name, phone: payload.phone,
+    idMethod: state.idMethod, total: result.total
+  };
+
+  document.getElementById('bookingIdOut').textContent = 'Booking ID: ' + booking.bookingId;
+  document.getElementById('receiptOut').innerHTML = `
+    <div class="review-row"><span>Hotel</span><b>${booking.hotel}</b></div>
+    <div class="review-row"><span>Room</span><b>${booking.room} (${booking.category}, ${booking.ac?'AC':'Non‑AC'})</b></div>
+    <div class="review-row"><span>Stay</span><b>${booking.stay==='24hr'?'24 Hours':'5–6 Hours'}</b></div>
+    <div class="review-row"><span>Check‑in</span><b>${booking.date} ${booking.time}</b></div>
+    <div class="review-row"><span>Guest</span><b>${booking.name} · ${booking.phone}</b></div>
+    <div class="review-row"><span>ID verification</span><b>${booking.idMethod==='upload'?'Uploaded':'At hotel'}</b></div>
+    <div class="review-row" style="border-top:1px dashed var(--line); margin-top:8px; padding-top:8px;"><span>Total</span><b>${fmt(booking.total)}</b></div>
+  `;
+  document.getElementById('book').querySelector('.wizard').style.display='none';
+  document.getElementById('confirmWizard').style.display='block';
+  document.getElementById('confirmWizard').scrollIntoView({behavior:'smooth', block:'start'});
+}
+document.getElementById('btnNewBooking').addEventListener('click', ()=>{
+  state.hotel=null; state.stay=null; state.room=null; state.cart={}; state.idMethod='upload'; idUploadedFile=null; idPhotoBase64=null;
+  document.getElementById('gName').value=''; document.getElementById('gPhone').value=''; document.getElementById('gEmail').value='';
+  document.getElementById('gGuests').value=1; document.getElementById('gRequests').value='';
+  document.getElementById('idPreview').innerHTML=''; document.getElementById('idUpload').value='';
+  document.querySelectorAll('input[name=idMethod]')[0].checked = true; refreshIdChoiceUI();
+  document.getElementById('stay24').classList.remove('selected'); document.getElementById('stay6').classList.remove('selected');
+  document.getElementById('confirmWizard').style.display='none';
+  document.getElementById('book').querySelector('.wizard').style.display='block';
+  renderWizHotels();
+  goToStep(1);
+});
+
+/* =========================================================================
+   MOBILE NAV
+   ========================================================================= */
+document.getElementById('navToggle').addEventListener('click', ()=>{
+  document.getElementById('navLinks').classList.toggle('open');
+});
+document.querySelectorAll('#navLinks a').forEach(a=> a.addEventListener('click', ()=> document.getElementById('navLinks').classList.remove('open')));
+
+/* =========================================================================
+   FAQ ACCORDION
+   ========================================================================= */
+const FAQS = [
+  {q:'How do I actually book a room?', a:'Scroll to the "Book Now" section (or tap any room card anywhere on the site) and follow the 6‑step wizard: hotel → stay length → room → your details → food (optional) → review. It takes about 2 minutes and there\'s no sign‑up required.'},
+  {q:'What\'s the difference between a 24‑hour and a 5–6 hour stay?', a:'A 24‑hour stay runs a full day from your check‑in time, ideal for overnight or family stays. A 5–6 hour stay is a shorter day‑use booking for rest or a quick stop, at a lower price.'},
+  {q:'Do I have to upload my Aadhar card online?', a:'No. During booking you can either upload a photo of your Aadhar card, or simply choose "I\'ll show it at the hotel reception" and present it when you check in.'},
+  {q:'Can I choose which of the three Deepak Hotels Group properties I stay at?', a:'Yes — Hotel Sai View, Hotel Sai Santosh and Hotel Om Sai are separate properties in different locations. You pick one in Step 1 of the booking wizard, and can browse all three rooms and photos before deciding.'},
+  {q:'Can I order food before I arrive?', a:'Yes, Step 5 of the booking wizard lets you add breakfast, lunch/dinner, snacks or drinks to your booking so it\'s ready when you check in. You can also order later once you\'re at the hotel.'},
+  {q:'How is my booking confirmed?', a:'After you submit your booking you\'ll get a booking ID on screen. Our reception team will call you shortly after to confirm the details and payment.'}
+];
+function renderFAQ(){
+  document.getElementById('faqList').innerHTML = FAQS.map((f,i)=>`
+    <div class="faq-item" id="faq-${i}">
+      <button type="button" class="faq-q" onclick="toggleFaq(${i})"><span>${f.q}</span><span class="plus">+</span></button>
+      <div class="faq-a"><p>${f.a}</p></div>
+    </div>`).join('');
+}
+function toggleFaq(i){
+  const item = document.getElementById('faq-'+i);
+  const answer = item.querySelector('.faq-a');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(el=>{ el.classList.remove('open'); el.querySelector('.faq-a').style.maxHeight = null; });
+  if(!isOpen){ item.classList.add('open'); answer.style.maxHeight = answer.scrollHeight+'px'; }
+}
+
+/* Hide the mobile sticky "Book Now" bar once the booking section itself is on screen */
+function setupMobileBookBar(){
+  const bar = document.getElementById('mobileBookBar');
+  const bookSection = document.getElementById('book');
+  if(!('IntersectionObserver' in window)) return;
+  const obs = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{ bar.style.display = entry.isIntersecting ? 'none' : ''; });
+  }, {threshold:0.15});
+  obs.observe(bookSection);
+}
+
+/* =========================================================================
+   LOAD LIVE DATA, THEN INIT
+   ========================================================================= */
+async function loadLiveDataAndInit(){
+  document.getElementById('yearNow').textContent = new Date().getFullYear();
+  try{
+    const [hotelsRes, roomsRes, menuRes] = await Promise.all([
+      fetch('/api/hotels').then(r=>r.json()),
+      fetch('/api/rooms').then(r=>r.json()),
+      fetch('/api/menu').then(r=>r.json())
+    ]);
+    HOTELS = hotelsRes.hotels.map(h => ({ ...h, hero: (HOTEL_DISPLAY_EXTRAS[h.id]||{}).hero || '' }));
+    ROOMS = roomsRes.rooms.map((r,i) => ({ ...r, img: r.photo || IMG_POOL[i % IMG_POOL.length], img2: r.photo || IMG_POOL[(i+3) % IMG_POOL.length] }));
+    MENU = menuRes.menu;
+  } catch(e){
+    document.body.innerHTML = '<div style="padding:60px 24px; text-align:center; font-family:sans-serif; color:#7C2D2D;">Could not connect to the Deepak Hotels Group server. Please make sure it is running and reload this page.</div>';
+    return;
+  }
+  renderDirectory();
+  renderHotels();
+  renderRoomFilters(); renderRooms();
+  renderGalleryFilters(); renderGallery();
+  renderFoodPreview();
+  renderFAQ();
+  renderWizHotels();
+  renderWizardSteps();
+  setupMobileBookBar();
+  goToStep(1, true); // true = don't scroll on initial page load
+}
+loadLiveDataAndInit();
+</script>
+</body>
+</html>

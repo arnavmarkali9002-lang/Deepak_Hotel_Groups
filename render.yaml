@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: deepak-hotels-group
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATA_DIR
+        value: /var/data
+    disk:
+      name: db-data
+      mountPath: /var/data
+      sizeGB: 1

@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deepak Hotels Group — Host Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============ DESIGN TOKENS (matches the customer-facing site) ============ */
+:root{
+  --navy:#16232F; --navy-2:#1F3244; --cream:#FBF6EC; --cream-2:#F3EAD6;
+  --saffron:#E8A33D; --saffron-dark:#C77F1E; --maroon:#7C2D2D; --teal:#2F6E62;
+  --slate:#3A4550; --slate-light:#6B7684; --line:#E4D9C4; --white:#FFFFFF;
+  --radius:14px; --shadow:0 8px 24px rgba(22,35,47,.10); --shadow-lg:0 20px 50px rgba(22,35,47,.25);
+  --font-display:'Fraunces', serif; --font-body:'Work Sans', sans-serif; --font-mono:'JetBrains Mono', monospace;
+  --sidebar-w:230px;
+}
+*{box-sizing:border-box;}
+body{margin:0; font-family:var(--font-body); color:var(--slate); background:var(--cream-2); line-height:1.5;}
+h1,h2,h3,h4{font-family:var(--font-display); color:var(--navy); margin:0 0 .3em;}
+img{max-width:100%; display:block;}
+button{font-family:var(--font-body);}
+.eyebrow{font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.13em; font-size:.7rem; color:var(--saffron-dark); font-weight:700;}
+.btn{display:inline-flex; align-items:center; gap:7px; justify-content:center; font-weight:600; font-size:.88rem; padding:10px 18px; border-radius:999px; border:1.5px solid transparent; cursor:pointer; transition:all .15s ease;}
+.btn:focus-visible{outline:3px solid var(--saffron); outline-offset:2px;}
+.btn-primary{background:var(--saffron); color:var(--navy);}
+.btn-primary:hover{transform:translateY(-1px); box-shadow:0 8px 18px rgba(232,163,61,.35);}
+.btn-outline{background:transparent; border-color:var(--navy); color:var(--navy);}
+.btn-outline:hover{background:var(--navy); color:var(--cream);}
+.btn-ghost{background:transparent; border-color:var(--line); color:var(--slate);}
+.btn-ghost:hover{background:var(--cream-2);}
+.btn-danger{background:transparent; border-color:var(--maroon); color:var(--maroon);}
+.btn-danger:hover{background:var(--maroon); color:#fff;}
+.btn-xs{padding:6px 12px; font-size:.76rem;}
+.btn[disabled]{opacity:.4; cursor:not-allowed;}
+
+/* ============ LOGIN ============ */
+.login-wrap{min-height:100vh; display:flex; align-items:center; justify-content:center; background:radial-gradient(120% 140% at 15% 0%, var(--navy-2) 0%, var(--navy) 65%); padding:24px;}
+.login-card{background:var(--white); width:100%; max-width:400px; border-radius:20px; box-shadow:var(--shadow-lg); padding:36px 32px;}
+.login-brand{display:flex; align-items:center; gap:10px; margin-bottom:22px;}
+.brand-mark{width:40px; height:40px; border-radius:50%; background:var(--saffron); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:700; color:var(--navy); font-size:1.15rem; flex-shrink:0;}
+.login-brand span.title{font-family:var(--font-display); font-size:1.3rem; font-weight:600; color:var(--navy);}
+.login-brand span.title b{color:var(--saffron-dark);}
+.login-card h2{font-size:1.3rem; margin-bottom:4px;}
+.login-card p.sub{color:var(--slate-light); font-size:.88rem; margin-bottom:24px;}
+.field{margin-bottom:16px;}
+.field label{display:block; font-size:.8rem; font-weight:600; color:var(--navy); margin-bottom:6px;}
+input[type=text],input[type=password],input[type=number],select,textarea{
+  width:100%; padding:11px 13px; border:1.5px solid var(--line); border-radius:10px; font-family:var(--font-body);
+  font-size:.92rem; background:var(--cream); color:var(--slate);
+}
+input:focus,select:focus,textarea:focus{outline:none; border-color:var(--saffron);}
+.login-demo-hint{background:var(--cream-2); border:1px dashed var(--line); border-radius:10px; padding:10px 12px; font-size:.78rem; color:var(--slate-light); margin-top:14px; font-family:var(--font-mono);}
+.login-error{background:#FBE4E4; border:1px solid #E9BEBE; color:var(--maroon); font-size:.82rem; padding:9px 12px; border-radius:8px; margin-bottom:14px; display:none;}
+
+/* ============ SHELL ============ */
+.dash-shell{display:none; min-height:100vh;}
+.dash-shell.active{display:flex;}
+.sidebar{
+  width:var(--sidebar-w); background:var(--navy); color:var(--cream); flex-shrink:0;
+  display:flex; flex-direction:column; position:sticky; top:0; height:100vh; padding:22px 16px;
+}
+.sidebar .brand{display:flex; align-items:center; gap:9px; margin-bottom:30px; padding:0 6px;}
+.sidebar .brand span.name{font-family:var(--font-display); font-size:1.08rem; font-weight:600;}
+.sidebar .brand span.name b{color:var(--saffron);}
+.sidenav{display:flex; flex-direction:column; gap:3px; flex:1;}
+.sidenav button{
+  display:flex; align-items:center; gap:11px; background:none; border:none; color:#B9C1CA; text-align:left;
+  padding:11px 12px; border-radius:10px; cursor:pointer; font-size:.9rem; font-weight:500; transition:all .15s;
+}
+.sidenav button .ic{font-size:1.05rem; width:20px; text-align:center;}
+.sidenav button:hover{background:rgba(251,246,236,.06); color:var(--cream);}
+.sidenav button.active{background:var(--saffron); color:var(--navy); font-weight:700;}
+.sidebar-foot{border-top:1px solid rgba(251,246,236,.1); padding-top:14px; margin-top:10px;}
+.host-chip{display:flex; align-items:center; gap:9px; padding:8px 10px; font-size:.82rem; color:#B9C1CA; margin-bottom:8px;}
+.host-chip .dot{width:8px; height:8px; border-radius:50%; background:var(--teal);}
+
+.main-content{flex:1; min-width:0;}
+.topbar{background:var(--white); border-bottom:1px solid var(--line); padding:18px 30px; display:flex; align-items:center; justify-content:space-between; gap:16px; position:sticky; top:0; z-index:20;}
+.topbar h1{font-size:1.3rem;}
+.topbar .date{font-family:var(--font-mono); font-size:.78rem; color:var(--slate-light);}
+.mobile-toggle{display:none; background:none; border:none; font-size:1.5rem; color:var(--navy); cursor:pointer;}
+.content-pad{padding:28px 30px 60px;}
+.panel{display:none;}
+.panel.active{display:block;}
+
+@media(max-width:920px){
+  .sidebar{position:fixed; left:-260px; z-index:80; transition:left .2s ease; box-shadow:var(--shadow-lg);}
+  .sidebar.open{left:0;}
+  .mobile-toggle{display:block;}
+  .content-pad{padding:22px 16px 50px;}
+  .topbar{padding:14px 16px;}
+}
+
+/* ============ STAT CARDS ============ */
+.stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:16px; margin-bottom:30px;}
+.stat-card{background:var(--white); border:1px solid var(--line); border-radius:14px; padding:18px 20px; box-shadow:var(--shadow);}
+.stat-card .ic{font-size:1.3rem; margin-bottom:8px;}
+.stat-card b{display:block; font-family:var(--font-mono); font-size:1.6rem; color:var(--navy);}
+.stat-card span{font-size:.78rem; color:var(--slate-light);}
+.stat-card.accent{background:var(--navy);}
+.stat-card.accent b{color:var(--saffron);}
+.stat-card.accent span{color:#B9C1CA;}
+
+.card{background:var(--white); border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow); padding:22px 24px; margin-bottom:24px;}
+.card h3{font-size:1.05rem; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;}
+.card h3 .eyebrow{display:block;}
+
+/* ============ TABLE / LIST ============ */
+.filter-bar{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:18px;}
+.chip{font-family:var(--font-mono); font-size:.74rem; font-weight:600; padding:6px 13px; border-radius:999px; border:1px solid var(--line); background:var(--cream); cursor:pointer; color:var(--slate);}
+.chip.active{background:var(--navy); color:var(--cream); border-color:var(--navy);}
+.search-box{flex:1; min-width:180px;}
+.search-box input{width:100%;}
+
+.table-wrap{overflow-x:auto;}
+table.data{width:100%; border-collapse:collapse; font-size:.86rem; min-width:760px;}
+table.data th{
+  text-align:left; font-family:var(--font-mono); font-size:.7rem; text-transform:uppercase; letter-spacing:.05em;
+  color:var(--slate-light); padding:10px 12px; border-bottom:2px solid var(--line);
+}
+table.data td{padding:12px; border-bottom:1px solid var(--cream-2); vertical-align:middle;}
+table.data tr:hover td{background:var(--cream-2);}
+.row-clickable{cursor:pointer;}
+.mono{font-family:var(--font-mono);}
+.badge{font-family:var(--font-mono); font-size:.68rem; font-weight:700; padding:4px 9px; border-radius:6px; text-transform:uppercase; letter-spacing:.03em; white-space:nowrap;}
+.badge.pending{background:#FBF0DD; color:var(--saffron-dark);}
+.badge.confirmed{background:#E4F1EE; color:var(--teal);}
+.badge.checkedin{background:var(--navy); color:var(--saffron);}
+.badge.checkedout{background:#E7E7E7; color:var(--slate-light);}
+.badge.cancelled{background:#FBE4E4; color:var(--maroon);}
+.badge.ac{background:#E4F1EE; color:var(--teal);}
+.badge.nonac{background:#F3E7DC; color:var(--saffron-dark);}
+.idflag{font-size:.72rem; font-family:var(--font-mono); display:inline-flex; align-items:center; gap:5px;}
+
+/* ============ ROOM AVAILABILITY GRID ============ */
+.avail-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); gap:10px;}
+.avail-tile{border-radius:10px; padding:10px 8px; text-align:center; cursor:pointer; border:1px solid transparent;}
+.avail-tile .num{font-family:var(--font-mono); font-weight:700; font-size:1rem;}
+.avail-tile .cat{font-size:.66rem; text-transform:uppercase; letter-spacing:.03em; font-family:var(--font-mono);}
+.avail-tile.available{background:#E4F1EE; color:var(--teal); border-color:#BFE0D8;}
+.avail-tile.occupied{background:#FBE4E4; color:var(--maroon); border-color:#E9BEBE;}
+.avail-tile.reserved{background:#FBF0DD; color:var(--saffron-dark); border-color:#EAD3A0;}
+.legend{display:flex; gap:16px; flex-wrap:wrap; margin-top:14px; font-size:.78rem; color:var(--slate-light);}
+.legend span{display:inline-flex; align-items:center; gap:6px;}
+.legend i{width:10px; height:10px; border-radius:3px; display:inline-block;}
+
+/* ============ MODAL ============ */
+.modal-overlay{position:fixed; inset:0; background:rgba(22,35,47,.55); z-index:200; display:none; align-items:flex-start; justify-content:center; padding:40px 16px; overflow-y:auto;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:var(--white); border-radius:18px; max-width:560px; width:100%; padding:28px 26px; box-shadow:var(--shadow-lg); position:relative;}
+.modal-close{position:absolute; top:16px; right:18px; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--slate-light);}
+.review-row{display:flex; justify-content:space-between; gap:12px; font-size:.88rem; padding:5px 0;}
+.review-row b{color:var(--navy); text-align:right;}
+.detail-block{background:var(--cream); border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin-bottom:14px;}
+.detail-block h4{font-family:var(--font-mono); font-size:.7rem; text-transform:uppercase; letter-spacing:.06em; color:var(--slate-light); margin-bottom:8px;}
+.id-placeholder{width:100%; max-width:220px; height:130px; background:var(--cream-2); border:1.5px dashed var(--line); border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; color:var(--slate-light); font-size:.74rem; margin-top:8px;}
+.modal-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:18px;}
+
+/* ============ SETTINGS ============ */
+.settings-hotel{border:1px solid var(--line); border-radius:12px; padding:18px 20px; margin-bottom:16px;}
+.settings-hotel h4{font-size:1.05rem; margin-bottom:12px;}
+.field-row{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+@media(max-width:640px){.field-row{grid-template-columns:1fr;}}
+.mini-note{font-size:.78rem; color:var(--slate-light); margin-top:4px;}
+.price-table td input{width:90px; padding:7px 9px; font-size:.82rem;}
+
+.menu-thumb{width:56px; height:56px; border-radius:10px; overflow:hidden; background:var(--cream-2); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0;}
+.menu-thumb img{width:100%; height:100%; object-fit:cover; display:block;}
+#menuTbody input[type=text], #menuTbody input[type=number]{width:100%; padding:7px 9px; font-size:.84rem;}
+#menuTbody input[type=number]{width:96px;}
+.btn-danger{color:var(--maroon); border-color:var(--maroon);}
+/* ============ TOAST ============ */
+.toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--navy); color:var(--cream); padding:12px 22px; border-radius:999px; font-size:.86rem; box-shadow:var(--shadow-lg); z-index:300; opacity:0; pointer-events:none; transition:all .25s ease; display:flex; align-items:center; gap:8px;}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+.empty-state{text-align:center; padding:40px 20px; color:var(--slate-light);}
+.empty-state .ic{font-size:2.2rem; margin-bottom:10px;}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN SCREEN ============ -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-card">
+    <div class="login-brand">
+      <img src="/images/deepak-hotels-logo.png" alt="Deepak Hotels Group Logo" style="height:36px; border-radius:6px; margin-right:8px; vertical-align:middle;">
+      <span class="title">Deepak Hotels <b>Group</b></span>
+    </div>
+    <h2>Host Login</h2>
+    <p class="sub">Sign in to view bookings, rooms and site details across all three properties.</p>
+    <div class="login-error" id="loginError">Incorrect username or password. Try the demo credentials below.</div>
+    <div class="field">
+      <label for="loginUser">Username</label>
+      <input type="text" id="loginUser" placeholder="admin" autocomplete="username">
+    </div>
+    <div class="field">
+      <label for="loginPass">Password</label>
+      <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn btn-primary" id="loginBtn" style="width:100%;">Sign In →</button>
+    <div class="login-demo-hint">Default login — username: <b>admin</b> · password: <b>saiview@123</b><br>Checked server-side against the database. Change this password before going live.</div>
+  </div>
+</div>
+
+<!-- ============ DASHBOARD SHELL ============ -->
+<div class="dash-shell" id="dashShell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <img src="/images/deepak-hotels-logo.png" alt="Deepak Hotels Group Logo" style="height:32px; border-radius:6px; margin-right:8px; vertical-align:middle;">
+      <span class="name">Deepak Hotels <b>Group</b></span>
+    </div>
+    <nav class="sidenav" id="sidenav">
+      <button data-panel="overview" class="active"><span class="ic">📊</span>Dashboard</button>
+      <button data-panel="bookings"><span class="ic">🗂️</span>Bookings</button>
+      <button data-panel="rooms"><span class="ic">🛏️</span>Rooms &amp; Availability</button>
+      <button data-panel="food"><span class="ic">🍽️</span>Food Orders</button>
+      <button data-panel="settings"><span class="ic">⚙️</span>Property Settings</button>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="host-chip"><span class="dot"></span>Signed in as admin</div>
+      <button class="btn btn-ghost btn-xs" id="logoutBtn" style="width:100%; color:var(--cream); border-color:rgba(251,246,236,.25);">⏻ Log Out</button>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <div class="topbar">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <button class="mobile-toggle" id="mobileToggle">☰</button>
+        <div>
+          <h1 id="topbarTitle">Dashboard</h1>
+          <div class="date" id="topbarDate"></div>
+        </div>
+      </div>
+      <button class="btn btn-outline btn-xs" id="exportBtn">⬇ Export Bookings (CSV)</button>
+    </div>
+
+    <div class="content-pad">
+
+      <!-- PANEL: OVERVIEW -->
+      <section class="panel active" id="panel-overview">
+        <div class="stat-grid" id="statGrid"></div>
+        <div class="card">
+          <h3><span>Occupancy by Property</span><span class="eyebrow">Today</span></h3>
+          <div id="occupancyList"></div>
+        </div>
+        <div class="card">
+          <h3><span>Recent Bookings</span><span class="eyebrow">Last 5</span></h3>
+          <div class="table-wrap"><table class="data" id="recentTable"><thead><tr><th>Booking</th><th>Guest</th><th>Hotel / Room</th><th>Check‑in</th><th>Status</th></tr></thead><tbody></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- PANEL: BOOKINGS -->
+      <section class="panel" id="panel-bookings">
+        <div class="card">
+          <div class="filter-bar">
+            <div class="search-box"><input type="text" id="bookingSearch" placeholder="Search by name, phone or booking ID…"></div>
+            <div id="fHotelB"></div>
+            <div id="fStatusB"></div>
+          </div>
+          <div class="table-wrap">
+            <table class="data" id="bookingsTable">
+              <thead><tr><th>Booking</th><th>Guest</th><th>Hotel / Room</th><th>Stay</th><th>Check‑in</th><th>ID Verify</th><th>Food</th><th>Total</th><th>Status</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- PANEL: ROOMS & AVAILABILITY -->
+      <section class="panel" id="panel-rooms">
+        <div id="roomsByHotel"></div>
+      </section>
+
+      <!-- PANEL: FOOD ORDERS -->
+      <section class="panel" id="panel-food">
+        <div class="filter-bar" id="foodTabs">
+          <button type="button" class="chip active" data-view="orders">Active Orders</button>
+          <button type="button" class="chip" data-view="menu">Menu &amp; Prices</button>
+        </div>
+
+        <div id="foodView-orders"><div id="foodByHotel"></div></div>
+
+        <div id="foodView-menu" style="display:none;">
+          <div class="card">
+            <h3><span>Add a Dish</span><span class="eyebrow">Shown on the booking site</span></h3>
+            <div class="field-row">
+              <div class="field"><label for="mNewName">Dish name</label><input type="text" id="mNewName" maxlength="80" placeholder="e.g. Veg Thali"></div>
+              <div class="field"><label for="mNewCat">Category</label><input type="text" id="mNewCat" maxlength="40" list="mCatList" placeholder="e.g. Lunch &amp; Dinner"><datalist id="mCatList"></datalist></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label for="mNewPrice">Price (₹)</label><input type="number" id="mNewPrice" min="0" placeholder="150"></div>
+              <div class="field"><label>Dish photo (optional)</label>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <div id="mNewThumb" class="menu-thumb">🍽️</div>
+                  <label class="btn btn-outline btn-xs" style="cursor:pointer;">Choose photo<input type="file" accept="image/*" id="mNewPhoto" style="display:none;"></label>
+                  <button type="button" class="btn btn-xs" id="mNewPhotoClear" style="display:none;">Remove</button>
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-primary" id="mAddBtn" type="button">+ Add to menu</button>
+          </div>
+
+          <div class="card">
+            <h3><span>Your Menu</span><span class="eyebrow" id="menuCount"></span></h3>
+            <div class="table-wrap"><table class="data" style="min-width:820px;"><thead><tr><th>Photo</th><th>Dish</th><th>Category</th><th>Price (₹)</th><th>Available</th><th></th></tr></thead><tbody id="menuTbody"></tbody></table></div>
+            <p class="mini-note">Only dishes marked <b>Available</b> appear on the customer site. Changes to name, category and price are applied when you press <b>Save</b>; photo and availability changes apply straight away.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- PANEL: SETTINGS -->
+      <section class="panel" id="panel-settings">
+        <div class="card">
+          <h3><span>Booking Snapshot</span><span class="eyebrow">From live data</span></h3>
+          <div class="stat-grid" id="analyticsGrid"></div>
+          <p class="mini-note">These are computed from real bookings in the database. For site traffic (page views, visitors), connect an analytics tool such as Google Analytics or Plausible.</p>
+        </div>
+        <div class="card">
+          <h3><span>Hotel Details</span><span class="eyebrow">Edit contact info</span></h3>
+          <div id="hotelSettingsList"></div>
+        </div>
+        <div class="card">
+          <h3><span>Room Details & Pricing</span><span class="eyebrow">Photo, category, cooling & rates</span></h3>
+          <div id="pricingHotelTabs" class="filter-bar"></div>
+          <div class="table-wrap"><table class="data price-table" id="pricingTable"><thead><tr><th>Room</th><th>Photo</th><th>Category</th><th>Cooling</th><th>24‑Hr Rate (₹)</th><th>5–6 Hr Rate (₹)</th></tr></thead><tbody></tbody></table></div>
+          <button class="btn btn-primary btn-xs" id="savePricingBtn" style="margin-top:14px;">Save Pricing</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============ BOOKING DETAIL MODAL ============ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box" id="modalBox"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================================
+   DEEPAK HOTELS GROUP — HOST DASHBOARD
+   Talks to the real backend in server.js over the /api/* REST endpoints.
+   Every hotel, room, and booking below is live data loaded from the
+   server's JSON database — nothing here is hardcoded sample data.
+   ========================================================================= */
+
+const API = ''; // same-origin
+async function api(path, opts){
+  const res = await fetch(API + path, {
+    credentials:'include',
+    headers: opts && opts.body ? {'Content-Type':'application/json'} : undefined,
+    ...opts
+  });
+  let data = null;
+  try { data = await res.json(); } catch(e){}
+  if(!res.ok){ const err = new Error((data && data.error) || 'Request failed'); err.status = res.status; throw err; }
+  return data;
+}
+
+let HOTELS = [];
+let ROOMS = [];
+let bookings = [];
+const hotelOf = id => HOTELS.find(h=>h.id===id);
+const roomOf = id => ROOMS.find(r=>r.id===id);
+const fmt = n => '₹' + n.toLocaleString('en-IN');
+function dOffset(days){
+  const d = new Date(); d.setDate(d.getDate()+days);
+  return d.toISOString().split('T')[0];
+}
+async function loadCoreData(){
+  const [hotelsRes, roomsRes, bookingsRes] = await Promise.all([
+    api('/api/hotels'), api('/api/rooms'), api('/api/bookings')
+  ]);
+  HOTELS = hotelsRes.hotels;
+  ROOMS = roomsRes.rooms;
+  bookings = bookingsRes.bookings;
+}
+
+const STATUS_LABEL = {pending:'Pending', confirmed:'Confirmed', checkedin:'Checked‑in', checkedout:'Checked‑out', cancelled:'Cancelled'};
+function statusBadge(s){ return `<span class="badge ${s}">${STATUS_LABEL[s]}</span>`; }
+function bookingTotal(b){
+  const r = roomOf(b.hotelRoom);
+  const room = b.stay==='24hr'? r.price24 : r.price6;
+  const food = b.food.reduce((s,i)=> s+i.price*i.qty, 0);
+  return room+food;
+}
+
+/* =========================================================================
+   LOGIN
+   ========================================================================= */
+document.getElementById('loginBtn').addEventListener('click', doLogin);
+document.getElementById('loginPass').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+async function doLogin(){
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  const btn = document.getElementById('loginBtn');
+  const errBox = document.getElementById('loginError');
+  errBox.style.display = 'none';
+  btn.disabled = true; btn.textContent = 'Signing in…';
+  try{
+    await api('/api/admin/login', {method:'POST', body: JSON.stringify({username:u, password:p})});
+    document.getElementById('loginWrap').style.display='none';
+    document.getElementById('dashShell').classList.add('active');
+    await initDashboard();
+  } catch(e){
+    errBox.textContent = e.status===401 ? 'Incorrect username or password.' : 'Could not reach the server. Is it running?';
+    errBox.style.display='block';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Sign In →';
+  }
+}
+document.getElementById('logoutBtn').addEventListener('click', async ()=>{
+  try{ await api('/api/admin/logout', {method:'POST'}); } catch(e){}
+  document.getElementById('dashShell').classList.remove('active');
+  document.getElementById('loginWrap').style.display='flex';
+  document.getElementById('loginUser').value=''; document.getElementById('loginPass').value='';
+  document.getElementById('loginError').style.display='none';
+});
+// If a session cookie is already valid (e.g. page refresh), skip straight to the dashboard
+(async function checkExistingSession(){
+  try{
+    await api('/api/admin/me');
+    document.getElementById('loginWrap').style.display='none';
+    document.getElementById('dashShell').classList.add('active');
+    await initDashboard();
+  } catch(e){ /* not logged in — show login screen (default) */ }
+})();
+
+/* =========================================================================
+   SIDEBAR NAV
+   ========================================================================= */
+const PANEL_TITLES = {overview:'Dashboard', bookings:'Bookings', rooms:'Rooms & Availability', food:'Food Orders', settings:'Property Settings'};
+document.getElementById('sidenav').addEventListener('click', e=>{
+  const btn = e.target.closest('button[data-panel]');
+  if(!btn) return;
+  [...document.querySelectorAll('#sidenav button')].forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.panel').forEach(p=> p.classList.toggle('active', p.id==='panel-'+btn.dataset.panel));
+  document.getElementById('topbarTitle').textContent = PANEL_TITLES[btn.dataset.panel];
+  document.getElementById('sidebar').classList.remove('open');
+});
+document.getElementById('mobileToggle').addEventListener('click', ()=> document.getElementById('sidebar').classList.toggle('open'));
+
+/* =========================================================================
+   OVERVIEW PANEL
+   ========================================================================= */
+function renderOverview(){
+  const today = dOffset(0);
+  const todays = bookings.filter(b=> b.date===today && b.status!=='cancelled');
+  const occupiedRoomIds = new Set(todays.filter(b=>b.status==='checkedin'||b.status==='confirmed').map(b=>b.hotelRoom));
+  const revenueToday = todays.reduce((s,b)=> s+bookingTotal(b), 0);
+  const pendingCheckins = bookings.filter(b=> b.date===today && b.status==='confirmed').length;
+  const pendingFood = bookings.reduce((s,b)=> s + (b.status!=='cancelled' && b.status!=='checkedout' ? b.food.length : 0), 0);
+
+  document.getElementById('statGrid').innerHTML = `
+    <div class="stat-card"><div class="ic">📅</div><b>${todays.length}</b><span>Bookings today</span></div>
+    <div class="stat-card"><div class="ic">🛏️</div><b>${occupiedRoomIds.size} / ${ROOMS.length}</b><span>Rooms occupied today</span></div>
+    <div class="stat-card accent"><div class="ic">💰</div><b>${fmt(revenueToday)}</b><span>Revenue today (est.)</span></div>
+    <div class="stat-card"><div class="ic">🧾</div><b>${pendingCheckins}</b><span>Pending check‑ins</span></div>
+    <div class="stat-card"><div class="ic">🍽️</div><b>${pendingFood}</b><span>Active food orders</span></div>
+  `;
+
+  document.getElementById('occupancyList').innerHTML = HOTELS.map(h=>{
+    const totalRooms = ROOMS.filter(r=>r.hotel===h.id).length;
+    const occ = bookings.filter(b=> b.date===today && (b.status==='checkedin'||b.status==='confirmed') && roomOf(b.hotelRoom).hotel===h.id).length;
+    const pct = Math.round((occ/totalRooms)*100);
+    return `<div style="margin-bottom:14px;">
+      <div style="display:flex; justify-content:space-between; font-size:.86rem; margin-bottom:5px;"><b>${h.name}</b><span class="mono">${occ}/${totalRooms} rooms · ${pct}%</span></div>
+      <div style="background:var(--cream-2); border-radius:999px; height:9px; overflow:hidden;"><div style="width:${pct}%; height:100%; background:var(--saffron);"></div></div>
+    </div>`;
+  }).join('');
+
+  const recent = [...bookings].sort((a,b)=> b.id.localeCompare(a.id)).slice(0,5);
+  document.querySelector('#recentTable tbody').innerHTML = recent.map(b=>{
+    const r = roomOf(b.hotelRoom), h = hotelOf(r.hotel);
+    return `<tr class="row-clickable" onclick="openBookingModal('${b.id}')">
+      <td class="mono">${b.id}</td><td>${b.name}</td><td>${h.name} · ${r.num}</td><td class="mono">${b.date}</td><td>${statusBadge(b.status)}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* =========================================================================
+   BOOKINGS PANEL
+   ========================================================================= */
+const bFilters = {hotel:'all', status:'all', q:''};
+function chipRow(container, options, current, onSelect){
+  container.innerHTML = options.map(o=>`<button type="button" class="chip ${current===o.val?'active':''}" data-val="${o.val}">${o.label}</button>`).join('');
+  [...container.children].forEach(btn=> btn.onclick = ()=>{ onSelect(btn.dataset.val); });
+}
+function renderBookingFilters(){
+  chipRow(document.getElementById('fHotelB'), [{val:'all',label:'All Hotels'}, ...HOTELS.map(h=>({val:h.id,label:h.name}))], bFilters.hotel, v=>{ bFilters.hotel=v; renderBookingFilters(); renderBookings(); });
+  chipRow(document.getElementById('fStatusB'), [{val:'all',label:'All Status'},{val:'pending',label:'Pending'},{val:'confirmed',label:'Confirmed'},{val:'checkedin',label:'Checked‑in'},{val:'checkedout',label:'Checked‑out'},{val:'cancelled',label:'Cancelled'}], bFilters.status, v=>{ bFilters.status=v; renderBookingFilters(); renderBookings(); });
+}
+document.getElementById('bookingSearch').addEventListener('input', e=>{ bFilters.q = e.target.value.toLowerCase(); renderBookings(); });
+function renderBookings(){
+  let list = bookings.filter(b=>{
+    const r = roomOf(b.hotelRoom);
+    if(bFilters.hotel!=='all' && r.hotel!==bFilters.hotel) return false;
+    if(bFilters.status!=='all' && b.status!==bFilters.status) return false;
+    if(bFilters.q && !(b.name.toLowerCase().includes(bFilters.q) || b.phone.includes(bFilters.q) || b.id.toLowerCase().includes(bFilters.q))) return false;
+    return true;
+  }).sort((a,b)=> b.id.localeCompare(a.id));
+
+  const tbody = document.querySelector('#bookingsTable tbody');
+  if(!list.length){ tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><div class="ic">🗂️</div>No bookings match those filters.</div></td></tr>`; return; }
+  tbody.innerHTML = list.map(b=>{
+    const r = roomOf(b.hotelRoom), h = hotelOf(r.hotel);
+    const foodTotal = b.food.reduce((s,i)=>s+i.price*i.qty,0);
+    return `<tr class="row-clickable" onclick="openBookingModal('${b.id}')">
+      <td class="mono">${b.id}</td>
+      <td>${b.name}<br><span class="mono" style="font-size:.72rem; color:var(--slate-light);">${b.phone}</span></td>
+      <td>${h.name}<br><span class="mono" style="font-size:.78rem;">Room ${r.num} · ${r.cat}</span></td>
+      <td>${b.stay==='24hr'?'24 Hr':'5–6 Hr'}</td>
+      <td class="mono">${b.date}<br><span style="font-size:.76rem;">${b.time}</span></td>
+      <td>${b.idMethod==='upload'? '<span class="idflag">📎 Uploaded</span>' : '<span class="idflag">🏨 At hotel</span>'}</td>
+      <td>${b.food.length? `${b.food.length} item(s)<br><span class="mono" style="font-size:.76rem;">${fmt(foodTotal)}</span>` : '—'}</td>
+      <td class="mono"><b>${fmt(bookingTotal(b))}</b></td>
+      <td>${statusBadge(b.status)}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* =========================================================================
+   BOOKING DETAIL MODAL
+   ========================================================================= */
+function openBookingModal(id){
+  const b = bookings.find(x=>x.id===id);
+  const r = roomOf(b.hotelRoom), h = hotelOf(r.hotel);
+  const foodTotal = b.food.reduce((s,i)=>s+i.price*i.qty,0);
+  const roomPrice = b.stay==='24hr'? r.price24 : r.price6;
+
+  let actions = '';
+  if(b.status==='pending') actions += `<button class="btn btn-primary btn-xs" onclick="setStatus('${b.id}','confirmed')">✓ Confirm Booking</button>`;
+  if(b.status==='confirmed') actions += `<button class="btn btn-primary btn-xs" onclick="setStatus('${b.id}','checkedin')">🔑 Check In</button>`;
+  if(b.status==='checkedin') actions += `<button class="btn btn-primary btn-xs" onclick="setStatus('${b.id}','checkedout')">🚪 Check Out</button>`;
+  if(b.status!=='cancelled' && b.status!=='checkedout') actions += `<button class="btn btn-danger btn-xs" onclick="setStatus('${b.id}','cancelled')">✕ Cancel Booking</button>`;
+  actions += `<a class="btn btn-outline btn-xs" href="tel:${b.phone}">📞 Call Guest</a>`;
+
+  document.getElementById('modalBox').innerHTML = `
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <p class="eyebrow">${b.id}</p>
+    <h3 style="margin-bottom:4px;">${b.name}</h3>
+    <div style="margin-bottom:16px;">${statusBadge(b.status)}</div>
+
+    <div class="detail-block">
+      <h4>Stay</h4>
+      <div class="review-row"><span>Hotel</span><b>${h.name} — ${h.locality}</b></div>
+      <div class="review-row"><span>Room</span><b>Room ${r.num} · ${r.cat} · ${r.ac?'AC':'Non‑AC'}</b></div>
+      <div class="review-row"><span>Stay type</span><b>${b.stay==='24hr'?'24‑Hour Stay':'5–6 Hour Stay'}</b></div>
+      <div class="review-row"><span>Check‑in</span><b>${b.date} at ${b.time}</b></div>
+      <div class="review-row"><span>Guests</span><b>${b.guests}</b></div>
+      <div class="review-row"><span>Room charge</span><b>${fmt(roomPrice)}</b></div>
+    </div>
+
+    <div class="detail-block">
+      <h4>Guest &amp; ID Verification</h4>
+      <div class="review-row"><span>Phone</span><b>${b.phone}</b></div>
+      <div class="review-row"><span>Aadhar</span><b>${b.idMethod==='upload'?'Uploaded online':'Will show at hotel reception'}</b></div>
+      ${b.idMethod==='upload' ? (b.idPhotoBase64
+        ? `<img src="${b.idPhotoBase64}" alt="Aadhar photo on file" style="width:100%; max-width:220px; border-radius:10px; border:1.5px solid var(--line); margin-top:8px; display:block;">`
+        : `<div class="id-placeholder">🔒<span>ID photo on file<br>(view during check‑in only)</span></div>`) : ''}
+    </div>
+
+    ${b.food.length? `<div class="detail-block">
+      <h4>Food / Room Service</h4>
+      ${b.food.map(i=>`<div class="review-row"><span>${i.name} × ${i.qty}</span><b>${fmt(i.price*i.qty)}</b></div>`).join('')}
+      <div class="review-row" style="border-top:1px dashed var(--line); margin-top:6px; padding-top:6px;"><span>Food total</span><b>${fmt(foodTotal)}</b></div>
+    </div>` : ''}
+
+    <div class="detail-block" style="background:var(--navy); border-color:var(--navy);">
+      <div class="review-row" style="font-size:1.05rem;"><span style="color:#B9C1CA;">Total</span><b style="color:var(--saffron);">${fmt(bookingTotal(b))}</b></div>
+    </div>
+
+    <div class="modal-actions">${actions}</div>
+  `;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal(){ document.getElementById('modalOverlay').classList.remove('open'); }
+document.getElementById('modalOverlay').addEventListener('click', e=>{ if(e.target.id==='modalOverlay') closeModal(); });
+async function setStatus(id, status){
+  try{
+    await api('/api/bookings/' + encodeURIComponent(id) + '/status', {method:'PATCH', body: JSON.stringify({status})});
+    const b = bookings.find(x=>x.id===id); b.status = status;
+    showToast('Booking ' + id + ' marked as ' + STATUS_LABEL[status] + '.');
+  } catch(e){
+    showToast('Could not update booking: ' + e.message);
+  }
+  closeModal(); renderAll();
+}
+
+/* =========================================================================
+   ROOMS & AVAILABILITY PANEL
+   ========================================================================= */
+function renderRoomsPanel(){
+  const today = dOffset(0);
+  document.getElementById('roomsByHotel').innerHTML = HOTELS.map(h=>{
+    const rooms = ROOMS.filter(r=>r.hotel===h.id);
+    const tiles = rooms.map(r=>{
+      const activeBooking = bookings.find(b=> b.hotelRoom===r.id && b.date===today && (b.status==='checkedin'||b.status==='confirmed'));
+      let cls='available', label='Available';
+      if(activeBooking && activeBooking.status==='checkedin'){ cls='occupied'; label='Occupied'; }
+      else if(activeBooking && activeBooking.status==='confirmed'){ cls='reserved'; label='Reserved'; }
+      return `<div class="avail-tile ${cls}" title="${label}${activeBooking? ' — '+activeBooking.name : ''}" ${activeBooking?`onclick="openBookingModal('${activeBooking.id}')"`:''}>
+        <div class="num">${r.num}</div><div class="cat">${r.cat}${r.ac?' · AC':''}</div>
+      </div>`;
+    }).join('');
+    return `<div class="card">
+      <h3><span>${h.name}</span><span class="eyebrow">${rooms.length} rooms</span></h3>
+      <div class="avail-grid">${tiles}</div>
+      <div class="legend">
+        <span><i style="background:#BFE0D8;"></i>Available</span>
+        <span><i style="background:#EAD3A0;"></i>Reserved (upcoming)</span>
+        <span><i style="background:#E9BEBE;"></i>Occupied (checked‑in)</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* =========================================================================
+   FOOD ORDERS PANEL
+   ========================================================================= */
+function renderFoodPanel(){
+  const active = bookings.filter(b=> b.food.length && b.status!=='cancelled' && b.status!=='checkedout');
+  if(!active.length){ document.getElementById('foodByHotel').innerHTML = `<div class="card"><div class="empty-state"><div class="ic">🍽️</div>No active food orders right now.</div></div>`; return; }
+  document.getElementById('foodByHotel').innerHTML = HOTELS.map(h=>{
+    const orders = active.filter(b=> roomOf(b.hotelRoom).hotel===h.id);
+    if(!orders.length) return '';
+    return `<div class="card">
+      <h3><span>${h.name}</span><span class="eyebrow">${orders.length} order(s)</span></h3>
+      ${orders.map(b=>{
+        const r = roomOf(b.hotelRoom);
+        return `<div style="border-bottom:1px solid var(--cream-2); padding:10px 0;">
+          <div style="display:flex; justify-content:space-between; font-size:.88rem;"><b>Room ${r.num} — ${b.name}</b><span class="mono">${fmt(b.food.reduce((s,i)=>s+i.price*i.qty,0))}</span></div>
+          <div style="font-size:.82rem; color:var(--slate-light);">${b.food.map(i=>`${i.name} × ${i.qty}`).join(', ')}</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+}
+
+
+/* =========================================================================
+   FOOD MENU MANAGER (Food Orders → Menu & Prices)
+   Dishes live in the database; the customer site reads them from /api/menu.
+   ========================================================================= */
+let MENU_ITEMS = [];
+let newDishPhoto = null;
+const SUGGESTED_CATS = ['Breakfast','Lunch & Dinner','Snacks','Beverages'];
+function esc(v){ return String(v).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// Shrinks the chosen photo (max 700px, JPEG) so the database and the customer site stay light.
+function fileToDishPhoto(file){
+  return new Promise((resolve, reject)=>{
+    if(!file || !file.type.startsWith('image/')) return reject(new Error('Please choose an image file.'));
+    if(file.size > 15*1024*1024) return reject(new Error('That photo is too large — please use one under 15MB.'));
+    const reader = new FileReader();
+    reader.onerror = ()=> reject(new Error('Could not read that file.'));
+    reader.onload = ev=>{
+      const img = new Image();
+      img.onerror = ()=> reject(new Error('That image format is not supported.'));
+      img.onload = ()=>{
+        const MAX = 700, scale = Math.min(1, MAX/Math.max(img.width, img.height));
+        const c = document.createElement('canvas');
+        c.width = Math.round(img.width*scale); c.height = Math.round(img.height*scale);
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#fff'; ctx.fillRect(0,0,c.width,c.height);
+        ctx.drawImage(img,0,0,c.width,c.height);
+        resolve(c.toDataURL('image/jpeg', 0.82));
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+const thumbHtml = (photo, name) => photo ? `<img src="${photo}" alt="${esc(name||'Dish')}">` : '🍽️';
+
+async function loadMenuAdmin(){
+  try{ const r = await api('/api/menu/all'); MENU_ITEMS = r.items || []; }
+  catch(e){ MENU_ITEMS = []; }
+  renderMenuManager();
+}
+function renderMenuManager(){
+  const cats = [...new Set([...SUGGESTED_CATS, ...MENU_ITEMS.map(i=>i.category)])];
+  document.getElementById('mCatList').innerHTML = cats.map(c=>`<option value="${esc(c)}">`).join('');
+  document.getElementById('menuCount').textContent = MENU_ITEMS.length + ' dish' + (MENU_ITEMS.length===1?'':'es');
+  const tb = document.getElementById('menuTbody');
+  if(!MENU_ITEMS.length){
+    tb.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="ic">🍽️</div>No dishes yet. Add your first dish above — it will appear on the booking site.</div></td></tr>`;
+    return;
+  }
+  tb.innerHTML = MENU_ITEMS.map(i=>`
+    <tr data-id="${i.id}">
+      <td>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div class="menu-thumb" id="mthumb-${i.id}">${thumbHtml(i.photo, i.name)}</div>
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <label class="btn btn-xs" style="cursor:pointer; text-align:center;">${i.photo?'Change':'Add photo'}<input type="file" accept="image/*" class="m-photo" data-id="${i.id}" style="display:none;"></label>
+            ${i.photo ? `<button type="button" class="btn btn-xs m-photo-rm" data-id="${i.id}">Remove</button>` : ''}
+          </div>
+        </div>
+      </td>
+      <td><input type="text" maxlength="80" value="${esc(i.name)}" data-f="name"></td>
+      <td><input type="text" maxlength="40" list="mCatList" value="${esc(i.category)}" data-f="category"></td>
+      <td><input type="number" min="0" value="${i.price}" data-f="price"></td>
+      <td><select class="m-avail" data-id="${i.id}"><option value="1" ${i.available?'selected':''}>Available</option><option value="0" ${!i.available?'selected':''}>Hidden</option></select></td>
+      <td style="white-space:nowrap;">
+        <button type="button" class="btn btn-primary btn-xs m-save" data-id="${i.id}">Save</button>
+        <button type="button" class="btn btn-outline btn-xs btn-danger m-del" data-id="${i.id}">Delete</button>
+      </td>
+    </tr>`).join('');
+}
+const menuItemOf = id => MENU_ITEMS.find(i=>i.id===id);
+
+// --- add a dish ---
+document.getElementById('mNewPhoto').addEventListener('change', async e=>{
+  const f = e.target.files[0]; e.target.value = '';
+  if(!f) return;
+  try{
+    newDishPhoto = await fileToDishPhoto(f);
+    document.getElementById('mNewThumb').innerHTML = thumbHtml(newDishPhoto);
+    document.getElementById('mNewPhotoClear').style.display = '';
+  }catch(err){ showToast(err.message); }
+});
+document.getElementById('mNewPhotoClear').addEventListener('click', ()=>{
+  newDishPhoto = null;
+  document.getElementById('mNewThumb').innerHTML = '🍽️';
+  document.getElementById('mNewPhotoClear').style.display = 'none';
+});
+document.getElementById('mAddBtn').addEventListener('click', async ()=>{
+  const name = document.getElementById('mNewName').value.trim();
+  const category = document.getElementById('mNewCat').value.trim() || 'Other';
+  const priceRaw = document.getElementById('mNewPrice').value;
+  if(!name){ showToast('Please enter the dish name.'); return; }
+  if(priceRaw==='' || Number(priceRaw) < 0){ showToast('Please enter a valid price.'); return; }
+  const btn = document.getElementById('mAddBtn'); btn.disabled = true;
+  try{
+    const r = await api('/api/menu', {method:'POST', body: JSON.stringify({name, category, price: Number(priceRaw), photo: newDishPhoto, available: true})});
+    MENU_ITEMS.push(r.item);
+    document.getElementById('mNewName').value = '';
+    document.getElementById('mNewPrice').value = '';
+    document.getElementById('mNewPhotoClear').click();
+    renderMenuManager();
+    showToast('“' + r.item.name + '” added — it is now live on the booking site.');
+  }catch(err){ showToast('Could not add dish: ' + err.message); }
+  btn.disabled = false;
+});
+
+// --- edit / delete rows (event delegation) ---
+const menuTbody = document.getElementById('menuTbody');
+menuTbody.addEventListener('click', async e=>{
+  const save = e.target.closest('.m-save'), del = e.target.closest('.m-del'), rm = e.target.closest('.m-photo-rm');
+  if(save){
+    const id = save.dataset.id, row = save.closest('tr');
+    const body = {
+      name: row.querySelector('[data-f=name]').value,
+      category: row.querySelector('[data-f=category]').value,
+      price: row.querySelector('[data-f=price]').value === '' ? NaN : Number(row.querySelector('[data-f=price]').value)
+    };
+    try{
+      const r = await api('/api/menu/' + encodeURIComponent(id), {method:'PATCH', body: JSON.stringify(body)});
+      Object.assign(menuItemOf(id), r.item);
+      renderMenuManager();
+      showToast('Saved “' + r.item.name + '” — updated on the booking site.');
+    }catch(err){ showToast('Could not save: ' + err.message); }
+  } else if(del){
+    const it = menuItemOf(del.dataset.id);
+    if(!confirm('Delete “' + it.name + '” from the menu? Past bookings keep their records.')) return;
+    try{
+      await api('/api/menu/' + encodeURIComponent(it.id), {method:'DELETE'});
+      MENU_ITEMS = MENU_ITEMS.filter(i=>i.id!==it.id);
+      renderMenuManager();
+      showToast('Dish deleted.');
+    }catch(err){ showToast('Could not delete: ' + err.message); }
+  } else if(rm){
+    const it = menuItemOf(rm.dataset.id);
+    try{
+      await api('/api/menu/' + encodeURIComponent(it.id), {method:'PATCH', body: JSON.stringify({photo:null})});
+      it.photo = null; renderMenuManager(); showToast('Photo removed.');
+    }catch(err){ showToast('Could not remove photo: ' + err.message); }
+  }
+});
+menuTbody.addEventListener('change', async e=>{
+  const photoInp = e.target.closest('.m-photo'), avail = e.target.closest('.m-avail');
+  if(photoInp){
+    const f = photoInp.files[0]; if(!f) return;
+    const it = menuItemOf(photoInp.dataset.id);
+    try{
+      const data = await fileToDishPhoto(f);
+      await api('/api/menu/' + encodeURIComponent(it.id), {method:'PATCH', body: JSON.stringify({photo: data})});
+      it.photo = data; renderMenuManager();
+      showToast('Photo updated for “' + it.name + '”.');
+    }catch(err){ showToast('Could not update photo: ' + err.message); }
+  } else if(avail){
+    const it = menuItemOf(avail.dataset.id), on = avail.value === '1';
+    try{
+      await api('/api/menu/' + encodeURIComponent(it.id), {method:'PATCH', body: JSON.stringify({available: on})});
+      it.available = on;
+      showToast('“' + it.name + '” is now ' + (on ? 'visible on' : 'hidden from') + ' the booking site.');
+    }catch(err){ avail.value = it.available ? '1' : '0'; showToast('Could not update: ' + err.message); }
+  }
+});
+
+// --- Orders / Menu sub-tabs ---
+document.getElementById('foodTabs').addEventListener('click', e=>{
+  const b = e.target.closest('button[data-view]'); if(!b) return;
+  [...document.querySelectorAll('#foodTabs .chip')].forEach(c=>c.classList.toggle('active', c===b));
+  document.getElementById('foodView-orders').style.display = b.dataset.view==='orders' ? '' : 'none';
+  document.getElementById('foodView-menu').style.display = b.dataset.view==='menu' ? '' : 'none';
+});
+
+/* =========================================================================
+   SETTINGS PANEL
+   ========================================================================= */
+function renderAnalytics(){
+  // No analytics provider is connected — showing real booking-derived numbers instead of fake traffic stats.
+  const total = bookings.length;
+  const thisWeek = bookings.filter(b=>{
+    const days = (new Date(b.date) - new Date(dOffset(-7))) / 86400000;
+    return days >= 0 && days <= 14;
+  }).length;
+  const cancelled = bookings.filter(b=>b.status==='cancelled').length;
+  const rate = total ? Math.round(((total-cancelled)/total)*1000)/10 : 0;
+  const byHotelCount = HOTELS.map(h=>({h, n: bookings.filter(b=> roomOf(b.hotelRoom) && roomOf(b.hotelRoom).hotel===h.id).length}));
+  const top = byHotelCount.sort((a,b)=>b.n-a.n)[0];
+  document.getElementById('analyticsGrid').innerHTML = `
+    <div class="stat-card"><div class="ic">🗂️</div><b>${total}</b><span>Total bookings on record</span></div>
+    <div class="stat-card"><div class="ic">📅</div><b>${thisWeek}</b><span>Bookings, past/next 7 days</span></div>
+    <div class="stat-card"><div class="ic">📈</div><b>${rate}%</b><span>Not‑cancelled rate</span></div>
+    <div class="stat-card"><div class="ic">🏆</div><b>${top && top.n ? top.h.name : '—'}</b><span>Most‑booked property</span></div>
+  `;
+}
+function renderHotelSettings(){
+  document.getElementById('hotelSettingsList').innerHTML = HOTELS.map(h=>`
+    <div class="settings-hotel">
+      <h4>${h.name}</h4>
+      <div class="field-row">
+        <div class="field"><label>Address</label><input type="text" value="${h.locality}" data-hotel="${h.id}" data-field="locality"></div>
+        <div class="field"><label>Phone</label><input type="text" value="${h.phone}" data-hotel="${h.id}" data-field="phone"></div>
+      </div>
+      <button class="btn btn-outline btn-xs" onclick="saveHotelField('${h.id}')">Save</button>
+    </div>
+  `).join('');
+}
+async function saveHotelField(hotelId){
+  const patch = {};
+  document.querySelectorAll(`input[data-hotel="${hotelId}"]`).forEach(inp=>{ patch[inp.dataset.field] = inp.value; });
+  try{
+    await api('/api/hotels/' + encodeURIComponent(hotelId), {method:'PATCH', body: JSON.stringify(patch)});
+    Object.assign(hotelOf(hotelId), patch);
+    showToast(hotelOf(hotelId).name + ' details saved.');
+  } catch(e){
+    showToast('Could not save: ' + e.message);
+  }
+}
+
+let pricingFilterHotel = 'sv1';
+function renderPricingTabs(){
+  document.getElementById('pricingHotelTabs').innerHTML = HOTELS.map(h=>`<button type="button" class="chip ${pricingFilterHotel===h.id?'active':''}" data-val="${h.id}">${h.name}</button>`).join('');
+  [...document.getElementById('pricingHotelTabs').children].forEach(btn=> btn.onclick = ()=>{ pricingFilterHotel = btn.dataset.val; renderPricingTabs(); renderPricingTable(); });
+}
+function renderPricingTable(){
+  const rows = ROOMS.filter(r=>r.hotel===pricingFilterHotel);
+  document.querySelector('#pricingTable tbody').innerHTML = rows.map(r=>`
+    <tr>
+      <td class="mono">${r.num}</td>
+      <td>
+        <div class="room-photo-cell" style="display:flex; align-items:center; gap:8px;">
+          <div class="room-photo-thumb" style="width:46px; height:46px; border-radius:8px; overflow:hidden; background:var(--paper2, #f2ede0); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; flex-shrink:0;" id="thumb-${r.id}">
+            ${r.photo ? `<img src="${r.photo}" style="width:100%; height:100%; object-fit:cover;" alt="Room ${r.num}">` : `<span style="font-size:18px;">🖼️</span>`}
+          </div>
+          <label class="btn btn-xs" style="cursor:pointer;">
+            Upload
+            <input type="file" accept="image/*" data-room="${r.id}" class="room-photo-input" style="display:none;">
+          </label>
+        </div>
+      </td>
+      <td>
+        <select data-room="${r.id}" data-field="cat">
+          ${['Single','Couple','Family','Suite'].map(c=>`<option value="${c}" ${r.cat===c?'selected':''}>${c}</option>`).join('')}
+        </select>
+      </td>
+      <td>
+        <select data-room="${r.id}" data-field="ac">
+          <option value="ac" ${r.ac?'selected':''}>AC</option>
+          <option value="nonac" ${!r.ac?'selected':''}>Non‑AC</option>
+        </select>
+      </td>
+      <td><input type="number" value="${r.price24}" data-room="${r.id}" data-field="price24"></td>
+      <td><input type="number" value="${r.price6}" data-room="${r.id}" data-field="price6"></td>
+    </tr>`).join('');
+  document.querySelectorAll('.room-photo-input').forEach(inp=>{
+    inp.addEventListener('change', async e=>{
+      const file = e.target.files[0];
+      const roomId = inp.dataset.room;
+      if(!file) return;
+      if(file.size > 6*1024*1024){ showToast('That photo is too large — please use one under 6MB.'); return; }
+      const reader = new FileReader();
+      reader.onload = async ev=>{
+        const base64 = ev.target.result;
+        try{
+          await api('/api/rooms/' + encodeURIComponent(roomId), {method:'PATCH', body: JSON.stringify({photo: base64})});
+          roomOf(roomId).photo = base64;
+          document.getElementById('thumb-'+roomId).innerHTML = `<img src="${base64}" style="width:100%; height:100%; object-fit:cover;" alt="Room photo">`;
+          showToast('Photo updated for room ' + roomOf(roomId).num + ' — it now shows on the booking site.');
+        } catch(err){
+          showToast('Could not upload photo: ' + err.message);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+}
+document.getElementById('savePricingBtn').addEventListener('click', async ()=>{
+  const byRoom = {};
+  document.querySelectorAll('#pricingTable input, #pricingTable select').forEach(el=>{
+    byRoom[el.dataset.room] = byRoom[el.dataset.room] || {roomId: el.dataset.room};
+    if(el.dataset.field==='ac') byRoom[el.dataset.room].ac = (el.value==='ac');
+    else if(el.dataset.field==='cat') byRoom[el.dataset.room].cat = el.value;
+    else byRoom[el.dataset.room][el.dataset.field] = Number(el.value)||0;
+  });
+  const updates = Object.values(byRoom);
+  try{
+    await api('/api/rooms/bulk-pricing', {method:'PATCH', body: JSON.stringify({updates})});
+    updates.forEach(u=> Object.assign(roomOf(u.roomId), u));
+    showToast('Room details updated for ' + hotelOf(pricingFilterHotel).name + ' — changes are live on the booking site.');
+    renderBookings();
+  } catch(e){
+    showToast('Could not save changes: ' + e.message);
+  }
+});
+
+/* =========================================================================
+   CSV EXPORT
+   ========================================================================= */
+document.getElementById('exportBtn').addEventListener('click', ()=>{
+  const header = ['Booking ID','Guest Name','Phone','Hotel','Room','Category','Stay Type','Check-in Date','Check-in Time','ID Verification','Food Items','Total (INR)','Status'];
+  const rows = bookings.map(b=>{
+    const r = roomOf(b.hotelRoom), h = hotelOf(r.hotel);
+    return [b.id, b.name, b.phone, h.name, r.num, r.cat, b.stay==='24hr'?'24 Hour':'5-6 Hour', b.date, b.time, b.idMethod==='upload'?'Uploaded':'At hotel', b.food.map(i=>i.name+' x'+i.qty).join('; '), bookingTotal(b), STATUS_LABEL[b.status]];
+  });
+  const csv = [header, ...rows].map(row=> row.map(cell=> `"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'sai-view-bookings.csv'; a.click();
+  URL.revokeObjectURL(url);
+});
+
+/* =========================================================================
+   TOAST
+   ========================================================================= */
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = '✓ ' + msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> t.classList.remove('show'), 2600);
+}
+
+/* =========================================================================
+   INIT
+   ========================================================================= */
+function renderAll(){
+  renderOverview();
+  renderBookings();
+  renderRoomsPanel();
+  renderFoodPanel();
+}
+async function initDashboard(){
+  document.getElementById('topbarDate').textContent = new Date().toLocaleDateString('en-IN', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+  await loadCoreData();
+  renderBookingFilters();
+  renderAnalytics();
+  renderHotelSettings();
+  renderPricingTabs();
+  renderPricingTable();
+  renderAll();
+  loadMenuAdmin();
+  if(!window._svPollStarted){
+    window._svPollStarted = true;
+    setInterval(async ()=>{
+      if(!document.getElementById('dashShell').classList.contains('active')) return;
+      try{ const r = await api('/api/bookings'); bookings = r.bookings; renderAll(); }
+      catch(e){ /* likely logged out — ignore, next manual action will surface it */ }
+    }, 20000);
+  }
+}
+</script>
+</body>
+</html>

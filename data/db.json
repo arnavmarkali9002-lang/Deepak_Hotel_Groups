@@ -1,0 +1,405 @@
+{
+  "hotels": [
+    {
+      "id": "sv1",
+      "name": "Hotel Sai View",
+      "tag": "The Original",
+      "locality": "Station Road, near Bus Stand",
+      "phone": "+91 98765 43210",
+      "accent": "#E8A33D",
+      "image": "/images/hotel-sai-view.jpg",
+      "desc": "Our flagship property with 11 rooms across single, couple, family and suite categories."
+    },
+    {
+      "id": "sv2",
+      "name": "Hotel Sai Santosh",
+      "tag": "The Family Wing",
+      "locality": "Market Yard Road",
+      "phone": "+91 98765 43211",
+      "accent": "#2F6E62",
+      "image": "/images/hotel-sai-santosh.jpg",
+      "desc": "A quieter property popular with families, 10 rooms with a bigger courtyard and parking."
+    },
+    {
+      "id": "sv3",
+      "name": "Hotel Om Sai",
+      "tag": "The Highway Stop",
+      "locality": "Highway Junction, opp. Petrol Pump",
+      "phone": "+91 98765 43212",
+      "accent": "#7C2D2D",
+      "image": "/images/hotel-om-sai.jpg",
+      "desc": "Convenient for travellers passing through, 10 rooms with easy parking and quick check-in."
+    }
+  ],
+  "rooms": [
+    {
+      "id": "sv1-101",
+      "hotel": "sv1",
+      "num": "101",
+      "floor": 1,
+      "ac": false,
+      "cat": "Single",
+      "price24": 1200,
+      "price6": 700,
+      "photo": "data:image/jpeg;base64,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"
+    },
+    {
+      "id": "sv1-102",
+      "hotel": "sv1",
+      "num": "102",
+      "floor": 1,
+      "ac": false,
+      "cat": "Single",
+      "price24": 1200,
+      "price6": 700,
+      "photo": null
+    },
+    {
+      "id": "sv1-103",
+      "hotel": "sv1",
+      "num": "103",
+      "floor": 1,
+      "ac": true,
+      "cat": "Single",
+      "price24": 1800,
+      "price6": 1000,
+      "photo": null
+    },
+    {
+      "id": "sv1-104",
+      "hotel": "sv1",
+      "num": "104",
+      "floor": 1,
+      "ac": false,
+      "cat": "Couple",
+      "price24": 1500,
+      "price6": 900,
+      "photo": null
+    },
+    {
+      "id": "sv1-105",
+      "hotel": "sv1",
+      "num": "105",
+      "floor": 1,
+      "ac": true,
+      "cat": "Couple",
+      "price24": 2200,
+      "price6": 1300,
+      "photo": null
+    },
+    {
+      "id": "sv1-201",
+      "hotel": "sv1",
+      "num": "201",
+      "floor": 2,
+      "ac": false,
+      "cat": "Couple",
+      "price24": 1500,
+      "price6": 900,
+      "photo": null
+    },
+    {
+      "id": "sv1-202",
+      "hotel": "sv1",
+      "num": "202",
+      "floor": 2,
+      "ac": true,
+      "cat": "Couple",
+      "price24": 2200,
+      "price6": 1300,
+      "photo": null
+    },
+    {
+      "id": "sv1-203",
+      "hotel": "sv1",
+      "num": "203",
+      "floor": 2,
+      "ac": false,
+      "cat": "Family",
+      "price24": 2200,
+      "price6": 1300,
+      "photo": null
+    },
+    {
+      "id": "sv1-204",
+      "hotel": "sv1",
+      "num": "204",
+      "floor": 2,
+      "ac": true,
+      "cat": "Family",
+      "price24": 3000,
+      "price6": 1800,
+      "photo": null
+    },
+    {
+      "id": "sv1-205",
+      "hotel": "sv1",
+      "num": "205",
+      "floor": 2,
+      "ac": true,
+      "cat": "Family",
+      "price24": 3000,
+      "price6": 1800,
+      "photo": null
+    },
+    {
+      "id": "sv1-301",
+      "hotel": "sv1",
+      "num": "301",
+      "floor": 3,
+      "ac": true,
+      "cat": "Suite",
+      "price24": 4000,
+      "price6": 2400,
+      "photo": null
+    },
+    {
+      "id": "sv2-201",
+      "hotel": "sv2",
+      "num": "201",
+      "floor": 1,
+      "ac": false,
+      "cat": "Single",
+      "price24": 1100,
+      "price6": 650,
+      "photo": null
+    },
+    {
+      "id": "sv2-202",
+      "hotel": "sv2",
+      "num": "202",
+      "floor": 1,
+      "ac": true,
+      "cat": "Single",
+      "price24": 1700,
+      "price6": 950,
+      "photo": null
+    },
+    {
+      "id": "sv2-203",
+      "hotel": "sv2",
+      "num": "203",
+      "floor": 1,
+      "ac": false,
+      "cat": "Couple",
+      "price24": 1450,
+      "price6": 850,
+      "photo": null
+    },
+    {
+      "id": "sv2-204",
+      "hotel": "sv2",
+      "num": "204",
+      "floor": 1,
+      "ac": true,
+      "cat": "Couple",
+      "price24": 2100,
+      "price6": 1250,
+      "photo": null
+    },
+    {
+      "id": "sv2-205",
+      "hotel": "sv2",
+      "num": "205",
+      "floor": 1,
+      "ac": false,
+      "cat": "Couple",
+      "price24": 1450,
+      "price6": 850,
+      "photo": null
+    },
+    {
+      "id": "sv2-301",
+      "hotel": "sv2",
+      "num": "301",
+      "floor": 2,
+      "ac": true,
+      "cat": "Family",
+      "price24": 2900,
+      "price6": 1750,
+      "photo": null
+    },
+    {
+      "id": "sv2-302",
+      "hotel": "sv2",
+      "num": "302",
+      "floor": 2,
+      "ac": false,
+      "cat": "Family",
+      "price24": 2100,
+      "price6": 1250,
+      "photo": null
+    },
+    {
+      "id": "sv2-303",
+      "hotel": "sv2",
+      "num": "303",
+      "floor": 2,
+      "ac": true,
+      "cat": "Family",
+      "price24": 2900,
+      "price6": 1750,
+      "photo": null
+    },
+    {
+      "id": "sv2-304",
+      "hotel": "sv2",
+      "num": "304",
+      "floor": 2,
+      "ac": true,
+      "cat": "Couple",
+      "price24": 2100,
+      "price6": 1250,
+      "photo": null
+    },
+    {
+      "id": "sv2-305",
+      "hotel": "sv2",
+      "num": "305",
+      "floor": 2,
+      "ac": true,
+      "cat": "Suite",
+      "price24": 3800,
+      "price6": 2300,
+      "photo": null
+    },
+    {
+      "id": "sv3-301",
+      "hotel": "sv3",
+      "num": "301",
+      "floor": 1,
+      "ac": false,
+      "cat": "Single",
+      "price24": 1100,
+      "price6": 650,
+      "photo": null
+    },
+    {
+      "id": "sv3-302",
+      "hotel": "sv3",
+      "num": "302",
+      "floor": 1,
+      "ac": false,
+      "cat": "Single",
+      "price24": 1100,
+      "price6": 650,
+      "photo": null
+    },
+    {
+      "id": "sv3-303",
+      "hotel": "sv3",
+      "num": "303",
+      "floor": 1,
+      "ac": true,
+      "cat": "Couple",
+      "price24": 2100,
+      "price6": 1250,
+      "photo": null
+    },
+    {
+      "id": "sv3-304",
+      "hotel": "sv3",
+      "num": "304",
+      "floor": 1,
+      "ac": false,
+      "cat": "Couple",
+      "price24": 1450,
+      "price6": 850,
+      "photo": null
+    },
+    {
+      "id": "sv3-305",
+      "hotel": "sv3",
+      "num": "305",
+      "floor": 1,
+      "ac": true,
+      "cat": "Couple",
+      "price24": 2100,
+      "price6": 1250,
+      "photo": null
+    },
+    {
+      "id": "sv3-401",
+      "hotel": "sv3",
+      "num": "401",
+      "floor": 2,
+      "ac": false,
+      "cat": "Family",
+      "price24": 2100,
+      "price6": 1250,
+      "photo": null
+    },
+    {
+      "id": "sv3-402",
+      "hotel": "sv3",
+      "num": "402",
+      "floor": 2,
+      "ac": true,
+      "cat": "Family",
+      "price24": 2900,
+      "price6": 1750,
+      "photo": null
+    },
+    {
+      "id": "sv3-403",
+      "hotel": "sv3",
+      "num": "403",
+      "floor": 2,
+      "ac": true,
+      "cat": "Family",
+      "price24": 2900,
+      "price6": 1750,
+      "photo": null
+    },
+    {
+      "id": "sv3-404",
+      "hotel": "sv3",
+      "num": "404",
+      "floor": 2,
+      "ac": false,
+      "cat": "Couple",
+      "price24": 1450,
+      "price6": 850,
+      "photo": null
+    },
+    {
+      "id": "sv3-405",
+      "hotel": "sv3",
+      "num": "405",
+      "floor": 2,
+      "ac": true,
+      "cat": "Suite",
+      "price24": 3800,
+      "price6": 2300,
+      "photo": null
+    }
+  ],
+  "bookings": [
+    {
+      "id": "SV10480001",
+      "hotelRoom": "sv1-101",
+      "name": "Sanika Amol Patare",
+      "phone": "9860190506",
+      "email": "sanika.patare24@sanjivani.edu.in",
+      "guests": 1,
+      "stay": "24hr",
+      "date": "2026-09-29",
+      "time": "03:00",
+      "idMethod": "hotel",
+      "idPhotoBase64": null,
+      "requests": "",
+      "food": [],
+      "status": "checkedin",
+      "createdAt": "2026-09-29T09:31:16.586Z"
+    }
+  ],
+  "admins": [
+    {
+      "username": "admin",
+      "salt": "3109c1717e804fe501fa7812ca52ebf3",
+      "hash": "790207e0a0442f961896aa4aa03be6d91456693aba58e4357fd230becbe8d8697fe70f73e6212171f98420113df6e7f9a1bcc7bf362d838103cf8381c32f8d76"
+    }
+  ],
+  "nextBookingSeq": 2,
+  "menuItems": []
+}
