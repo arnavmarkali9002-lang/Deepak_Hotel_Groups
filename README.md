@@ -17,7 +17,7 @@ Then open:
 - **Customer site:** http://localhost:3000/
 - **Admin dashboard:** http://localhost:3000/admin
 
-Default admin login: **admin** / **saiview@123** (change this — see below).
+Default admin login: **deepakhotelgroup** / **deepakhotelgroup@123**.
 
 ## How it's wired together
 
@@ -40,10 +40,7 @@ Default admin login: **admin** / **saiview@123** (change this — see below).
 
 ## What to change before this goes live for real guests
 
-1. **Change the admin password.** Right now it's the seeded default
-   (`admin` / `saiview@123`). Easiest path: delete `data/db.json`, edit the
-   `seedDb()` password in `server.js`, then restart — or add a "change
-   password" admin screen if you want it self-serve.
+1. **Admin credentials.** Configured with username `deepakhotelgroup` and password `deepakhotelgroup@123`. Edit `server.js` if you wish to change these credentials in the future.
 2. **Put it behind HTTPS.** Session cookies are marked `HttpOnly` but not
    `Secure`; add a reverse proxy (nginx/Caddy) or a platform that terminates
    TLS, then set `Secure` on the cookie in `server.js`.

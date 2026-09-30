@@ -190,17 +190,16 @@ table.data tr:hover td{background:var(--cream-2);}
     </div>
     <h2>Host Login</h2>
     <p class="sub">Sign in to view bookings, rooms and site details across all three properties.</p>
-    <div class="login-error" id="loginError">Incorrect username or password. Try the demo credentials below.</div>
+    <div class="login-error" id="loginError">Incorrect username or password.</div>
     <div class="field">
       <label for="loginUser">Username</label>
-      <input type="text" id="loginUser" placeholder="admin" autocomplete="username">
+      <input type="text" id="loginUser" placeholder="Enter username" autocomplete="username">
     </div>
     <div class="field">
       <label for="loginPass">Password</label>
       <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
     </div>
     <button class="btn btn-primary" id="loginBtn" style="width:100%;">Sign In →</button>
-    <div class="login-demo-hint">Default login — username: <b>admin</b> · password: <b>saiview@123</b><br>Checked server-side against the database. Change this password before going live.</div>
   </div>
 </div>
 
@@ -219,7 +218,7 @@ table.data tr:hover td{background:var(--cream-2);}
       <button data-panel="settings"><span class="ic">⚙️</span>Property Settings</button>
     </nav>
     <div class="sidebar-foot">
-      <div class="host-chip"><span class="dot"></span>Signed in as admin</div>
+      <div class="host-chip"><span class="dot"></span>Signed in as <span id="hostChipUser">deepakhotelgroup</span></div>
       <button class="btn btn-ghost btn-xs" id="logoutBtn" style="width:100%; color:var(--cream); border-color:rgba(251,246,236,.25);">⏻ Log Out</button>
     </div>
   </aside>
@@ -402,7 +401,8 @@ async function doLogin(){
   errBox.style.display = 'none';
   btn.disabled = true; btn.textContent = 'Signing in…';
   try{
-    await api('/api/admin/login', {method:'POST', body: JSON.stringify({username:u, password:p})});
+    const res = await api('/api/admin/login', {method:'POST', body: JSON.stringify({username:u, password:p})});
+    if(res && res.username) document.getElementById('hostChipUser').textContent = res.username;
     document.getElementById('loginWrap').style.display='none';
     document.getElementById('dashShell').classList.add('active');
     await initDashboard();
@@ -423,7 +423,8 @@ document.getElementById('logoutBtn').addEventListener('click', async ()=>{
 // If a session cookie is already valid (e.g. page refresh), skip straight to the dashboard
 (async function checkExistingSession(){
   try{
-    await api('/api/admin/me');
+    const res = await api('/api/admin/me');
+    if(res && res.username) document.getElementById('hostChipUser').textContent = res.username;
     document.getElementById('loginWrap').style.display='none';
     document.getElementById('dashShell').classList.add('active');
     await initDashboard();

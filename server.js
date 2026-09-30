@@ -58,13 +58,13 @@ function verifyPassword(password, salt, hash) {
 }
 
 function seedDb() {
-  const admin = hashPassword('saiview@123');
+  const admin = hashPassword('deepakhotelgroup@123');
   return {
     hotels: SEED_HOTELS,
     rooms: SEED_ROOMS,
     menuItems: [],         // starts EMPTY — the admin adds dishes from the Food Orders panel
     bookings: [],          // starts EMPTY — no fake bookings, ever
-    admins: [{ username: 'admin', salt: admin.salt, hash: admin.hash }],
+    admins: [{ username: 'deepakhotelgroup', salt: admin.salt, hash: admin.hash }],
     nextBookingSeq: 1
   };
 }
@@ -87,6 +87,12 @@ function loadDb() {
     // builds the menu themselves and it is stored as a flat list in DB.menuItems
     if (!Array.isArray(DB.menuItems)) { DB.menuItems = []; migrated = true; }
     if ('menu' in DB) { delete DB.menu; migrated = true; }
+    
+    // Update admin account credentials for deepakhotelgroup
+    const adminCreds = hashPassword('deepakhotelgroup@123');
+    DB.admins = [{ username: 'deepakhotelgroup', salt: adminCreds.salt, hash: adminCreds.hash }];
+    migrated = true;
+
     if (migrated) saveDb();
   }
 }

@@ -412,9 +412,9 @@
   ],
   "admins": [
     {
-      "username": "admin",
-      "salt": "3109c1717e804fe501fa7812ca52ebf3",
-      "hash": "790207e0a0442f961896aa4aa03be6d91456693aba58e4357fd230becbe8d8697fe70f73e6212171f98420113df6e7f9a1bcc7bf362d838103cf8381c32f8d76"
+      "username": "deepakhotelgroup",
+      "salt": "0aaf3eb54fc35c7b00b5c7403a8301ce",
+      "hash": "ea0657535c5a20a601d08b5926f4f486c42db6c0d0002dfb0038e4d9324f84d107d6bb67c01bb4a1d8d401d14cea9aa0698768f705da14656fa1d4718b0a9713"
     }
   ],
   "nextBookingSeq": 3,
