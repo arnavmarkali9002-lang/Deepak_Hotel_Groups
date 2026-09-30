@@ -883,33 +883,77 @@ function renderAnalytics(){
 function renderHotelSettings(){
   const hotelSel = document.getElementById('addRoomHotel');
   if(hotelSel) hotelSel.innerHTML = HOTELS.map(h=>`<option value="${h.id}">${h.name}</option>`).join('');
-  document.getElementById('hotelSettingsList').innerHTML = HOTELS.map(h=>`
+  const container = document.getElementById('hotelSettingsList');
+  container.innerHTML = HOTELS.map(h=>`
     <div class="settings-hotel">
       <h4>${h.name}</h4>
       <div class="field-row">
-        <div class="field"><label>Address</label><input type="text" value="${h.locality}" data-hotel="${h.id}" data-field="locality"></div>
-        <div class="field"><label>Phone</label><input type="text" value="${h.phone}" data-hotel="${h.id}" data-field="phone"></div>
+        <div class="field"><label>Address</label><input type="text" value="${h.locality}" data-hotel="${h.id}" data-field="locality" class="hotel-input"></div>
+        <div class="field"><label>Phone</label><input type="text" value="${h.phone}" data-hotel="${h.id}" data-field="phone" class="hotel-input"></div>
       </div>
-      <button class="btn btn-outline btn-xs" onclick="saveHotelField('${h.id}')">Save</button>
+      <button class="btn btn-outline btn-xs" onclick="saveHotelField('${h.id}', true)">Save</button>
     </div>
   `).join('');
+
+  container.querySelectorAll('.hotel-input').forEach(inp => {
+    const autoSaveHotel = () => saveHotelField(inp.dataset.hotel, false);
+    inp.addEventListener('change', autoSaveHotel);
+    inp.addEventListener('blur', autoSaveHotel);
+  });
 }
-async function saveHotelField(hotelId){
+async function saveHotelField(hotelId, showNotification = true){
   const patch = {};
   document.querySelectorAll(`input[data-hotel="${hotelId}"]`).forEach(inp=>{ patch[inp.dataset.field] = inp.value; });
   try{
     await api('/api/hotels/' + encodeURIComponent(hotelId), {method:'PATCH', body: JSON.stringify(patch)});
     Object.assign(hotelOf(hotelId), patch);
-    showToast(hotelOf(hotelId).name + ' details saved.');
+    if(showNotification){
+      showToast(hotelOf(hotelId).name + ' details saved permanently.');
+    }
   } catch(e){
-    showToast('Could not save: ' + e.message);
+    if(showNotification){
+      showToast('Could not save: ' + e.message);
+    }
   }
 }
 
 let pricingFilterHotel = 'sv1';
 function renderPricingTabs(){
   document.getElementById('pricingHotelTabs').innerHTML = HOTELS.map(h=>`<button type="button" class="chip ${pricingFilterHotel===h.id?'active':''}" data-val="${h.id}">${h.name}</button>`).join('');
-  [...document.getElementById('pricingHotelTabs').children].forEach(btn=> btn.onclick = ()=>{ pricingFilterHotel = btn.dataset.val; renderPricingTabs(); renderPricingTable(); });
+  [...document.getElementById('pricingHotelTabs').children].forEach(btn=> {
+    btn.onclick = async ()=>{
+      if(pricingFilterHotel !== btn.dataset.val){
+        await saveCurrentPricingTable(false);
+        pricingFilterHotel = btn.dataset.val;
+        renderPricingTabs();
+        renderPricingTable();
+      }
+    };
+  });
+}
+async function saveCurrentPricingTable(showNotification = false){
+  const byRoom = {};
+  document.querySelectorAll('#pricingTable input[data-room], #pricingTable select[data-room]').forEach(el=>{
+    if(!el.dataset.field) return;
+    byRoom[el.dataset.room] = byRoom[el.dataset.room] || {roomId: el.dataset.room};
+    if(el.dataset.field==='ac') byRoom[el.dataset.room].ac = (el.value==='ac');
+    else if(el.dataset.field==='cat') byRoom[el.dataset.room].cat = el.value;
+    else byRoom[el.dataset.room][el.dataset.field] = Math.max(0, Math.round(Number(el.value)||0));
+  });
+  const updates = Object.values(byRoom);
+  if(!updates.length) return;
+  try{
+    await api('/api/rooms/bulk-pricing', {method:'PATCH', body: JSON.stringify({updates})});
+    updates.forEach(u=> Object.assign(roomOf(u.roomId), u));
+    if(showNotification){
+      showToast('Room details updated for ' + (hotelOf(pricingFilterHotel) ? hotelOf(pricingFilterHotel).name : 'hotel') + ' — changes are saved permanently.');
+      renderBookings();
+    }
+  } catch(e){
+    if(showNotification){
+      showToast('Could not save changes: ' + e.message);
+    }
+  }
 }
 function renderPricingTable(){
   const rows = ROOMS.filter(r=>r.hotel===pricingFilterHotel);
@@ -943,8 +987,8 @@ function renderPricingTable(){
           <option value="nonac" ${!r.ac?'selected':''}>Non‑AC</option>
         </select>
       </td>
-      <td><input type="number" value="${r.price24}" data-room="${r.id}" data-field="price24"></td>
-      <td><input type="number" value="${r.price6}" data-room="${r.id}" data-field="price6"></td>
+      <td><input type="number" value="${r.price24}" data-room="${r.id}" data-field="price24" min="0"></td>
+      <td><input type="number" value="${r.price6}" data-room="${r.id}" data-field="price6" min="0"></td>
       <td>
         <button type="button" class="btn btn-outline btn-xs btn-danger" onclick="deleteRoom('${r.id}')">Delete</button>
       </td>
@@ -969,6 +1013,32 @@ function renderPricingTable(){
       };
       reader.readAsDataURL(file);
     });
+  });
+
+  // Attach auto-save event listeners for room rate and category/ac edits
+  document.querySelectorAll('#pricingTable input[data-room], #pricingTable select[data-room]').forEach(el => {
+    if(!el.dataset.field) return;
+    const autoSaveRoom = async () => {
+      const roomId = el.dataset.room;
+      const field = el.dataset.field;
+      const r = roomOf(roomId);
+      if(!r) return;
+      let val;
+      if(field === 'ac') val = (el.value === 'ac');
+      else if(field === 'cat') val = el.value;
+      else val = Math.max(0, Math.round(Number(el.value) || 0));
+
+      if(r[field] !== val){
+        try{
+          await api('/api/rooms/' + encodeURIComponent(roomId), {method:'PATCH', body: JSON.stringify({[field]: val})});
+          r[field] = val;
+        } catch(err){
+          showToast('Could not save room field: ' + err.message);
+        }
+      }
+    };
+    el.addEventListener('change', autoSaveRoom);
+    el.addEventListener('blur', autoSaveRoom);
   });
 }
 
@@ -1023,22 +1093,7 @@ async function deleteRoom(roomId){
 }
 
 document.getElementById('savePricingBtn').addEventListener('click', async ()=>{
-  const byRoom = {};
-  document.querySelectorAll('#pricingTable input, #pricingTable select').forEach(el=>{
-    byRoom[el.dataset.room] = byRoom[el.dataset.room] || {roomId: el.dataset.room};
-    if(el.dataset.field==='ac') byRoom[el.dataset.room].ac = (el.value==='ac');
-    else if(el.dataset.field==='cat') byRoom[el.dataset.room].cat = el.value;
-    else byRoom[el.dataset.room][el.dataset.field] = Number(el.value)||0;
-  });
-  const updates = Object.values(byRoom);
-  try{
-    await api('/api/rooms/bulk-pricing', {method:'PATCH', body: JSON.stringify({updates})});
-    updates.forEach(u=> Object.assign(roomOf(u.roomId), u));
-    showToast('Room details updated for ' + hotelOf(pricingFilterHotel).name + ' — changes are live on the booking site.');
-    renderBookings();
-  } catch(e){
-    showToast('Could not save changes: ' + e.message);
-  }
+  await saveCurrentPricingTable(true);
 });
 
 /* =========================================================================
@@ -1093,7 +1148,7 @@ async function initDashboard(){
     window._svPollStarted = true;
     setInterval(async ()=>{
       if(!document.getElementById('dashShell').classList.contains('active')) return;
-      try{ const r = await api('/api/bookings'); bookings = r.bookings; renderAll(); }
+      try{ const r = await api('/api/bookings'); bookings = r.bookings; renderOverview(); renderBookings(); }
       catch(e){ /* likely logged out — ignore, next manual action will surface it */ }
     }, 20000);
   }

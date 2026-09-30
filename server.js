@@ -74,25 +74,177 @@ function seedDb() {
 }
 
 /* ---------------------------------------------------------------------
-   Tiny JSON-file "database" with an in-memory cache + write queue.
+   DATABASE ENGINE — SQLite Database (via node:sqlite)
+   with automatic JSON file dual-sync for complete compatibility.
 --------------------------------------------------------------------- */
+const SQLITE_PATH = path.join(DATA_DIR, 'deepak_hotels.db');
+let sqliteDb = null;
+
+function initSqliteDatabase() {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+  try {
+    const { DatabaseSync } = require('node:sqlite');
+    sqliteDb = new DatabaseSync(SQLITE_PATH);
+
+    // Initialize SQLite Relational Database Tables
+    sqliteDb.exec(`
+      CREATE TABLE IF NOT EXISTS hotels (
+        id TEXT PRIMARY KEY,
+        name TEXT,
+        tag TEXT,
+        locality TEXT,
+        phone TEXT,
+        accent TEXT,
+        image TEXT,
+        desc TEXT
+      );
+      CREATE TABLE IF NOT EXISTS rooms (
+        id TEXT PRIMARY KEY,
+        hotel TEXT,
+        num TEXT,
+        floor INTEGER,
+        ac INTEGER,
+        cat TEXT,
+        price24 INTEGER,
+        price6 INTEGER,
+        photo TEXT
+      );
+      CREATE TABLE IF NOT EXISTS menu_items (
+        id TEXT PRIMARY KEY,
+        name TEXT,
+        category TEXT,
+        price INTEGER,
+        photo TEXT,
+        available INTEGER
+      );
+      CREATE TABLE IF NOT EXISTS bookings (
+        id TEXT PRIMARY KEY,
+        hotelRoom TEXT,
+        name TEXT,
+        phone TEXT,
+        email TEXT,
+        guests INTEGER,
+        stay TEXT,
+        date TEXT,
+        time TEXT,
+        idMethod TEXT,
+        idPhotoBase64 TEXT,
+        requests TEXT,
+        food TEXT,
+        status TEXT,
+        createdAt TEXT
+      );
+      CREATE TABLE IF NOT EXISTS admins (
+        username TEXT PRIMARY KEY,
+        salt TEXT,
+        hash TEXT
+      );
+      CREATE TABLE IF NOT EXISTS metadata (
+        key TEXT PRIMARY KEY,
+        value TEXT
+      );
+    `);
+    console.log(`[Database] SQLite relational database connected at: ${SQLITE_PATH}`);
+  } catch (err) {
+    console.log('[Database] Running fallback JSON file database storage engine.');
+    sqliteDb = null;
+  }
+}
+
+function syncDbToSqlite() {
+  if (!sqliteDb || !DB) return;
+  try {
+    sqliteDb.exec('BEGIN TRANSACTION;');
+
+    sqliteDb.exec('DELETE FROM hotels;');
+    const insertHotel = sqliteDb.prepare(`INSERT INTO hotels (id, name, tag, locality, phone, accent, image, desc) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`);
+    DB.hotels.forEach(h => insertHotel.run(h.id, h.name || '', h.tag || '', h.locality || '', h.phone || '', h.accent || '', h.image || '', h.desc || ''));
+
+    sqliteDb.exec('DELETE FROM rooms;');
+    const insertRoom = sqliteDb.prepare(`INSERT INTO rooms (id, hotel, num, floor, ac, cat, price24, price6, photo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+    DB.rooms.forEach(r => insertRoom.run(r.id, r.hotel, r.num, r.floor, r.ac ? 1 : 0, r.cat, r.price24, r.price6, r.photo || null));
+
+    sqliteDb.exec('DELETE FROM menu_items;');
+    const insertMenu = sqliteDb.prepare(`INSERT INTO menu_items (id, name, category, price, photo, available) VALUES (?, ?, ?, ?, ?, ?)`);
+    DB.menuItems.forEach(i => insertMenu.run(i.id, i.name, i.category || 'Other', i.price, i.photo || null, i.available ? 1 : 0));
+
+    sqliteDb.exec('DELETE FROM bookings;');
+    const insertBooking = sqliteDb.prepare(`INSERT INTO bookings (id, hotelRoom, name, phone, email, guests, stay, date, time, idMethod, idPhotoBase64, requests, food, status, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+    DB.bookings.forEach(b => insertBooking.run(b.id, b.hotelRoom, b.name, b.phone, b.email || '', b.guests, b.stay, b.date, b.time, b.idMethod, b.idPhotoBase64 || null, b.requests || '', JSON.stringify(b.food || []), b.status, b.createdAt));
+
+    sqliteDb.exec('DELETE FROM admins;');
+    const insertAdmin = sqliteDb.prepare(`INSERT INTO admins (username, salt, hash) VALUES (?, ?, ?)`);
+    DB.admins.forEach(a => insertAdmin.run(a.username, a.salt, a.hash));
+
+    const insertMeta = sqliteDb.prepare(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)`);
+    insertMeta.run('nextBookingSeq', String(DB.nextBookingSeq || 1));
+
+    sqliteDb.exec('COMMIT;');
+  } catch (err) {
+    try { sqliteDb.exec('ROLLBACK;'); } catch (e) { }
+    console.error('[Database] SQLite sync warning:', err.message);
+  }
+}
+
+function loadDbFromSqlite() {
+  if (!sqliteDb) return false;
+  try {
+    const hotelRows = sqliteDb.prepare('SELECT * FROM hotels').all();
+    if (!hotelRows || !hotelRows.length) return false;
+
+    const roomRows = sqliteDb.prepare('SELECT * FROM rooms').all();
+    const menuRows = sqliteDb.prepare('SELECT * FROM menu_items').all();
+    const bookingRows = sqliteDb.prepare('SELECT * FROM bookings').all();
+    const adminRows = sqliteDb.prepare('SELECT * FROM admins').all();
+    const metaRow = sqliteDb.prepare("SELECT value FROM metadata WHERE key = 'nextBookingSeq'").get();
+
+    DB = {
+      hotels: hotelRows.map(h => ({
+        id: h.id, name: h.name, tag: h.tag, locality: h.locality, phone: h.phone, accent: h.accent, image: h.image, desc: h.desc
+      })),
+      rooms: roomRows.map(r => ({
+        id: r.id, hotel: r.hotel, num: r.num, floor: Number(r.floor), ac: Boolean(r.ac), cat: r.cat, price24: Number(r.price24), price6: Number(r.price6), photo: r.photo || null
+      })),
+      menuItems: menuRows.map(m => ({
+        id: m.id, name: m.name, category: m.category, price: Number(m.price), photo: m.photo || null, available: Boolean(m.available)
+      })),
+      bookings: bookingRows.map(b => ({
+        id: b.id, hotelRoom: b.hotelRoom, name: b.name, phone: b.phone, email: b.email, guests: Number(b.guests), stay: b.stay, date: b.date, time: b.time, idMethod: b.idMethod, idPhotoBase64: b.idPhotoBase64, requests: b.requests, food: JSON.parse(b.food || '[]'), status: b.status, createdAt: b.createdAt
+      })),
+      admins: adminRows.map(a => ({ username: a.username, salt: a.salt, hash: a.hash })),
+      nextBookingSeq: metaRow ? Number(metaRow.value) || 1 : 1
+    };
+    return true;
+  } catch (err) {
+    console.error('[Database] Failed to read from SQLite database:', err.message);
+    return false;
+  }
+}
+
 let DB;
 function loadDb() {
-  fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+  initSqliteDatabase();
+
+  const loadedFromSqlite = loadDbFromSqlite();
+  if (loadedFromSqlite) {
+    // Ensure admin credentials are always up to date
+    const adminCreds = hashPassword('deepakhotelgroup@123');
+    DB.admins = [{ username: 'deepakhotelgroup', salt: adminCreds.salt, hash: adminCreds.hash }];
+    saveDb();
+    return;
+  }
+
   if (!fs.existsSync(DB_PATH)) {
     DB = seedDb();
     saveDb();
   } else {
     DB = JSON.parse(fs.readFileSync(DB_PATH, 'utf8'));
-    // migrate older db.json files that predate the photo field
     let migrated = false;
     DB.rooms.forEach(r => { if (!('photo' in r)) { r.photo = null; migrated = true; } });
-    // menu migration: the old hard-coded sample menu (DB.menu) is dropped; the admin now
-    // builds the menu themselves and it is stored as a flat list in DB.menuItems
     if (!Array.isArray(DB.menuItems)) { DB.menuItems = []; migrated = true; }
     if ('menu' in DB) { delete DB.menu; migrated = true; }
 
-    // Update admin account credentials for deepakhotelgroup
     const adminCreds = hashPassword('deepakhotelgroup@123');
     DB.admins = [{ username: 'deepakhotelgroup', salt: adminCreds.salt, hash: adminCreds.hash }];
     migrated = true;
@@ -100,10 +252,10 @@ function loadDb() {
     if (migrated) saveDb();
   }
 }
-let saveQueued = false;
+
 function saveDb() {
-  // synchronous write is fine at this scale and avoids write-write races
   fs.writeFileSync(DB_PATH, JSON.stringify(DB, null, 2));
+  syncDbToSqlite();
 }
 loadDb();
 
@@ -206,6 +358,13 @@ function route(method, pattern, handler) {
 route('GET', '/api/health', async (req, res) => {
   sendJson(res, 200, {
     status: 'ok',
+    database: sqliteDb ? 'SQLite (data/deepak_hotels.db)' : 'JSON File Engine (data/db.json)',
+    stats: {
+      hotels: DB.hotels.length,
+      rooms: DB.rooms.length,
+      menuItems: DB.menuItems.length,
+      bookings: DB.bookings.length
+    },
     uptime: Math.floor(process.uptime()),
     timestamp: new Date().toISOString()
   });
@@ -248,6 +407,9 @@ route('PATCH', '/api/hotels/:id', async (req, res, params) => {
   const body = await readBody(req);
   if (typeof body.locality === 'string') h.locality = body.locality;
   if (typeof body.phone === 'string') h.phone = body.phone;
+  if (typeof body.name === 'string') h.name = body.name;
+  if (typeof body.tag === 'string') h.tag = body.tag;
+  if (typeof body.desc === 'string') h.desc = body.desc;
   saveDb();
   sendJson(res, 200, { ok: true, hotel: h });
 });
