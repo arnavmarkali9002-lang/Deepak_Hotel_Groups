@@ -25,25 +25,29 @@ const PUBLIC_DIR = path.join(ROOT, 'public');
    After that, everything lives in data/db.json and this is never re-read.
 --------------------------------------------------------------------- */
 const SEED_HOTELS = [
-  { id: 'sv1', name: 'Hotel Sai View',   tag: 'The Original',    locality: 'Station Road, near Bus Stand',        phone: '+91 98765 43210', accent: '#E8A33D', image: '/images/hotel-sai-view.jpg', desc: 'Our flagship property with 11 rooms across single, couple, family and suite categories.' },
-  { id: 'sv2', name: 'Hotel Sai Santosh', tag: 'The Family Wing', locality: 'Market Yard Road',                     phone: '+91 98765 43211', accent: '#2F6E62', image: '/images/hotel-sai-santosh.jpg', desc: 'A quieter property popular with families, 10 rooms with a bigger courtyard and parking.' },
-  { id: 'sv3', name: 'Hotel Om Sai',     tag: 'The Highway Stop', locality: 'Highway Junction, opp. Petrol Pump',   phone: '+91 98765 43212', accent: '#7C2D2D', image: '/images/hotel-om-sai.jpg', desc: 'Convenient for travellers passing through, 10 rooms with easy parking and quick check-in.' }
+  { id: 'sv1', name: 'Hotel Sai View', tag: 'The Original', locality: 'Vivekanand nagar, Nagar, Manmad Rd, near S T Bus stand, near Holiday Park, Sai Nagar, Shirdi, Maharashtra 423109 QF6H+93 Shirdi, Maharashtra', phone: '+91 98765 43210', accent: '#E8A33D', image: '/images/hotel-sai-view.jpg', desc: 'Our flagship property with 10 rooms across single, couple, family and suite categories.' },
+  { id: 'sv2', name: 'Hotel Sai Santosh', tag: 'The Family Wing', locality: 'QF6H+WH7 city market, road gaikwad chowk, near addarsha school, Shirdi, Maharashtra 423109 QF6H+WH7 Shirdi, Maharashtra', phone: '+91 98765 43211', accent: '#2F6E62', image: '/images/hotel-sai-santosh.jpg', desc: 'A quieter property popular with families, 20 rooms with a bigger courtyard and parking.' },
+  { id: 'sv3', name: 'Hotel Om Sai', tag: 'The Highway Stop', locality: 'Vivekanand Nagar, Nagar, Manmad Rd, Sai Nagar, Shirdi, Maharashtra 423109 QF6G+9W Shirdi, Maharashtra', phone: '+91 98765 43212', accent: '#7C2D2D', image: '/images/hotel-om-sai.jpg', desc: 'Convenient for travellers passing through, 10 rooms with easy parking and quick check-in.' }
 ];
 const SEED_ROOMS_RAW = [
-  ['sv1','101',1,false,'Single',1200,700], ['sv1','102',1,false,'Single',1200,700], ['sv1','103',1,true,'Single',1800,1000],
-  ['sv1','104',1,false,'Couple',1500,900], ['sv1','105',1,true,'Couple',2200,1300], ['sv1','201',2,false,'Couple',1500,900],
-  ['sv1','202',2,true,'Couple',2200,1300], ['sv1','203',2,false,'Family',2200,1300], ['sv1','204',2,true,'Family',3000,1800],
-  ['sv1','205',2,true,'Family',3000,1800], ['sv1','301',3,true,'Suite',4000,2400],
-  ['sv2','201',1,false,'Single',1100,650], ['sv2','202',1,true,'Single',1700,950], ['sv2','203',1,false,'Couple',1450,850],
-  ['sv2','204',1,true,'Couple',2100,1250], ['sv2','205',1,false,'Couple',1450,850], ['sv2','301',2,true,'Family',2900,1750],
-  ['sv2','302',2,false,'Family',2100,1250], ['sv2','303',2,true,'Family',2900,1750], ['sv2','304',2,true,'Couple',2100,1250],
-  ['sv2','305',2,true,'Suite',3800,2300],
-  ['sv3','301',1,false,'Single',1100,650], ['sv3','302',1,false,'Single',1100,650], ['sv3','303',1,true,'Couple',2100,1250],
-  ['sv3','304',1,false,'Couple',1450,850], ['sv3','305',1,true,'Couple',2100,1250], ['sv3','401',2,false,'Family',2100,1250],
-  ['sv3','402',2,true,'Family',2900,1750], ['sv3','403',2,true,'Family',2900,1750], ['sv3','404',2,false,'Couple',1450,850],
-  ['sv3','405',2,true,'Suite',3800,2300]
+  ['sv1', '101', 1, false, 'Single', 1200, 700], ['sv1', '102', 1, false, 'Single', 1200, 700], ['sv1', '103', 1, true, 'Single', 1800, 1000],
+  ['sv1', '104', 1, false, 'Couple', 1500, 900], ['sv1', '105', 1, true, 'Couple', 2200, 1300], ['sv1', '201', 2, false, 'Couple', 1500, 900],
+  ['sv1', '202', 2, true, 'Couple', 2200, 1300], ['sv1', '203', 2, false, 'Family', 2200, 1300], ['sv1', '204', 2, true, 'Family', 3000, 1800],
+  ['sv1', '205', 2, true, 'Family', 3000, 1800],
+  ['sv2', '101', 1, false, 'Single', 1100, 650], ['sv2', '102', 1, true, 'Single', 1700, 950], ['sv2', '103', 1, false, 'Couple', 1450, 850],
+  ['sv2', '104', 1, true, 'Couple', 2100, 1250], ['sv2', '105', 1, false, 'Family', 2100, 1250],
+  ['sv2', '201', 2, false, 'Single', 1100, 650], ['sv2', '202', 2, true, 'Single', 1700, 950], ['sv2', '203', 2, false, 'Couple', 1450, 850],
+  ['sv2', '204', 2, true, 'Couple', 2100, 1250], ['sv2', '205', 2, false, 'Couple', 1450, 850], ['sv2', '301', 3, true, 'Family', 2900, 1750],
+  ['sv2', '302', 3, false, 'Family', 2100, 1250], ['sv2', '303', 3, true, 'Family', 2900, 1750], ['sv2', '304', 3, true, 'Couple', 2100, 1250],
+  ['sv2', '305', 3, true, 'Suite', 3800, 2300],
+  ['sv2', '401', 4, true, 'Family', 2900, 1750], ['sv2', '402', 4, false, 'Couple', 1450, 850], ['sv2', '403', 4, true, 'Couple', 2100, 1250],
+  ['sv2', '404', 4, true, 'Suite', 3800, 2300], ['sv2', '405', 4, true, 'Suite', 3800, 2300],
+  ['sv3', '301', 1, false, 'Single', 1100, 650], ['sv3', '302', 1, false, 'Single', 1100, 650], ['sv3', '303', 1, true, 'Couple', 2100, 1250],
+  ['sv3', '304', 1, false, 'Couple', 1450, 850], ['sv3', '305', 1, true, 'Couple', 2100, 1250], ['sv3', '401', 2, false, 'Family', 2100, 1250],
+  ['sv3', '402', 2, true, 'Family', 2900, 1750], ['sv3', '403', 2, true, 'Family', 2900, 1750], ['sv3', '404', 2, false, 'Couple', 1450, 850],
+  ['sv3', '405', 2, true, 'Suite', 3800, 2300]
 ];
-const SEED_ROOMS = SEED_ROOMS_RAW.map(([hotel,num,floor,ac,cat,price24,price6]) => ({
+const SEED_ROOMS = SEED_ROOMS_RAW.map(([hotel, num, floor, ac, cat, price24, price6]) => ({
   id: hotel + '-' + num, hotel, num, floor, ac, cat, price24, price6, photo: null
 }));
 const ROOM_CATEGORIES = ['Single', 'Couple', 'Family', 'Suite'];
@@ -87,7 +91,7 @@ function loadDb() {
     // builds the menu themselves and it is stored as a flat list in DB.menuItems
     if (!Array.isArray(DB.menuItems)) { DB.menuItems = []; migrated = true; }
     if ('menu' in DB) { delete DB.menu; migrated = true; }
-    
+
     // Update admin account credentials for deepakhotelgroup
     const adminCreds = hashPassword('deepakhotelgroup@123');
     DB.admins = [{ username: 'deepakhotelgroup', salt: adminCreds.salt, hash: adminCreds.hash }];
@@ -294,6 +298,43 @@ route('PATCH', '/api/rooms/:id', async (req, res, params) => {
   sendJson(res, 200, { ok: true, room: r });
 });
 
+route('POST', '/api/rooms', async (req, res) => {
+  if (!requireAdmin(req, res)) return;
+  let body;
+  try { body = await readBody(req); } catch (e) { return sendJson(res, 400, { error: e.message }); }
+  const { hotel, num, floor, ac, cat, price24, price6, photo } = body;
+  if (!hotel || !hotelOf(hotel)) return sendJson(res, 400, { error: 'Invalid hotel' });
+  if (!num || (typeof num !== 'string' && typeof num !== 'number')) return sendJson(res, 400, { error: 'Room number is required' });
+  const strNum = String(num).trim();
+  const roomId = hotel + '-' + strNum;
+  if (DB.rooms.some(r => r.id === roomId)) return sendJson(res, 400, { error: `Room ${strNum} already exists for this hotel` });
+  if (!ROOM_CATEGORIES.includes(cat)) return sendJson(res, 400, { error: 'Invalid room category' });
+
+  const newRoom = {
+    id: roomId,
+    hotel,
+    num: strNum,
+    floor: Number(floor) || 1,
+    ac: Boolean(ac),
+    cat,
+    price24: Math.max(0, Math.round(Number(price24) || 0)),
+    price6: Math.max(0, Math.round(Number(price6) || 0)),
+    photo: (typeof photo === 'string' && photo.startsWith('data:image/')) ? photo : null
+  };
+  DB.rooms.push(newRoom);
+  saveDb();
+  sendJson(res, 201, { ok: true, room: newRoom });
+});
+
+route('DELETE', '/api/rooms/:id', async (req, res, params) => {
+  if (!requireAdmin(req, res)) return;
+  const idx = DB.rooms.findIndex(r => r.id === params.id);
+  if (idx === -1) return sendJson(res, 404, { error: 'Room not found' });
+  DB.rooms.splice(idx, 1);
+  saveDb();
+  sendJson(res, 200, { ok: true, removedId: params.id });
+});
+
 /* ---------------------------------------------------------------------
    FOOD MENU — fully admin-managed (no sample dishes ship with the site)
 --------------------------------------------------------------------- */
@@ -480,7 +521,7 @@ const MIME = {
 function serveStatic(req, res, pathname) {
   let rel = pathname === '/' ? '/index.html'
     : pathname === '/admin' ? '/admin.html'
-    : pathname;
+      : pathname;
   const filePath = path.normalize(path.join(PUBLIC_DIR, rel));
   if (!filePath.startsWith(PUBLIC_DIR)) { res.writeHead(403); return res.end('Forbidden'); }
   fs.readFile(filePath, (err, data) => {

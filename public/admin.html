@@ -321,9 +321,55 @@ table.data tr:hover td{background:var(--cream-2);}
           <div id="hotelSettingsList"></div>
         </div>
         <div class="card">
+          <h3><span>Add New Room</span><span class="eyebrow">Expand property inventory</span></h3>
+          <div class="field-row">
+            <div class="field">
+              <label for="addRoomHotel">Hotel</label>
+              <select id="addRoomHotel"></select>
+            </div>
+            <div class="field">
+              <label for="addRoomNum">Room Number</label>
+              <input type="text" id="addRoomNum" maxlength="10" placeholder="e.g. 106">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="addRoomFloor">Floor</label>
+              <input type="number" id="addRoomFloor" value="1" min="1" max="20">
+            </div>
+            <div class="field">
+              <label for="addRoomCat">Category</label>
+              <select id="addRoomCat">
+                <option value="Single">Single</option>
+                <option value="Couple">Couple</option>
+                <option value="Family">Family</option>
+                <option value="Suite">Suite</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="addRoomAc">Cooling</label>
+              <select id="addRoomAc">
+                <option value="ac">AC</option>
+                <option value="nonac">Non‑AC</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="addRoomPrice24">24‑Hr Rate (₹)</label>
+              <input type="number" id="addRoomPrice24" placeholder="1500" min="0">
+            </div>
+            <div class="field">
+              <label for="addRoomPrice6">5–6 Hr Rate (₹)</label>
+              <input type="number" id="addRoomPrice6" placeholder="900" min="0">
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary btn-xs" id="addRoomBtn" style="margin-top:10px;">+ Add Room</button>
+        </div>
+        <div class="card">
           <h3><span>Room Details & Pricing</span><span class="eyebrow">Photo, category, cooling & rates</span></h3>
           <div id="pricingHotelTabs" class="filter-bar"></div>
-          <div class="table-wrap"><table class="data price-table" id="pricingTable"><thead><tr><th>Room</th><th>Photo</th><th>Category</th><th>Cooling</th><th>24‑Hr Rate (₹)</th><th>5–6 Hr Rate (₹)</th></tr></thead><tbody></tbody></table></div>
+          <div class="table-wrap"><table class="data price-table" id="pricingTable"><thead><tr><th>Room</th><th>Photo</th><th>Category</th><th>Cooling</th><th>24‑Hr Rate (₹)</th><th>5–6 Hr Rate (₹)</th><th>Action</th></tr></thead><tbody></tbody></table></div>
           <button class="btn btn-primary btn-xs" id="savePricingBtn" style="margin-top:14px;">Save Pricing</button>
         </div>
       </section>
@@ -835,6 +881,8 @@ function renderAnalytics(){
   `;
 }
 function renderHotelSettings(){
+  const hotelSel = document.getElementById('addRoomHotel');
+  if(hotelSel) hotelSel.innerHTML = HOTELS.map(h=>`<option value="${h.id}">${h.name}</option>`).join('');
   document.getElementById('hotelSettingsList').innerHTML = HOTELS.map(h=>`
     <div class="settings-hotel">
       <h4>${h.name}</h4>
@@ -865,7 +913,12 @@ function renderPricingTabs(){
 }
 function renderPricingTable(){
   const rows = ROOMS.filter(r=>r.hotel===pricingFilterHotel);
-  document.querySelector('#pricingTable tbody').innerHTML = rows.map(r=>`
+  const tbody = document.querySelector('#pricingTable tbody');
+  if(!rows.length){
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="ic">🛏️</div>No rooms for this hotel yet. Add a room above.</div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = rows.map(r=>`
     <tr>
       <td class="mono">${r.num}</td>
       <td>
@@ -892,6 +945,9 @@ function renderPricingTable(){
       </td>
       <td><input type="number" value="${r.price24}" data-room="${r.id}" data-field="price24"></td>
       <td><input type="number" value="${r.price6}" data-room="${r.id}" data-field="price6"></td>
+      <td>
+        <button type="button" class="btn btn-outline btn-xs btn-danger" onclick="deleteRoom('${r.id}')">Delete</button>
+      </td>
     </tr>`).join('');
   document.querySelectorAll('.room-photo-input').forEach(inp=>{
     inp.addEventListener('change', async e=>{
@@ -915,6 +971,57 @@ function renderPricingTable(){
     });
   });
 }
+
+document.getElementById('addRoomBtn').addEventListener('click', async ()=>{
+  const hotel = document.getElementById('addRoomHotel').value;
+  const num = document.getElementById('addRoomNum').value.trim();
+  const floor = Number(document.getElementById('addRoomFloor').value) || 1;
+  const cat = document.getElementById('addRoomCat').value;
+  const ac = document.getElementById('addRoomAc').value === 'ac';
+  const price24 = Number(document.getElementById('addRoomPrice24').value);
+  const price6 = Number(document.getElementById('addRoomPrice6').value);
+
+  if(!num){ showToast('Please enter a room number.'); return; }
+  if(isNaN(price24) || isNaN(price6)){ showToast('Please enter valid 24-hr and 5-6 hr rates.'); return; }
+
+  const btn = document.getElementById('addRoomBtn'); btn.disabled = true;
+  try{
+    const res = await api('/api/rooms', {
+      method: 'POST',
+      body: JSON.stringify({ hotel, num, floor, ac, cat, price24, price6 })
+    });
+    ROOMS.push(res.room);
+    document.getElementById('addRoomNum').value = '';
+    document.getElementById('addRoomPrice24').value = '';
+    document.getElementById('addRoomPrice6').value = '';
+    pricingFilterHotel = hotel;
+    renderPricingTabs();
+    renderPricingTable();
+    renderAll();
+    showToast('Room ' + res.room.num + ' added to ' + (hotelOf(hotel)?hotelOf(hotel).name:'hotel') + '!');
+  } catch(err){
+    showToast('Could not add room: ' + err.message);
+  } finally{
+    btn.disabled = false;
+  }
+});
+
+async function deleteRoom(roomId){
+  const r = roomOf(roomId);
+  if(!r) return;
+  const h = hotelOf(r.hotel);
+  if(!confirm('Are you sure you want to delete Room ' + r.num + ' from ' + (h?h.name:'hotel') + '?')) return;
+  try{
+    await api('/api/rooms/' + encodeURIComponent(roomId), { method: 'DELETE' });
+    ROOMS = ROOMS.filter(x => x.id !== roomId);
+    renderPricingTable();
+    renderAll();
+    showToast('Room ' + r.num + ' deleted.');
+  } catch(err){
+    showToast('Could not delete room: ' + err.message);
+  }
+}
+
 document.getElementById('savePricingBtn').addEventListener('click', async ()=>{
   const byRoom = {};
   document.querySelectorAll('#pricingTable input, #pricingTable select').forEach(el=>{

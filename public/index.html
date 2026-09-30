@@ -165,7 +165,8 @@ section{padding:74px 0;}
   display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:28px;
   background:var(--white); border:1px solid var(--line); border-radius:12px; padding:14px 16px;
 }
-.filter-group{display:flex; gap:6px; flex-wrap:wrap;}
+.filter-bar-row{display:flex; flex-direction:row; align-items:center; justify-content:flex-start; flex-wrap:wrap; gap:20px;}
+.filter-group{display:flex; gap:6px; flex-wrap:wrap; align-items:center;}
 .chip{
   font-family:var(--font-mono); font-size:.78rem; font-weight:600; padding:7px 14px; border-radius:999px;
   border:1px solid var(--line); background:var(--cream); cursor:pointer; color:var(--slate); transition:all .15s;
@@ -462,9 +463,8 @@ footer a:hover{color:var(--saffron);}
       <h2>Find the room that fits</h2>
       <p>Filter by hotel, AC / Non‑AC and room category. Prices shown are per stay for the duration selected in the filter.</p>
     </div>
-    <div class="filter-bar">
+    <div class="filter-bar filter-bar-row">
       <div class="filter-group"><span class="filter-label">Hotel</span><div id="fHotel"></div></div>
-      <div class="filter-group"><span class="filter-label">Cooling</span><div id="fAc"></div></div>
       <div class="filter-group"><span class="filter-label">Category</span><div id="fCat"></div></div>
       <div class="filter-group"><span class="filter-label">Stay</span><div id="fStay"></div></div>
     </div>
@@ -763,13 +763,15 @@ function withFallback(img){ img.onerror = function(){ this.onerror=null; this.sr
    ========================================================================= */
 function renderDirectory(){
   const el = document.getElementById('directoryList');
-  el.innerHTML = HOTELS.map((h,i)=>`
-    <a class="directory-row" href="#rooms" data-hotel="${h.id}" onclick="quickFilterHotel('${h.id}')">
+  el.innerHTML = HOTELS.map((h,i)=>{
+    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(h.name + ', ' + h.locality)}`;
+    return `
+    <a class="directory-row" href="${mapsUrl}" target="_blank" rel="noopener" title="Open ${h.name} location on Google Maps">
       <span class="num" style="color:${h.accent};">0${i+1}</span>
       <span class="name">${h.name}</span>
-      <span class="loc">${h.locality.split(',')[0]}</span>
-      <span class="arrow">→</span>
-    </a>`).join('');
+      <span class="loc" style="color:var(--saffron); font-size:.84rem; font-weight:600; display:inline-flex; align-items:center; gap:4px;">View Location <span class="arrow">→</span></span>
+    </a>`;
+  }).join('');
 }
 function quickFilterHotel(id){
   state.filters.hotel = id;
@@ -782,15 +784,19 @@ function quickFilterHotel(id){
 function hotelCardHTML(h, count, forWizard){
   const selected = forWizard && state.hotel===h.id;
   const bg = h.id === 'sv3' ? '#FFFFFF' : (h.id === 'sv1' ? '#000000' : '#0B101D');
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(h.name + ', ' + h.locality)}`;
   return `
   <div class="hotel-card" style="border-top:4px solid ${h.accent}; ${selected?'outline:3px solid var(--saffron);':''}" ${forWizard?`onclick="selectHotel('${h.id}')" role="button" tabindex="0"`:''}>
     <div class="img" style="background:${bg};"><span class="badge">${h.tag}</span><img src="${h.hero || h.image}" alt="${h.name} image" style="object-fit:contain; width:100%; height:100%; padding:4px;"></div>
     <div class="body">
       <h3><span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:${h.accent}; margin-right:7px;"></span>${h.name}</h3>
-      <div class="loc">📍 ${h.locality}</div>
+      <div class="loc">📍 <a href="${mapsUrl}" target="_blank" rel="noopener" style="color:inherit; text-decoration:underline;" title="Open location in Google Maps">${h.locality} ↗</a></div>
       <p class="desc">${h.desc}</p>
       <div class="meta"><span>${count} rooms</span><span>📞 ${h.phone}</span></div>
-      ${forWizard? `<button class="btn btn-sm ${selected?'btn-primary':'btn-outline'}" style="margin-top:8px;">${selected?'✓ Selected':'Select this hotel'}</button>` : `<a href="#rooms" class="btn btn-outline btn-sm" style="margin-top:8px;" onclick="quickFilterHotel('${h.id}')">View Rooms</a>`}
+      <div style="display:flex; gap:8px; margin-top:8px;">
+        ${forWizard? `<button class="btn btn-sm ${selected?'btn-primary':'btn-outline'}" style="flex:1;">${selected?'✓ Selected':'Select this hotel'}</button>` : `<a href="#rooms" class="btn btn-outline btn-sm" style="flex:1;" onclick="quickFilterHotel('${h.id}')">View Rooms</a>`}
+        <a href="${mapsUrl}" target="_blank" rel="noopener" class="btn btn-outline btn-sm" style="flex:1;" title="Open in Google Maps">📍 View Location →</a>
+      </div>
     </div>
   </div>`;
 }
@@ -814,10 +820,14 @@ function chipRow(container, options, currentKey, filterKey, onSelectFn){
   });
 }
 function renderRoomFilters(){
-  chipRow(document.getElementById('fHotel'), [{val:'all',label:'All'}, ...HOTELS.map(h=>({val:h.id,label:h.name}))], 'filters','hotel', ()=>{renderRoomFilters();renderRooms();});
-  chipRow(document.getElementById('fAc'), [{val:'all',label:'All'},{val:'ac',label:'AC'},{val:'nonac',label:'Non‑AC'}], 'filters','ac', ()=>{renderRoomFilters();renderRooms();});
-  chipRow(document.getElementById('fCat'), [{val:'all',label:'All'},{val:'Single',label:'Single'},{val:'Couple',label:'Couple'},{val:'Family',label:'Family'},{val:'Suite',label:'Suite'}], 'filters','cat', ()=>{renderRoomFilters();renderRooms();});
-  chipRow(document.getElementById('fStay'), [{val:'24hr',label:'24 Hour'},{val:'6hr',label:'5–6 Hour'}], 'filters','stay', ()=>{renderRoomFilters();renderRooms();});
+  const fHotel = document.getElementById('fHotel');
+  if(fHotel) chipRow(fHotel, [{val:'all',label:'All'}, ...HOTELS.map(h=>({val:h.id,label:h.name}))], 'filters','hotel', ()=>{renderRoomFilters();renderRooms();});
+  const fAc = document.getElementById('fAc');
+  if(fAc) chipRow(fAc, [{val:'all',label:'All'},{val:'ac',label:'AC'},{val:'nonac',label:'Non‑AC'}], 'filters','ac', ()=>{renderRoomFilters();renderRooms();});
+  const fCat = document.getElementById('fCat');
+  if(fCat) chipRow(fCat, [{val:'all',label:'All'},{val:'Single',label:'Single'},{val:'Couple',label:'Couple'},{val:'Family',label:'Family'},{val:'Suite',label:'Suite'}], 'filters','cat', ()=>{renderRoomFilters();renderRooms();});
+  const fStay = document.getElementById('fStay');
+  if(fStay) chipRow(fStay, [{val:'24hr',label:'24 Hour'},{val:'6hr',label:'5–6 Hour'}], 'filters','stay', ()=>{renderRoomFilters();renderRooms();});
 }
 function roomCardHTML(r, stayKey, mode){
   // mode: 'wizard' (inside step 3, clicking selects the room) or 'browse' (public grid, clicking jumps into booking)
