@@ -143,6 +143,14 @@ function initSqliteDatabase() {
         key TEXT PRIMARY KEY,
         value TEXT
       );
+      CREATE TABLE IF NOT EXISTS contact_details (
+        id TEXT PRIMARY KEY,
+        hotel_id TEXT UNIQUE,
+        phone TEXT,
+        address TEXT,
+        created_at TEXT,
+        updated_at TEXT
+      );
     `);
     console.log(`[Database] SQLite relational database connected at: ${SQLITE_PATH}`);
   } catch (err) {
@@ -189,6 +197,20 @@ function syncDbToSqlite() {
     const insertMeta = sqliteDb.prepare(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)`);
     insertMeta.run('nextBookingSeq', String(DB.nextBookingSeq || 1));
 
+    sqliteDb.exec('DELETE FROM contact_details;');
+    const insertContact = sqliteDb.prepare(`INSERT OR REPLACE INTO contact_details (id, hotel_id, phone, address, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)`);
+    (DB.hotels || []).forEach(h => {
+      const now = new Date().toISOString();
+      insertContact.run(
+        'c_' + String(h.id || ''),
+        String(h.id || ''),
+        String(h.phone || ''),
+        String(h.locality || h.address || ''),
+        now,
+        now
+      );
+    });
+
     sqliteDb.exec('COMMIT;');
   } catch (err) {
     try { sqliteDb.exec('ROLLBACK;'); } catch (e) { }
@@ -207,11 +229,23 @@ function loadDbFromSqlite() {
     const bookingRows = sqliteDb.prepare('SELECT * FROM bookings').all();
     const adminRows = sqliteDb.prepare('SELECT * FROM admins').all();
     const metaRow = sqliteDb.prepare("SELECT value FROM metadata WHERE key = 'nextBookingSeq'").get();
+    let contactRows = [];
+    try { contactRows = sqliteDb.prepare('SELECT * FROM contact_details').all() || []; } catch (e) { }
 
     DB = {
-      hotels: hotelRows.map(h => ({
-        id: h.id, name: h.name, tag: h.tag, locality: h.locality, phone: h.phone, accent: h.accent, image: h.image, desc: h.desc
-      })),
+      hotels: hotelRows.map(h => {
+        const contact = contactRows.find(c => c.hotel_id === h.id);
+        return {
+          id: h.id,
+          name: h.name,
+          tag: h.tag,
+          locality: contact && contact.address ? contact.address : h.locality,
+          phone: contact && contact.phone ? contact.phone : h.phone,
+          accent: h.accent,
+          image: h.image,
+          desc: h.desc
+        };
+      }),
       rooms: roomRows.map(r => ({
         id: r.id, hotel: r.hotel, num: r.num, floor: Number(r.floor), ac: Boolean(r.ac), cat: r.cat, price24: Number(r.price24), price6: Number(r.price6), photo: r.photo || null
       })),
@@ -449,12 +483,36 @@ route('PATCH', '/api/hotels/:id', async (req, res, params) => {
   if (!h) return sendJson(res, 404, { error: 'Hotel not found' });
   const body = await readBody(req);
   if (typeof body.locality === 'string') h.locality = body.locality;
+  if (typeof body.address === 'string') h.locality = body.address;
   if (typeof body.phone === 'string') h.phone = body.phone;
   if (typeof body.name === 'string') h.name = body.name;
   if (typeof body.tag === 'string') h.tag = body.tag;
   if (typeof body.desc === 'string') h.desc = body.desc;
   saveDb();
   sendJson(res, 200, { ok: true, hotel: h });
+});
+
+route('GET', '/api/contact-details', async (req, res) => {
+  const contacts = (DB.hotels || []).map(h => ({
+    id: 'c_' + h.id,
+    hotel_id: h.id,
+    hotel_name: h.name,
+    phone: h.phone,
+    address: h.locality
+  }));
+  sendJson(res, 200, { contacts });
+});
+
+route('PATCH', '/api/contact-details/:hotelId', async (req, res, params) => {
+  if (!requireAdmin(req, res)) return;
+  const h = hotelOf(params.hotelId);
+  if (!h) return sendJson(res, 404, { error: 'Hotel contact details not found' });
+  const body = await readBody(req);
+  if (typeof body.address === 'string') h.locality = body.address;
+  if (typeof body.locality === 'string') h.locality = body.locality;
+  if (typeof body.phone === 'string') h.phone = body.phone;
+  saveDb();
+  sendJson(res, 200, { ok: true, contact: { id: 'c_' + h.id, hotel_id: h.id, phone: h.phone, address: h.locality } });
 });
 
 route('GET', '/api/rooms', async (req, res) => {

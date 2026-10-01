@@ -1706,12 +1706,15 @@
     }
     async function saveHotelField(hotelId, showNotification = true) {
       const patch = {};
-      document.querySelectorAll(`input[data-hotel="${hotelId}"]`).forEach(inp => { patch[inp.dataset.field] = inp.value; });
+      document.querySelectorAll(`input[data-hotel="${hotelId}"]`).forEach(inp => {
+        patch[inp.dataset.field] = inp.value;
+        if (inp.dataset.field === 'locality') patch.address = inp.value;
+      });
       try {
-        await api('/api/hotels/' + encodeURIComponent(hotelId), { method: 'PATCH', body: JSON.stringify(patch) });
+        await api('/api/contact-details/' + encodeURIComponent(hotelId), { method: 'PATCH', body: JSON.stringify(patch) });
         Object.assign(hotelOf(hotelId), patch);
         if (showNotification) {
-          showToast(hotelOf(hotelId).name + ' details saved permanently.');
+          showToast(hotelOf(hotelId).name + ' details saved permanently to SQL database.');
         }
       } catch (e) {
         if (showNotification) {

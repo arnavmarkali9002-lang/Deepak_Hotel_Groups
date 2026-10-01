@@ -82,6 +82,18 @@ CREATE TABLE IF NOT EXISTS metadata (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 7. Hotel Contact & Address Details Table
+CREATE TABLE IF NOT EXISTS contact_details (
+  id VARCHAR(50) PRIMARY KEY,
+  hotel_id VARCHAR(50) NOT NULL UNIQUE,
+  phone VARCHAR(50) NOT NULL,
+  address TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (hotel_id) REFERENCES hotels (id) ON DELETE CASCADE
+);
+
+
 -- -------------------------------------------------------------------------
 -- Indexes for Performance & Faster Queries
 -- -------------------------------------------------------------------------
