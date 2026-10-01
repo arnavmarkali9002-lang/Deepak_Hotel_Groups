@@ -158,23 +158,33 @@ function syncDbToSqlite() {
 
     sqliteDb.exec('DELETE FROM hotels;');
     const insertHotel = sqliteDb.prepare(`INSERT INTO hotels (id, name, tag, locality, phone, accent, image, desc) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`);
-    DB.hotels.forEach(h => insertHotel.run(h.id, h.name || '', h.tag || '', h.locality || '', h.phone || '', h.accent || '', h.image || '', h.desc || ''));
+    (DB.hotels || []).forEach(h => insertHotel.run(
+      String(h.id || ''), String(h.name || ''), String(h.tag || ''), String(h.locality || ''), String(h.phone || ''), String(h.accent || ''), String(h.image || ''), String(h.desc || '')
+    ));
 
     sqliteDb.exec('DELETE FROM rooms;');
     const insertRoom = sqliteDb.prepare(`INSERT INTO rooms (id, hotel, num, floor, ac, cat, price24, price6, photo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`);
-    DB.rooms.forEach(r => insertRoom.run(r.id, r.hotel, r.num, r.floor, r.ac ? 1 : 0, r.cat, r.price24, r.price6, r.photo || null));
+    (DB.rooms || []).forEach(r => insertRoom.run(
+      String(r.id || ''), String(r.hotel || ''), String(r.num || ''), Number(r.floor) || 1, r.ac ? 1 : 0, String(r.cat || 'Single'), Number.isFinite(Number(r.price24)) ? Math.max(0, Math.round(Number(r.price24))) : 0, Number.isFinite(Number(r.price6)) ? Math.max(0, Math.round(Number(r.price6))) : 0, r.photo || null
+    ));
 
     sqliteDb.exec('DELETE FROM menu_items;');
     const insertMenu = sqliteDb.prepare(`INSERT INTO menu_items (id, name, category, price, photo, available) VALUES (?, ?, ?, ?, ?, ?)`);
-    DB.menuItems.forEach(i => insertMenu.run(i.id, i.name, i.category || 'Other', i.price, i.photo || null, i.available ? 1 : 0));
+    (DB.menuItems || []).forEach(i => insertMenu.run(
+      String(i.id || ''), String(i.name || ''), String(i.category || 'Other'), Number.isFinite(Number(i.price)) ? Math.max(0, Math.round(Number(i.price))) : 0, i.photo || null, i.available ? 1 : 0
+    ));
 
     sqliteDb.exec('DELETE FROM bookings;');
     const insertBooking = sqliteDb.prepare(`INSERT INTO bookings (id, hotelRoom, name, phone, email, guests, stay, date, time, idMethod, idPhotoBase64, requests, food, status, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
-    DB.bookings.forEach(b => insertBooking.run(b.id, b.hotelRoom, b.name, b.phone, b.email || '', b.guests, b.stay, b.date, b.time, b.idMethod, b.idPhotoBase64 || null, b.requests || '', JSON.stringify(b.food || []), b.status, b.createdAt));
+    (DB.bookings || []).forEach(b => insertBooking.run(
+      String(b.id || ''), String(b.hotelRoom || ''), String(b.name || ''), String(b.phone || ''), String(b.email || ''), Number(b.guests) || 1, String(b.stay || '24hr'), String(b.date || ''), String(b.time || ''), String(b.idMethod || 'hotel'), b.idPhotoBase64 || null, String(b.requests || ''), JSON.stringify(b.food || []), String(b.status || 'pending'), String(b.createdAt || new Date().toISOString())
+    ));
 
     sqliteDb.exec('DELETE FROM admins;');
     const insertAdmin = sqliteDb.prepare(`INSERT INTO admins (username, salt, hash) VALUES (?, ?, ?)`);
-    DB.admins.forEach(a => insertAdmin.run(a.username, a.salt, a.hash));
+    (DB.admins || []).forEach(a => insertAdmin.run(
+      String(a.username || ''), String(a.salt || ''), String(a.hash || '')
+    ));
 
     const insertMeta = sqliteDb.prepare(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)`);
     insertMeta.run('nextBookingSeq', String(DB.nextBookingSeq || 1));
@@ -226,38 +236,71 @@ function loadDb() {
   fs.mkdirSync(DATA_DIR, { recursive: true });
   initSqliteDatabase();
 
-  const loadedFromSqlite = loadDbFromSqlite();
-  if (loadedFromSqlite) {
-    // Ensure admin credentials are always up to date
-    const adminCreds = hashPassword('deepakhotelgroup@123');
-    DB.admins = [{ username: 'deepakhotelgroup', salt: adminCreds.salt, hash: adminCreds.hash }];
-    saveDb();
-    return;
+  let loaded = false;
+
+  // 1. Try reading from db.json first (Primary file database store)
+  if (fs.existsSync(DB_PATH)) {
+    try {
+      const raw = fs.readFileSync(DB_PATH, 'utf8');
+      const parsed = JSON.parse(raw);
+      if (parsed && Array.isArray(parsed.hotels) && parsed.hotels.length > 0) {
+        DB = parsed;
+        loaded = true;
+      }
+    } catch (err) {
+      console.error('[Database] Error reading db.json, attempting SQLite fallback:', err.message);
+    }
   }
 
-  if (!fs.existsSync(DB_PATH)) {
+  // 2. Fallback to SQLite if db.json was missing or invalid
+  if (!loaded) {
+    loaded = loadDbFromSqlite();
+  }
+
+  // 3. If neither contains data, seed from defaults
+  if (!loaded) {
     DB = seedDb();
-    saveDb();
-  } else {
-    DB = JSON.parse(fs.readFileSync(DB_PATH, 'utf8'));
-    let migrated = false;
-    DB.rooms.forEach(r => { if (!('photo' in r)) { r.photo = null; migrated = true; } });
-    if (!Array.isArray(DB.menuItems)) { DB.menuItems = []; migrated = true; }
-    if ('menu' in DB) { delete DB.menu; migrated = true; }
-
-    const adminCreds = hashPassword('deepakhotelgroup@123');
-    DB.admins = [{ username: 'deepakhotelgroup', salt: adminCreds.salt, hash: adminCreds.hash }];
-    migrated = true;
-
-    if (migrated) saveDb();
   }
+
+  // Schema verification & migration steps
+  if (!Array.isArray(DB.hotels) || DB.hotels.length === 0) DB.hotels = SEED_HOTELS;
+  if (!Array.isArray(DB.rooms) || DB.rooms.length === 0) DB.rooms = SEED_ROOMS;
+  if (!Array.isArray(DB.menuItems)) DB.menuItems = [];
+  if (!Array.isArray(DB.bookings)) DB.bookings = [];
+  if (!DB.nextBookingSeq) DB.nextBookingSeq = 1;
+
+  DB.rooms.forEach(r => { if (!('photo' in r)) r.photo = null; });
+  if ('menu' in DB) delete DB.menu;
+
+  // Ensure default admin credentials exist
+  const adminCreds = hashPassword('deepakhotelgroup@123');
+  if (!Array.isArray(DB.admins) || DB.admins.length === 0) {
+    DB.admins = [{ username: 'deepakhotelgroup', salt: adminCreds.salt, hash: adminCreds.hash }];
+  } else {
+    const idx = DB.admins.findIndex(a => a.username === 'deepakhotelgroup');
+    if (idx >= 0) {
+      DB.admins[idx] = { username: 'deepakhotelgroup', salt: adminCreds.salt, hash: adminCreds.hash };
+    } else {
+      DB.admins.unshift({ username: 'deepakhotelgroup', salt: adminCreds.salt, hash: adminCreds.hash });
+    }
+  }
+
+  // Persist current state across both db.json and SQLite
+  saveDb();
 }
 
 function saveDb() {
-  fs.writeFileSync(DB_PATH, JSON.stringify(DB, null, 2));
+  const tmpPath = DB_PATH + '.tmp';
+  try {
+    fs.writeFileSync(tmpPath, JSON.stringify(DB, null, 2));
+    fs.renameSync(tmpPath, DB_PATH);
+  } catch (err) {
+    fs.writeFileSync(DB_PATH, JSON.stringify(DB, null, 2));
+  }
   syncDbToSqlite();
 }
 loadDb();
+
 
 const roomOf = id => DB.rooms.find(r => r.id === id);
 const hotelOf = id => DB.hotels.find(h => h.id === id);
