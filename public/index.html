@@ -309,6 +309,7 @@
         opacity: 0;
         transform: translateY(-8px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
@@ -362,6 +363,7 @@
         grid-template-columns: 1fr;
         gap: 40px;
       }
+
       .hero {
         padding: 50px 0 50px;
       }
@@ -879,7 +881,7 @@
       display: flex;
       flex-direction: column;
       transition: transform .25s ease, box-shadow .25s ease;
-      padding-top: 8px;
+      padding-top: 0;
     }
 
     .keytag:hover {
@@ -1320,8 +1322,15 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .field-row {
@@ -2093,7 +2102,8 @@
       </div>
       <p class="mini-legend">💡 <b>AC</b> = air‑conditioned, <b>Non‑AC</b> = fan cooled · <b>Single</b> for 1 guest,
         <b>Couple</b> for 2, <b>Family</b> for 3–4, <b>Suite</b> for extra space · tap any room below to jump straight
-        into booking it.</p>
+        into booking it.
+      </p>
       <div class="room-grid" id="roomGrid"></div>
     </div>
   </section>
@@ -2521,11 +2531,18 @@
       const unavailable = mode === 'wizard' && state.unavailableRoomIds && state.unavailableRoomIds.includes(r.id);
       const clickAttr = unavailable ? '' : (mode === 'wizard' ? `onclick="pickRoom('${r.id}')" role="button" tabindex="0"` : `onclick="startBookingWithRoom('${r.id}')" role="button" tabindex="0"`);
       const captionText = unavailable ? 'Already booked for this date' : (mode === 'wizard' ? 'Tap to select' : 'Tap to book this room');
+      const photoSrc = r.photo || r.img;
+      const isCustomPhoto = Boolean(r.photo);
       return `
   <div class="keytag" ${clickAttr} style="${state.room === r.id ? 'outline:3px solid var(--saffron);' : ''} ${unavailable ? 'opacity:.45; cursor:not-allowed; filter:grayscale(60%);' : ''}">
     <div class="hole"></div>
+    ${photoSrc ? `
+    <div class="keytag-img" style="height:150px; overflow:hidden; position:relative; background:var(--cream-2); border-bottom:1px solid var(--line);">
+      <img src="${photoSrc}" alt="Room ${r.num} photo" style="width:100%; height:100%; object-fit:cover; display:block;">
+      ${isCustomPhoto ? `<span class="room-photo-badge" style="position:absolute; bottom:8px; right:8px; background:rgba(17,26,36,0.85); color:var(--saffron); font-family:var(--font-mono); font-size:.66rem; font-weight:700; padding:3px 8px; border-radius:6px; backdrop-filter:blur(4px); border:1px solid rgba(232,163,61,0.3);">📸 Room Photo</span>` : ''}
+    </div>` : ''}
     <div class="tag-body">
-      <div style="font-size:.74rem; color:var(--slate-light); font-family:var(--font-mono); text-transform:uppercase; display:flex; align-items:center; gap:6px;"><span style="width:8px; height:8px; border-radius:50%; background:${h.accent}; display:inline-block;"></span>${h.name}</div>
+      <div style="font-size:.74rem; color:var(--slate-light); font-family:var(--font-mono); text-transform:uppercase; display:flex; align-items:center; gap:6px;"><span style="width:8px; height:8px; border-radius:50%; background:${h ? h.accent : '#E8A33D'}; display:inline-block;"></span>${h ? h.name : 'Hotel'}</div>
       <div class="roomnum">Room ${r.num}</div>
       <div class="cat-row">
         <span class="tagpill ${r.ac ? 'ac' : 'nonac'}">${r.ac ? 'AC' : 'Non‑AC'}</span>

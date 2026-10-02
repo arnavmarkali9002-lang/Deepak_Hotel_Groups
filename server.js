@@ -27,7 +27,7 @@ const PUBLIC_DIR = path.join(ROOT, 'public');
 const SEED_HOTELS = [
   { id: 'sv1', name: 'Hotel Sai View', tag: 'The Original', locality: 'Vivekanand nagar, Nagar, Manmad Rd, near S T Bus stand, near Holiday Park, Sai Nagar, Shirdi, Maharashtra 423109 QF6H+93 Shirdi, Maharashtra', phone: '+91 98514 15415', accent: '#E8A33D', image: '/images/hotel-sai-view.jpg', desc: 'Our flagship property with 10 rooms across single, couple, family and suite categories.' },
   { id: 'sv2', name: 'Hotel Sai Santosh', tag: 'The Family Wing', locality: 'QF6H+WH7 city market, road gaikwad chowk, near addarsha school, Shirdi, Maharashtra 423109 QF6H+WH7 Shirdi, Maharashtra', phone: '+91 83293 21838', accent: '#2F6E62', image: '/images/hotel-sai-santosh.jpg', desc: 'A quieter property popular with families, 20 rooms with a bigger courtyard and parking.' },
-  { id: 'sv3', name: 'Hotel Om Sai', tag: 'The Highway Stop', locality: 'Vivekanand Nagar, Nagar, Manmad Rd, Sai Nagar, Shirdi, Maharashtra 423109 QF6G+9W Shirdi, Maharashtra', phone: '+91 98514 15415', accent: '#7C2D2D', image: '/images/hotel-om-sai.jpg', desc: 'Convenient for travellers passing through, 10 rooms with easy parking and quick check-in.' }
+  { id: 'sv3', name: 'Hotel Om Sai', tag: 'The Highway Stop', locality: 'Vivekanand Nagar, Nagar, Manmad Rd, Sai Nagar, Shirdi, Maharashtra 423109 QF6G+9W Shirdi, Maharashtra', phone: '+91 90227 51848', accent: '#7C2D2D', image: '/images/hotel-om-sai.jpg', desc: 'Convenient for travellers passing through, 10 rooms with easy parking and quick check-in.' }
 ];
 const SEED_ROOMS_RAW = [
   ['sv1', '101', 1, false, 'Single', 1200, 700], ['sv1', '102', 1, false, 'Single', 1200, 700], ['sv1', '103', 1, true, 'Single', 1800, 1000],
@@ -509,6 +509,8 @@ route('PATCH', '/api/hotels/:id', async (req, res, params) => {
   if (typeof body.name === 'string') h.name = body.name;
   if (typeof body.tag === 'string') h.tag = body.tag;
   if (typeof body.desc === 'string') h.desc = body.desc;
+  if (typeof body.image === 'string') h.image = body.image;
+  if (typeof body.photo === 'string') h.image = body.photo;
   saveDb();
   sendJson(res, 200, { ok: true, hotel: h });
 });

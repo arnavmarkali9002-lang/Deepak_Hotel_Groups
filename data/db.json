@@ -25,7 +25,7 @@
       "name": "Hotel Om Sai",
       "tag": "The Highway Stop",
       "locality": "Vivekanand Nagar, Nagar, Manmad Rd, Sai Nagar, Shirdi, Maharashtra 423109 QF6G+9W Shirdi, Maharashtra",
-      "phone": "+91 98514 15415",
+      "phone": "+91 90227 51848",
       "accent": "#7C2D2D",
       "image": "/images/hotel-om-sai.jpg",
       "desc": "Convenient for travellers passing through, 10 rooms with easy parking and quick check-in."
@@ -533,8 +533,8 @@
   "admins": [
     {
       "username": "deepakhotelgroup",
-      "salt": "a854fb5308be6ca484d6b3ea45615fcf",
-      "hash": "1b079b73dd5565e57f7967fe10d2a5fd74c97beec4d8342f87e8d20033d9fc90130140799286a823296cb0b34475cc54d3bdf090c34c45ea8676e8ca39dc7fe0"
+      "salt": "223f3523807e44c6999d4a6d61527bae",
+      "hash": "96b32dc6584c767d95d6317a85aad49c8e05bf6a99576b9a92ab891ab3f2a92d9179c05aff2cff2a309648cb8e15a5911da8f772982858964c092fd16f651bc6"
     }
   ],
   "nextBookingSeq": 3
