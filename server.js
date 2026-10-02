@@ -176,8 +176,7 @@ function syncDbToSqlite() {
       String(r.id || ''), String(r.hotel || ''), String(r.num || ''), Number(r.floor) || 1, r.ac ? 1 : 0, String(r.cat || 'Single'), Number.isFinite(Number(r.price24)) ? Math.max(0, Math.round(Number(r.price24))) : 0, Number.isFinite(Number(r.price6)) ? Math.max(0, Math.round(Number(r.price6))) : 0, r.photo || null
     ));
 
-    sqliteDb.exec('DELETE FROM menu_items;');
-    const insertMenu = sqliteDb.prepare(`INSERT INTO menu_items (id, name, category, price, photo, available) VALUES (?, ?, ?, ?, ?, ?)`);
+    const insertMenu = sqliteDb.prepare(`INSERT OR REPLACE INTO menu_items (id, name, category, price, photo, available) VALUES (?, ?, ?, ?, ?, ?)`);
     (DB.menuItems || []).forEach(i => insertMenu.run(
       String(i.id || ''), String(i.name || ''), String(i.category || 'Other'), Number.isFinite(Number(i.price)) ? Math.max(0, Math.round(Number(i.price))) : 0, i.photo || null, i.available ? 1 : 0
     ));
@@ -302,6 +301,28 @@ function loadDb() {
   if (!Array.isArray(DB.menuItems)) DB.menuItems = [];
   if (!Array.isArray(DB.bookings)) DB.bookings = [];
   if (!DB.nextBookingSeq) DB.nextBookingSeq = 1;
+
+  // Merge SQL menu_items into DB.menuItems to guarantee zero data loss on server restart
+  if (sqliteDb) {
+    try {
+      const sqlMenu = sqliteDb.prepare('SELECT * FROM menu_items').all();
+      if (sqlMenu && sqlMenu.length > 0) {
+        const sqlItems = sqlMenu.map(m => ({
+          id: m.id,
+          name: m.name,
+          category: m.category,
+          price: Number(m.price),
+          photo: m.photo || null,
+          available: Boolean(m.available)
+        }));
+        const sqlIdSet = new Set(sqlItems.map(i => i.id));
+        const extraDbItems = (DB.menuItems || []).filter(i => !sqlIdSet.has(i.id));
+        DB.menuItems = [...sqlItems, ...extraDbItems];
+      }
+    } catch (e) {
+      console.error('[Database] Failed to merge SQL menu_items:', e.message);
+    }
+  }
 
   DB.rooms.forEach(r => { if (!('photo' in r)) r.photo = null; });
   if ('menu' in DB) delete DB.menu;
@@ -602,10 +623,11 @@ route('DELETE', '/api/rooms/:id', async (req, res, params) => {
    FOOD MENU — fully admin-managed (no sample dishes ship with the site)
 --------------------------------------------------------------------- */
 function genMenuId() { return 'm' + Date.now().toString(36) + crypto.randomBytes(3).toString('hex'); }
-function groupedMenu() {
+function groupedMenu(itemList) {
   // public view: only dishes marked available, grouped by category (first-added order)
+  const items = itemList || (DB.menuItems || []).filter(i => i.available);
   const groups = [];
-  DB.menuItems.filter(i => i.available).forEach(i => {
+  items.forEach(i => {
     let g = groups.find(x => x.cat === i.category);
     if (!g) { g = { cat: i.category, items: [] }; groups.push(g); }
     g.items.push({ id: i.id, name: i.name, price: i.price, photo: i.photo || null });
@@ -640,12 +662,33 @@ function applyMenuFields(item, body) {
 }
 
 route('GET', '/api/menu', async (req, res) => {
-  sendJson(res, 200, { menu: groupedMenu() });
+  let items = (DB.menuItems || []).filter(i => i.available);
+  if (sqliteDb) {
+    try {
+      const rows = sqliteDb.prepare('SELECT * FROM menu_items WHERE available = 1').all();
+      if (rows && rows.length > 0) {
+        items = rows.map(m => ({ id: m.id, name: m.name, category: m.category, price: Number(m.price), photo: m.photo || null, available: Boolean(m.available) }));
+      }
+    } catch (e) {
+      console.error('[SQL Error] SELECT FROM menu_items:', e.message);
+    }
+  }
+  sendJson(res, 200, { menu: groupedMenu(items) });
 });
 
 route('GET', '/api/menu/all', async (req, res) => {
   if (!requireAdmin(req, res)) return;
-  sendJson(res, 200, { items: DB.menuItems });
+  let items = DB.menuItems || [];
+  if (sqliteDb) {
+    try {
+      const rows = sqliteDb.prepare('SELECT * FROM menu_items').all();
+      items = rows.map(m => ({ id: m.id, name: m.name, category: m.category, price: Number(m.price), photo: m.photo || null, available: Boolean(m.available) }));
+      DB.menuItems = items;
+    } catch (e) {
+      console.error('[SQL Error] SELECT ALL FROM menu_items:', e.message);
+    }
+  }
+  sendJson(res, 200, { items });
 });
 
 route('POST', '/api/menu', async (req, res) => {
@@ -664,17 +707,29 @@ route('POST', '/api/menu', async (req, res) => {
       stmt.run(item.id, item.name, item.category, item.price, item.photo || null, item.available ? 1 : 0);
     } catch (e) {
       console.error('[SQL Error] INSERT INTO menu_items:', e.message);
+      return sendJson(res, 500, { error: 'Failed to insert food item into SQL database: ' + e.message });
     }
   }
   
-  DB.menuItems.push(item);
+  const idx = DB.menuItems.findIndex(i => i.id === item.id);
+  if (idx >= 0) DB.menuItems[idx] = item;
+  else DB.menuItems.push(item);
   saveDb();
   sendJson(res, 201, { ok: true, item });
 });
 
 route('PATCH', '/api/menu/:id', async (req, res, params) => {
   if (!requireAdmin(req, res)) return;
-  const item = DB.menuItems.find(i => i.id === params.id);
+  let item = DB.menuItems.find(i => i.id === params.id);
+  if (!item && sqliteDb) {
+    try {
+      const row = sqliteDb.prepare('SELECT * FROM menu_items WHERE id = ?').get(params.id);
+      if (row) {
+        item = { id: row.id, name: row.name, category: row.category, price: Number(row.price), photo: row.photo || null, available: Boolean(row.available) };
+        DB.menuItems.push(item);
+      }
+    } catch (e) { }
+  }
   if (!item) return sendJson(res, 404, { error: 'Dish not found' });
   let body;
   try { body = await readBody(req); } catch (e) { return sendJson(res, 413, { error: e.message }); }
@@ -688,6 +743,7 @@ route('PATCH', '/api/menu/:id', async (req, res, params) => {
       stmt.run(item.name, item.category, item.price, item.photo || null, item.available ? 1 : 0, item.id);
     } catch (e) {
       console.error('[SQL Error] UPDATE menu_items:', e.message);
+      return sendJson(res, 500, { error: 'Failed to update food item in SQL database: ' + e.message });
     }
   }
 
@@ -697,8 +753,6 @@ route('PATCH', '/api/menu/:id', async (req, res, params) => {
 
 route('DELETE', '/api/menu/:id', async (req, res, params) => {
   if (!requireAdmin(req, res)) return;
-  const idx = DB.menuItems.findIndex(i => i.id === params.id);
-  if (idx === -1) return sendJson(res, 404, { error: 'Dish not found' });
   const itemId = params.id;
 
   // Direct SQL DELETE from SQLite menu_items table
@@ -708,10 +762,12 @@ route('DELETE', '/api/menu/:id', async (req, res, params) => {
       stmt.run(itemId);
     } catch (e) {
       console.error('[SQL Error] DELETE FROM menu_items:', e.message);
+      return sendJson(res, 500, { error: 'Failed to delete food item from SQL database: ' + e.message });
     }
   }
 
-  DB.menuItems.splice(idx, 1);
+  const idx = DB.menuItems.findIndex(i => i.id === itemId);
+  if (idx !== -1) DB.menuItems.splice(idx, 1);
   saveDb();
   sendJson(res, 200, { ok: true });
 });

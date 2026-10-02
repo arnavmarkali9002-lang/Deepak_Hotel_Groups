@@ -484,7 +484,16 @@
       "photo": null
     }
   ],
-  "menuItems": [],
+  "menuItems": [
+    {
+      "id": "mmuqob1xx9e23d0",
+      "name": "tea",
+      "category": "Breakfast",
+      "price": 20,
+      "photo": null,
+      "available": true
+    }
+  ],
   "bookings": [
     {
       "id": "SV10480001",
@@ -524,8 +533,8 @@
   "admins": [
     {
       "username": "deepakhotelgroup",
-      "salt": "1f5de2dc99a8d927cf178332cfadf4b1",
-      "hash": "c2e06c9f54ffe48b77cfbcc7cdf94782ca8d387feb890d8ac0d779b0b68c747bc8b9f1970a987676e337907062934972ae65598efa7baae3f2f5b4642be2bf2e"
+      "salt": "9a6d64fc58c7eb5958ba6b255dce07d2",
+      "hash": "ece1fe6398dcb7f823514090622f11b4aaa64d5d8127df7bc2a03f8cfdfef0cfb6c54f595f0d44df404ceaef82eb449ae1083de81198d06fb8a741e4a7895dbc"
     }
   ],
   "nextBookingSeq": 3
