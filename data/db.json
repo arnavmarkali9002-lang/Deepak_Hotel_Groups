@@ -5,7 +5,7 @@
       "name": "Hotel Sai View",
       "tag": "The Original",
       "locality": "Main Gate, Station Road, Shirdi",
-      "phone": "+91 99999 88888",
+      "phone": "+91 98514 15415",
       "accent": "#E8A33D",
       "image": "/images/hotel-sai-view.jpg",
       "desc": "Our flagship property with 10 rooms across single, couple, family and suite categories."
@@ -15,7 +15,7 @@
       "name": "Hotel Sai Santosh",
       "tag": "The Family Wing",
       "locality": "QF6H+WH7 city market, road gaikwad chowk, near addarsha school, Shirdi, Maharashtra 423109 QF6H+WH7 Shirdi, Maharashtra",
-      "phone": "+91 98765 43211",
+      "phone": "+91 83293 21838",
       "accent": "#2F6E62",
       "image": "/images/hotel-sai-santosh.jpg",
       "desc": "A quieter property popular with families, 20 rooms with a bigger courtyard and parking."
@@ -25,7 +25,7 @@
       "name": "Hotel Om Sai",
       "tag": "The Highway Stop",
       "locality": "Vivekanand Nagar, Nagar, Manmad Rd, Sai Nagar, Shirdi, Maharashtra 423109 QF6G+9W Shirdi, Maharashtra",
-      "phone": "+91 98765 43212",
+      "phone": "+91 98514 15415",
       "accent": "#7C2D2D",
       "image": "/images/hotel-om-sai.jpg",
       "desc": "Convenient for travellers passing through, 10 rooms with easy parking and quick check-in."
@@ -533,8 +533,8 @@
   "admins": [
     {
       "username": "deepakhotelgroup",
-      "salt": "9a6d64fc58c7eb5958ba6b255dce07d2",
-      "hash": "ece1fe6398dcb7f823514090622f11b4aaa64d5d8127df7bc2a03f8cfdfef0cfb6c54f595f0d44df404ceaef82eb449ae1083de81198d06fb8a741e4a7895dbc"
+      "salt": "a854fb5308be6ca484d6b3ea45615fcf",
+      "hash": "1b079b73dd5565e57f7967fe10d2a5fd74c97beec4d8342f87e8d20033d9fc90130140799286a823296cb0b34475cc54d3bdf090c34c45ea8676e8ca39dc7fe0"
     }
   ],
   "nextBookingSeq": 3
