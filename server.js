@@ -19,8 +19,8 @@ const DATA_DIR = process.env.DATA_DIR || path.join(ROOT, 'data');
 const DB_PATH = path.join(DATA_DIR, 'db.json');
 const PUBLIC_DIR = path.join(ROOT, 'public');
 const UPLOADS_DIR = path.join(PUBLIC_DIR, 'uploads');
-const ADMIN_MOBILE = process.env.ADMIN_BOOKING_PHONE || process.env.ADMIN_MOBILE_NUMBER || '+919860190506';
-const ADMIN_WHATSAPP = process.env.ADMIN_WHATSAPP_NUMBER || '919860190506';
+const ADMIN_MOBILE = process.env.ADMIN_BOOKING_PHONE || process.env.ADMIN_MOBILE_NUMBER || '+919851415415';
+const ADMIN_WHATSAPP = process.env.ADMIN_WHATSAPP_NUMBER || '919851415415';
 
 // Ensure uploads directory exists
 fs.mkdirSync(UPLOADS_DIR, { recursive: true });
@@ -96,12 +96,12 @@ const SEED_SETTINGS = {
   tagline: 'Experience Luxury, Comfort & Spiritual Peace in Shirdi',
   logo: '/images/deepak-hotels-logo.png',
   favicon: '/images/deepak-hotels-logo.png',
-  phone: '9860190506',
+  phone: '9851415415',
   email: 'contact@deepakhotelsgroup.com',
   address: 'Nagar-Manmad Highway, Near ST Bus Stand, Shirdi, Maharashtra 423109',
   facebook: 'https://facebook.com',
   instagram: 'https://instagram.com',
-  whatsapp: 'https://wa.me/919860190506',
+  whatsapp: 'https://wa.me/919851415415',
   twitter: 'https://twitter.com',
   footer_text: 'Deepak Hotels Group offers premium hospitality, executive air-conditioned suites, fine dining, and instant online room bookings just minutes away from Shirdi Sai Baba Temple.'
 };
@@ -725,7 +725,7 @@ async function triggerAdminBookingNotification(booking) {
     return existing;
   }
 
-  let recipient = (process.env.ADMIN_WHATSAPP_NUMBER || process.env.ADMIN_BOOKING_PHONE || '919860190506').replace(/[^0-9]/g, '');
+  let recipient = (process.env.ADMIN_WHATSAPP_NUMBER || process.env.ADMIN_BOOKING_PHONE || '919851415415').replace(/[^0-9]/g, '');
   if (recipient.length === 10) recipient = '91' + recipient;
 
   const notif = {
@@ -883,20 +883,21 @@ route('POST', '/api/admin/login', async (req, res) => {
   const u = String(body.username || '').trim();
   const p = String(body.password || '').trim();
 
-  const isDefaultAdmin = (
-    !u || !p ||
-    u === 'deepakhotelgroup' || u === 'admin' || u === 'deepak' ||
-    p === 'deepakhotelgroup@123' || p === 'admin123' || p === 'admin'
-  );
+  if (!u || !p) {
+    return sendJson(res, 401, { error: 'Username and password are required' });
+  }
 
-  const admin = DB.admins.find(a => a.username === u || a.username === 'deepakhotelgroup');
-  const pwdValid = admin ? verifyPassword(p, admin.salt, admin.hash) : false;
-
-  if (!isDefaultAdmin && !pwdValid) {
+  const admin = (DB.admins || []).find(a => a.username === u);
+  if (!admin) {
     return sendJson(res, 401, { error: 'Invalid username or password' });
   }
 
-  const sessionUser = u || 'deepakhotelgroup';
+  const pwdValid = verifyPassword(p, admin.salt, admin.hash);
+  if (!pwdValid) {
+    return sendJson(res, 401, { error: 'Invalid username or password' });
+  }
+
+  const sessionUser = admin.username;
   const token = createSession(sessionUser);
   res.setHeader('Set-Cookie', `sv_session=${token}; HttpOnly; Path=/; Max-Age=${SESSION_TTL_MS / 1000}; SameSite=Lax`);
   sendJson(res, 200, { ok: true, username: sessionUser, token });
@@ -1594,6 +1595,13 @@ route('POST', '/api/bookings', async (req, res) => {
   DB.bookings.push(booking);
   saveDb();
 
+  // DISPATCH REAL WHATSAPP NOTIFICATION
+  try {
+    triggerAdminBookingNotification(booking);
+  } catch (err) {
+    console.error('[Notification Engine] Failed to dispatch WhatsApp notification:', err.message);
+  }
+
   sendJson(res, 201, {
     ok: true,
     bookingId: booking.id,
@@ -1650,7 +1658,7 @@ route('POST', '/api/notifications/:id/retry', async (req, res, params) => {
 
 route('POST', '/api/notifications/whatsapp/test', async (req, res) => {
   if (!requireAdmin(req, res)) return;
-  let recipient = (process.env.ADMIN_WHATSAPP_NUMBER || process.env.ADMIN_BOOKING_PHONE || '919860190506').replace(/[^0-9]/g, '');
+  let recipient = (process.env.ADMIN_WHATSAPP_NUMBER || process.env.ADMIN_BOOKING_PHONE || '919851415415').replace(/[^0-9]/g, '');
   if (recipient.length === 10) recipient = '91' + recipient;
   
   const testNotif = {
@@ -1678,7 +1686,7 @@ route('POST', '/api/notifications/whatsapp/test', async (req, res) => {
 
 route('POST', '/api/notifications/test', async (req, res) => {
   if (!requireAdmin(req, res)) return;
-  let recipient = (process.env.ADMIN_WHATSAPP_NUMBER || process.env.ADMIN_BOOKING_PHONE || '919860190506').replace(/[^0-9]/g, '');
+  let recipient = (process.env.ADMIN_WHATSAPP_NUMBER || process.env.ADMIN_BOOKING_PHONE || '919851415415').replace(/[^0-9]/g, '');
   if (recipient.length === 10) recipient = '91' + recipient;
   
   const testNotif = {

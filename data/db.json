@@ -949,13 +949,47 @@
       "food": [],
       "status": "confirmed",
       "createdAt": "2026-10-02T17:24:36.104Z"
+    },
+    {
+      "id": "SV10480013",
+      "hotelRoom": "sv1-102",
+      "name": "Rohan Sharma",
+      "phone": "9851415415",
+      "email": "",
+      "guests": 2,
+      "stay": "24hr",
+      "date": "2026-10-28",
+      "time": "12:00",
+      "idMethod": "hotel",
+      "idPhotoBase64": null,
+      "requests": "",
+      "food": [],
+      "status": "pending",
+      "createdAt": "2026-10-02T18:40:12.664Z"
+    },
+    {
+      "id": "SV10480014",
+      "hotelRoom": "sv1-102",
+      "name": "Arnav Markali",
+      "phone": "9860190506",
+      "email": "",
+      "guests": 2,
+      "stay": "24hr",
+      "date": "2026-10-09",
+      "time": "12:00",
+      "idMethod": "hotel",
+      "idPhotoBase64": null,
+      "requests": "",
+      "food": [],
+      "status": "confirmed",
+      "createdAt": "2026-10-02T18:43:06.807Z"
     }
   ],
   "admins": [
     {
       "username": "deepakhotelgroup",
-      "salt": "73c49500b41a726a29ee4e897104385d",
-      "hash": "aa271d28760bbe0735c6514f9171207c22da2045bd5d8b3bb2b41cf8730e340400fc6f1be297b5d5e4aa8d681e6cbd40779d5da6e58e456b7ef808f20a9c86a8"
+      "salt": "0817fa81abbd8a1c7139760368c8495d",
+      "hash": "3c89214fa86326a07631c111feb383ed435adda200d9aa8850a4764f06b3663277c7f53f635ef8ff52bd69c824f51f2d53563c1263ff359c5b6cd76befff805b"
     }
   ],
   "settings": {
@@ -1257,7 +1291,35 @@
       "attempts": 1,
       "created_at": "2026-10-02T16:29:16.160Z",
       "sent_at": "2026-10-02T16:29:16.170Z"
+    },
+    {
+      "id": "notif_murb5san_1140e0",
+      "booking_id": "SV10480013",
+      "recipient": "919851415415",
+      "recipient_number": "919851415415",
+      "notification_type": "whatsapp",
+      "message": "🔔 NEW ROOM BOOKING - DEEPAK HOTELS GROUP\n\nBooking ID: #SV10480013\n\nCustomer: Rohan Sharma\nPhone: 9851415415\n\nHotel: Hotel Sai View\nRoom: Room 102 (Single)\n\nCheck-in: 2026-10-28 at 12:00\nCheck-out: 2026-10-29\n\nGuests: 2\nRooms: 1\n\nTotal Amount: ₹485\n\nPlease check the admin panel for complete booking details.",
+      "status": "sent",
+      "provider_message_id": "wamid.HBgL_1790966412677_o1qa24",
+      "error_message": null,
+      "attempts": 1,
+      "created_at": "2026-10-02T18:40:12.671Z",
+      "sent_at": "2026-10-02T18:40:12.677Z"
+    },
+    {
+      "id": "notif_murb9io9_ff03d3",
+      "booking_id": "SV10480014",
+      "recipient": "919851415415",
+      "recipient_number": "919851415415",
+      "notification_type": "whatsapp",
+      "message": "🔔 NEW ROOM BOOKING - DEEPAK HOTELS GROUP\n\nBooking ID: #SV10480014\n\nCustomer: Arnav Markali\nPhone: 9860190506\n\nHotel: Hotel Sai View\nRoom: Room 102 (Single)\n\nCheck-in: 2026-10-09 at 12:00\nCheck-out: 2026-10-10\n\nGuests: 2\nRooms: 1\n\nTotal Amount: ₹485\n\nPlease check the admin panel for complete booking details.",
+      "status": "sent",
+      "provider_message_id": "wamid.HBgL_1790966586845_gzsigp",
+      "error_message": null,
+      "attempts": 1,
+      "created_at": "2026-10-02T18:43:06.826Z",
+      "sent_at": "2026-10-02T18:43:06.846Z"
     }
   ],
-  "nextBookingSeq": 13
+  "nextBookingSeq": 15
 }

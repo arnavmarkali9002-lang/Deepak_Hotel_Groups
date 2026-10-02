@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=1280, initial-scale=0.35, maximum-scale=3.0, user-scalable=yes">
   <title>Deepak Hotels Group — Master Admin Control Panel</title>
 
   <!-- Google Fonts -->
@@ -57,6 +57,7 @@
       color: var(--text);
       line-height: 1.5;
       min-height: 100vh;
+      min-width: 1200px;
       display: flex;
     }
 
@@ -479,11 +480,11 @@
       <form id="adminLoginForm">
         <div class="form-group" style="text-align:left;">
           <label class="form-label">Username</label>
-          <input type="text" class="form-control" id="loginUsername" value="deepakhotelgroup" required>
+          <input type="text" class="form-control" id="loginUsername" placeholder="Enter admin username" required>
         </div>
         <div class="form-group" style="text-align:left;">
           <label class="form-label">Password</label>
-          <input type="password" class="form-control" id="loginPassword" value="deepakhotelgroup@123" required>
+          <input type="password" class="form-control" id="loginPassword" placeholder="Enter admin password" required>
         </div>
         <button type="submit" class="btn btn-gold" style="width:100%; margin-top:10px;" id="loginBtn">
           <i class="fa-solid fa-right-to-bracket"></i> Login to Dashboard
@@ -531,6 +532,9 @@
         </li>
         <li class="sidebar-item">
           <div class="sidebar-link" data-tab="reviews"><i class="fa-solid fa-star"></i> Reviews</div>
+        </li>
+        <li class="sidebar-item">
+          <div class="sidebar-link" data-tab="food"><i class="fa-solid fa-utensils"></i> Pure Veg Menu</div>
         </li>
         <li class="sidebar-item">
           <div class="sidebar-link" data-tab="bookings"><i class="fa-solid fa-calendar-check"></i> Bookings & Logs</div>
@@ -919,6 +923,32 @@
           </div>
         </div>
       </section>
+
+      <!-- TAB 12: PURE VEG FOOD MENU -->
+      <section class="tab-content" id="tab-food">
+        <div class="card-box">
+          <div class="card-title">
+            <span>Pure Veg Food Menu Management</span>
+            <button class="btn btn-gold btn-sm" onclick="showAddFoodModal()"><i class="fa-solid fa-plus"></i> Add
+              Dish</button>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Photo</th>
+                  <th>Dish Name</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="foodTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
     </main>
   </div>
 
@@ -1045,7 +1075,29 @@
   <!-- JAVASCRIPT ENGINE -->
   <script>
     'use strict';
-    let ADMIN_DATA = { settings: {}, hero: {}, hotels: [], rooms: [], gallery: [], videos: [], amenities: [], offers: [], reviews: [], bookings: [] };
+    let ADMIN_DATA = { settings: {}, hero: {}, hotels: [], rooms: [], gallery: [], videos: [], amenities: [], offers: [], reviews: [], bookings: [], menuItems: [] };
+
+    // Check Active Session on Page Load
+    async function checkSession() {
+      try {
+        const res = await fetch('/api/admin/me');
+        const data = await res.json();
+        if (data.ok) {
+          document.getElementById('loginScreen').style.display = 'none';
+          document.getElementById('adminApp').style.display = 'flex';
+          if (document.getElementById('adminUsernameDisplay')) {
+            document.getElementById('adminUsernameDisplay').textContent = data.username || 'deepakhotelgroup';
+          }
+          loadAdminData();
+        } else {
+          document.getElementById('loginScreen').style.display = 'flex';
+          document.getElementById('adminApp').style.display = 'none';
+        }
+      } catch (e) {
+        document.getElementById('loginScreen').style.display = 'flex';
+        document.getElementById('adminApp').style.display = 'none';
+      }
+    }
 
     // Authentication Logic
     document.getElementById('adminLoginForm').addEventListener('submit', async function (e) {
@@ -1063,6 +1115,9 @@
         if (data.ok) {
           document.getElementById('loginScreen').style.display = 'none';
           document.getElementById('adminApp').style.display = 'flex';
+          if (document.getElementById('adminUsernameDisplay')) {
+            document.getElementById('adminUsernameDisplay').textContent = data.username || u;
+          }
           loadAdminData();
         } else {
           alert('Login failed: ' + (data.error || 'Invalid credentials'));
@@ -1084,7 +1139,8 @@
 
         this.classList.add('active');
         const tab = this.dataset.tab;
-        document.getElementById('tab-' + tab).classList.add('active');
+        const targetTab = document.getElementById('tab-' + tab);
+        if (targetTab) targetTab.classList.add('active');
         document.getElementById('adminPageTitle').textContent = this.innerText.trim();
       });
     });
@@ -1119,7 +1175,7 @@
     // Load Admin Data from Server APIs
     async function loadAdminData() {
       try {
-        const [settRes, heroRes, hotRes, rmRes, galRes, vidRes, amRes, offRes, revRes, bkRes] = await Promise.all([
+        const [settRes, heroRes, hotRes, rmRes, galRes, vidRes, amRes, offRes, revRes, bkRes, menuRes] = await Promise.all([
           fetch('/api/settings').then(r => r.json()),
           fetch('/api/hero').then(r => r.json()),
           fetch('/api/hotels').then(r => r.json()),
@@ -1129,7 +1185,8 @@
           fetch('/api/amenities').then(r => r.json()),
           fetch('/api/offers').then(r => r.json()),
           fetch('/api/reviews').then(r => r.json()),
-          fetch('/api/bookings').then(r => r.json())
+          fetch('/api/bookings').then(r => r.json()),
+          fetch('/api/menu/all').then(r => r.json())
         ]);
 
         ADMIN_DATA.settings = settRes.settings || {};
@@ -1142,6 +1199,7 @@
         ADMIN_DATA.offers = offRes.offers || [];
         ADMIN_DATA.reviews = revRes.reviews || [];
         ADMIN_DATA.bookings = bkRes.bookings || [];
+        ADMIN_DATA.menuItems = menuRes.items || [];
 
         renderDashboardStats();
         populateSettingsForms();
@@ -1153,6 +1211,7 @@
         renderOffersTable();
         renderReviewsTable();
         renderBookingsTable();
+        renderFoodTable();
       } catch (err) {
         console.error('Failed to load admin data:', err);
       }
@@ -1721,6 +1780,68 @@
       const foodTotal = (b.food || []).reduce((sum, item) => sum + (item.price * item.qty), 0);
       return roomPrice || 485;
     }
+
+    // Pure Veg Food Menu Table & Functions
+    function renderFoodTable() {
+      const tbody = document.getElementById('foodTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      ADMIN_DATA.menuItems.forEach(i => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${i.photo ? `<img src="${i.photo}" style="height:40px; border-radius:4px;">` : '<span style="color:var(--text-muted);">No photo</span>'}</td>
+          <td><strong>${i.name}</strong></td>
+          <td>${i.category || 'Other'}</td>
+          <td>₹${i.price}</td>
+          <td><button class="badge ${i.available ? 'badge-confirmed' : 'badge-cancelled'}" style="border:none; cursor:pointer;" onclick="toggleFoodAvailable('${i.id}', ${!i.available})">${i.available ? 'AVAILABLE' : 'UNAVAILABLE'}</button></td>
+          <td><button class="btn btn-danger btn-sm" onclick="deleteFoodItem('${i.id}')">Delete</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function toggleFoodAvailable(id, available) {
+      try {
+        const res = await fetch('/api/menu/' + id, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ available })
+        });
+        const data = await res.json();
+        if (data.ok) { loadAdminData(); }
+        else { alert('Failed to update food item: ' + data.error); }
+      } catch (e) { alert('Error: ' + e.message); }
+    }
+
+    async function deleteFoodItem(id) {
+      if (!confirm('Permanently delete this food dish from menu?')) return;
+      try {
+        const res = await fetch('/api/menu/' + id, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.ok) { alert('Food item deleted from database!'); loadAdminData(); }
+        else { alert('Failed to delete dish: ' + data.error); }
+      } catch (e) { alert('Error: ' + e.message); }
+    }
+
+    function showAddFoodModal() {
+      const name = prompt('Dish Name (e.g. Maharashtrian Thali, Paneer Butter Masala):');
+      if (!name) return;
+      const category = prompt('Category (Thalis, Main Course, Snacks, Beverages):', 'Main Course') || 'Other';
+      const price = prompt('Price in ₹:', '180');
+      if (!price) return;
+
+      fetch('/api/menu', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, category, price: Number(price), available: true })
+      }).then(r => r.json()).then(data => {
+        if (data.ok) { alert('Food item added to database!'); loadAdminData(); }
+        else alert('Error: ' + data.error);
+      });
+    }
+
+    // Run session check on page load
+    document.addEventListener('DOMContentLoaded', checkSession);
   </script>
 </body>
 
