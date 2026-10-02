@@ -4,8 +4,8 @@
       "id": "sv1",
       "name": "Hotel Sai View",
       "tag": "The Original",
-      "locality": "Vivekanand nagar, Nagar, Manmad Rd, near S T Bus stand, near Holiday Park, Sai Nagar, Shirdi, Maharashtra 423109 QF6H+93 Shirdi, Maharashtra",
-      "phone": "+91 98765 43210",
+      "locality": "Main Gate, Station Road, Shirdi",
+      "phone": "+91 99999 88888",
       "accent": "#E8A33D",
       "image": "/images/hotel-sai-view.jpg",
       "desc": "Our flagship property with 10 rooms across single, couple, family and suite categories."
@@ -484,6 +484,7 @@
       "photo": null
     }
   ],
+  "menuItems": [],
   "bookings": [
     {
       "id": "SV10480001",
@@ -523,10 +524,9 @@
   "admins": [
     {
       "username": "deepakhotelgroup",
-      "salt": "77de939259d56035f84ed99921e478c5",
-      "hash": "1bc6c583f312e8bb880820b977e8bd07d726f226972fd4d428986cf63d47deb9116178ad9629c899f431f30c1b344cb1c714008c4bdbc78195f51a24fa763ebd"
+      "salt": "1f5de2dc99a8d927cf178332cfadf4b1",
+      "hash": "c2e06c9f54ffe48b77cfbcc7cdf94782ca8d387feb890d8ac0d779b0b68c747bc8b9f1970a987676e337907062934972ae65598efa7baae3f2f5b4642be2bf2e"
     }
   ],
-  "nextBookingSeq": 3,
-  "menuItems": []
+  "nextBookingSeq": 3
 }

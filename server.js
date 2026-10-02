@@ -272,8 +272,13 @@ function loadDb() {
 
   let loaded = false;
 
-  // 1. Try reading from db.json first (Primary file database store)
-  if (fs.existsSync(DB_PATH)) {
+  // 1. Try reading from SQLite relational database FIRST as primary SQL source of truth
+  if (sqliteDb) {
+    loaded = loadDbFromSqlite();
+  }
+
+  // 2. Fallback to db.json file database store if SQLite was empty or uninitialized
+  if (!loaded && fs.existsSync(DB_PATH)) {
     try {
       const raw = fs.readFileSync(DB_PATH, 'utf8');
       const parsed = JSON.parse(raw);
@@ -282,13 +287,8 @@ function loadDb() {
         loaded = true;
       }
     } catch (err) {
-      console.error('[Database] Error reading db.json, attempting SQLite fallback:', err.message);
+      console.error('[Database] Error reading db.json:', err.message);
     }
-  }
-
-  // 2. Fallback to SQLite if db.json was missing or invalid
-  if (!loaded) {
-    loaded = loadDbFromSqlite();
   }
 
   // 3. If neither contains data, seed from defaults
@@ -656,6 +656,17 @@ route('POST', '/api/menu', async (req, res) => {
   const item = { id: genMenuId(), name: '', category: 'Other', price: 0, photo: null, available: true };
   const err = applyMenuFields(item, body);
   if (err) return sendJson(res, 400, { error: err });
+  
+  // Direct SQL INSERT into SQLite menu_items table
+  if (sqliteDb) {
+    try {
+      const stmt = sqliteDb.prepare('INSERT INTO menu_items (id, name, category, price, photo, available) VALUES (?, ?, ?, ?, ?, ?)');
+      stmt.run(item.id, item.name, item.category, item.price, item.photo || null, item.available ? 1 : 0);
+    } catch (e) {
+      console.error('[SQL Error] INSERT INTO menu_items:', e.message);
+    }
+  }
+  
   DB.menuItems.push(item);
   saveDb();
   sendJson(res, 201, { ok: true, item });
@@ -669,6 +680,17 @@ route('PATCH', '/api/menu/:id', async (req, res, params) => {
   try { body = await readBody(req); } catch (e) { return sendJson(res, 413, { error: e.message }); }
   const err = applyMenuFields(item, body);
   if (err) return sendJson(res, 400, { error: err });
+
+  // Direct SQL UPDATE on SQLite menu_items table
+  if (sqliteDb) {
+    try {
+      const stmt = sqliteDb.prepare('UPDATE menu_items SET name = ?, category = ?, price = ?, photo = ?, available = ? WHERE id = ?');
+      stmt.run(item.name, item.category, item.price, item.photo || null, item.available ? 1 : 0, item.id);
+    } catch (e) {
+      console.error('[SQL Error] UPDATE menu_items:', e.message);
+    }
+  }
+
   saveDb();
   sendJson(res, 200, { ok: true, item });
 });
@@ -677,6 +699,18 @@ route('DELETE', '/api/menu/:id', async (req, res, params) => {
   if (!requireAdmin(req, res)) return;
   const idx = DB.menuItems.findIndex(i => i.id === params.id);
   if (idx === -1) return sendJson(res, 404, { error: 'Dish not found' });
+  const itemId = params.id;
+
+  // Direct SQL DELETE from SQLite menu_items table
+  if (sqliteDb) {
+    try {
+      const stmt = sqliteDb.prepare('DELETE FROM menu_items WHERE id = ?');
+      stmt.run(itemId);
+    } catch (e) {
+      console.error('[SQL Error] DELETE FROM menu_items:', e.message);
+    }
+  }
+
   DB.menuItems.splice(idx, 1);
   saveDb();
   sendJson(res, 200, { ok: true });
