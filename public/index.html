@@ -965,7 +965,7 @@
     }
     .modal-close:hover { background: #E2E8F0; color: var(--navy-900); }
 
-    /* FLOATING WHATSAPP BUTTON */
+    /* FLOATING WHATSAPP & BOOK NOW BUTTONS */
     .floating-whatsapp-btn {
       position: fixed;
       bottom: 28px;
@@ -988,6 +988,48 @@
       transform: scale(1.12);
       box-shadow: 0 16px 35px rgba(37, 211, 102, 0.65);
       color: #FFF;
+    }
+
+    .floating-book-btn {
+      position: fixed;
+      bottom: 28px;
+      left: 28px;
+      background: linear-gradient(135deg, #D4AF37 0%, #AA771C 100%);
+      color: #0A192F;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 14px 24px;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 12px 30px rgba(212, 175, 55, 0.5);
+      z-index: 9999;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-decoration: none;
+      border: 2px solid #FFF;
+      cursor: pointer;
+    }
+    .floating-book-btn:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 16px 35px rgba(212, 175, 55, 0.75);
+      color: #0A192F;
+    }
+
+    @media (max-width: 576px) {
+      .floating-whatsapp-btn {
+        bottom: 20px;
+        right: 16px;
+        width: 54px;
+        height: 54px;
+        font-size: 28px;
+      }
+      .floating-book-btn {
+        bottom: 20px;
+        left: 16px;
+        padding: 12px 18px;
+        font-size: 0.88rem;
+      }
     }
 
     /* ==========================================================================
@@ -1428,7 +1470,12 @@
     </div>
   </footer>
 
-  <!-- FLOATING WHATSAPP CHAT BUTTON -->
+  <!-- FLOATING WHATSAPP & BOOK NOW BUTTONS -->
+  <button type="button" class="floating-book-btn" id="floatingBookNowBtn" onclick="openBookingModal()" aria-label="Book Now">
+    <i class="fa-solid fa-calendar-check" style="font-size:1.15rem;"></i>
+    <span>Book Now</span>
+  </button>
+
   <a href="https://wa.me/919851415415" target="_blank" class="floating-whatsapp-btn" aria-label="Chat on WhatsApp">
     <i class="fa-brands fa-whatsapp"></i>
   </a>
@@ -1506,17 +1553,26 @@
       <!-- SUCCESS CONFIRMATION RECEIPT VIEW -->
       <div id="bookingSuccessContent" style="display:none; text-align:center; padding:20px 0;">
         <div style="width:70px; height:70px; background:rgba(16, 185, 129, 0.12); color:var(--emerald); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2.2rem; margin:0 auto 20px auto;">
-          <i class="fa-solid fa-check"></i>
+          <i class="fa-solid fa-circle-check"></i>
         </div>
-        <h3 style="font-size:1.8rem; margin-bottom:8px;">Booking Request Received!</h3>
-        <p style="color:var(--slate-500); font-size:0.95rem; margin-bottom:20px;">Your room reservation has been submitted. Our hotel front desk will call you shortly to confirm your check-in time.</p>
+        <h3 style="font-size:1.8rem; margin-bottom:8px; color:var(--navy-900);">Booking Request Received!</h3>
+        <p style="color:var(--slate-500); font-size:0.95rem; margin-bottom:20px;">Your room reservation has been submitted successfully.</p>
 
-        <div style="background:var(--gold-100); border:1px dashed var(--gold-400); padding:16px; border-radius:var(--radius-md); margin-bottom:24px; font-weight:700; color:var(--gold-600); font-size:1.1rem;">
-          Booking ID Reference: <span id="successBookingId">#1001</span>
+        <div style="background:var(--gold-100); border:1px dashed var(--gold-400); padding:16px; border-radius:var(--radius-md); margin-bottom:20px; color:var(--gold-600);">
+          <div style="font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; color:var(--slate-500); font-weight:700; margin-bottom:4px;">Booking Reference ID</div>
+          <div style="font-size:1.5rem; font-weight:800; font-family:var(--font-display);" id="successBookingId">#1001</div>
         </div>
 
-        <button type="button" class="btn btn-dark" onclick="document.getElementById('bookingModalBackdrop').classList.remove('active'); location.reload();">
-          Done
+        <div id="successBookingSummary" style="background:#F8FAFC; border:1px solid #E2E8F0; padding:18px; border-radius:var(--radius-md); margin-bottom:24px; text-align:left; font-size:0.92rem; color:var(--slate-700); line-height:1.6;">
+          <!-- Dynamically filled with guest & room details -->
+        </div>
+
+        <a id="whatsappConfirmBtn" href="#" target="_blank" class="btn" style="background:#25D366; color:#FFF; font-weight:700; font-size:1.05rem; padding:14px 20px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center; gap:10px; width:100%; text-decoration:none; margin-bottom:14px; box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4); transition: transform 0.2s ease;">
+          <i class="fa-brands fa-whatsapp" style="font-size:1.4rem;"></i> Send Confirmation on WhatsApp
+        </a>
+
+        <button type="button" class="btn btn-dark" style="width:100%; font-size:0.95rem; padding:12px 20px;" onclick="document.getElementById('bookingModalBackdrop').classList.remove('active'); location.reload();">
+          Done & Return to Home
         </button>
       </div>
     </div>
@@ -1835,13 +1891,25 @@
 
     // Booking Modal Interactions
     function openBookingModal(roomId) {
-      const room = APP_STATE.rooms.find(r => r.id === roomId);
-      if (!room) return;
+      let room = null;
+      if (roomId) {
+        room = APP_STATE.rooms.find(r => r.id === roomId);
+      }
+      if (!room && APP_STATE.rooms && APP_STATE.rooms.length > 0) {
+        room = APP_STATE.rooms.find(r => r.status === 'available') || APP_STATE.rooms[0];
+      }
+
+      if (!room) {
+        const roomsElem = document.getElementById('rooms');
+        if (roomsElem) roomsElem.scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+
       APP_STATE.selectedRoom = room;
 
       const hotel = APP_STATE.hotels.find(h => h.id === room.hotel) || {};
       document.getElementById('modalRoomId').value = room.id;
-      document.getElementById('modalRoomSubtitle').textContent = `${hotel.name || ''} — Room ${room.num} (${room.cat})`;
+      document.getElementById('modalRoomSubtitle').textContent = `${hotel.name || 'Deepak Hotels'} — Room ${room.num || ''} (${room.cat || 'Standard'})`;
       
       updateModalTotal();
       document.getElementById('bookingModalBackdrop').classList.add('active');
@@ -1916,6 +1984,34 @@
           document.getElementById('bookingModalContent').style.display = 'none';
           document.getElementById('bookingSuccessContent').style.display = 'block';
           document.getElementById('successBookingId').textContent = '#' + data.bookingId;
+
+          const room = APP_STATE.selectedRoom || {};
+          const hotel = APP_STATE.hotels.find(h => h.id === room.hotel) || {};
+          const stayText = payload.stay === '24hr' ? '24-Hour Stay' : '6-Hour Express Refresh';
+          const price = payload.stay === '24hr' ? (room.price24 || 0) : (room.price6 || 0);
+
+          // Populate Summary Details
+          const summaryElem = document.getElementById('successBookingSummary');
+          if (summaryElem) {
+            summaryElem.innerHTML = `
+              <div style="margin-bottom:6px;"><strong>👤 Guest Name:</strong> ${payload.name}</div>
+              <div style="margin-bottom:6px;"><strong>📞 Phone / WhatsApp:</strong> ${payload.phone}</div>
+              <div style="margin-bottom:6px;"><strong>🏨 Hotel:</strong> ${hotel.name || 'Deepak Hotels Group'}</div>
+              <div style="margin-bottom:6px;"><strong>🛏️ Room Details:</strong> Room ${room.num || ''} (${room.cat || 'Standard'})</div>
+              <div style="margin-bottom:6px;"><strong>📅 Check-in Date:</strong> ${payload.date} (${payload.time})</div>
+              <div style="margin-bottom:6px;"><strong>⏱️ Stay Package:</strong> ${stayText} (${payload.guests} Guest${payload.guests > 1 ? 's' : ''})</div>
+              <div style="color:var(--navy-900); font-weight:700; margin-top:8px; padding-top:8px; border-top:1px dashed #CBD5E1;">💰 Total Amount Payable: ₹${price} (Pay at Hotel Reception)</div>
+            `;
+          }
+
+          // Build Pre-filled WhatsApp Confirmation Message
+          const waMsg = `Hello Deepak Hotels Group! 🏨\n\nI have just submitted a room reservation on your website. Here are my booking confirmation details:\n\n📌 *Booking Reference ID:* #${data.bookingId}\n👤 *Guest Name:* ${payload.name}\n📞 *Phone Number:* ${payload.phone}\n🏨 *Hotel:* ${hotel.name || 'Deepak Hotels Group'}\n🛏️ *Room:* Room ${room.num || ''} (${room.cat || 'Standard'})\n📅 *Check-in Date:* ${payload.date}\n⏰ *Check-in Time:* ${payload.time}\n⏱️ *Stay Package:* ${stayText}\n👥 *Number of Guests:* ${payload.guests}\n💰 *Amount Payable:* ₹${price} (Pay at Reception)\n\nPlease confirm my room booking. Thank you!`;
+
+          const waUrl = `https://wa.me/919851415415?text=${encodeURIComponent(waMsg)}`;
+          const waBtn = document.getElementById('whatsappConfirmBtn');
+          if (waBtn) {
+            waBtn.href = waUrl;
+          }
         } else {
           alert('Booking Error: ' + (data.error || 'Failed to submit booking'));
         }

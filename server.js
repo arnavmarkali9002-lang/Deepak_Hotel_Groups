@@ -1725,7 +1725,7 @@ route('POST', '/api/bookings', async (req, res) => {
   const phone = (body.phone || '').trim();
   if (!name) return sendJson(res, 400, { error: 'Guest name required' });
   if (!/^\d{10}$/.test(phone)) return sendJson(res, 400, { error: 'Phone must be a 10-digit number' });
-  if (!['upload', 'hotel'].includes(body.idMethod)) return sendJson(res, 400, { error: 'Invalid idMethod' });
+  if (!['upload', 'hotel', 'reception'].includes(body.idMethod)) return sendJson(res, 400, { error: 'Invalid idMethod' });
   if (body.idMethod === 'upload' && !body.idPhotoBase64) return sendJson(res, 400, { error: 'ID photo required for upload method' });
 
   const conflict = DB.bookings.some(b => b.hotelRoom === body.hotelRoom && b.date === body.date && b.status !== 'cancelled');
