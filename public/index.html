@@ -1557,15 +1557,15 @@
           fetch('/api/reviews').then(r => r.json()).catch(() => [])
         ]);
 
-        APP_STATE.settings = settRes;
-        APP_STATE.hero = heroRes;
-        APP_STATE.hotels = hotRes;
-        APP_STATE.rooms = rmRes;
-        APP_STATE.menuItems = menuRes;
-        APP_STATE.amenities = amenRes;
-        APP_STATE.offers = offRes;
-        APP_STATE.gallery = galRes;
-        APP_STATE.reviews = revRes;
+        APP_STATE.settings = settRes.settings || settRes || {};
+        APP_STATE.hero = heroRes.hero || heroRes || {};
+        APP_STATE.hotels = Array.isArray(hotRes.hotels) ? hotRes.hotels : (Array.isArray(hotRes) ? hotRes : []);
+        APP_STATE.rooms = Array.isArray(rmRes.rooms) ? rmRes.rooms : (Array.isArray(rmRes) ? rmRes : []);
+        APP_STATE.menuItems = Array.isArray(menuRes.menu) ? menuRes.menu : (Array.isArray(menuRes.items) ? menuRes.items : (Array.isArray(menuRes) ? menuRes : []));
+        APP_STATE.amenities = Array.isArray(amenRes.amenities) ? amenRes.amenities : (Array.isArray(amenRes) ? amenRes : []);
+        APP_STATE.offers = Array.isArray(offRes.offers) ? offRes.offers : (Array.isArray(offRes) ? offRes : []);
+        APP_STATE.gallery = Array.isArray(galRes.gallery) ? galRes.gallery : (Array.isArray(galRes) ? galRes : []);
+        APP_STATE.reviews = Array.isArray(revRes.reviews) ? revRes.reviews : (Array.isArray(revRes) ? revRes : []);
 
         applyBranding();
         renderHotels();
@@ -1636,11 +1636,20 @@
     }
 
     // Render Rooms Cards
-    function renderRooms(catFilter = 'all', hotelFilter = 'all') {
+    function renderRooms(catFilter = 'all', hotelFilter = 'all', unavailableRoomIds = [], searchDate = null) {
       const container = document.getElementById('roomsGridContainer');
       container.innerHTML = '';
 
       let list = APP_STATE.rooms || [];
+      
+      // Filter out rooms marked unavailable in DB
+      list = list.filter(r => r.status === 'available');
+
+      // Filter out rooms already booked for the selected date
+      if (Array.isArray(unavailableRoomIds) && unavailableRoomIds.length > 0) {
+        list = list.filter(r => !unavailableRoomIds.includes(r.id));
+      }
+
       if (catFilter && catFilter !== 'all') {
         list = list.filter(r => r.cat && r.cat.toLowerCase() === catFilter.toLowerCase());
       }
@@ -1649,7 +1658,10 @@
       }
 
       if (!list.length) {
-        container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:50px; color:var(--slate-500); font-weight:600; font-size:1.1rem;">No rooms found matching your search criteria. Please select another category or property.</div>';
+        const msg = searchDate 
+          ? `No rooms available for ${searchDate}. Please select another date or room type.`
+          : `No rooms available for the selected date and room type.`;
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:60px 20px; color:var(--slate-500); font-weight:600; font-size:1.15rem; background:#FFF; border-radius:16px; border:1px dashed var(--gold-400);"><i class="fa-solid fa-calendar-xmark" style="font-size:2.5rem; color:var(--gold-500); margin-bottom:12px; display:block;"></i>${msg}</div>`;
         return;
       }
 
@@ -1843,10 +1855,11 @@
     }
 
     // Search Form Handler
-    document.getElementById('searchAvailabilityForm').addEventListener('submit', function(e) {
+    document.getElementById('searchAvailabilityForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       const cat = document.getElementById('searchCategorySelect').value;
       const hotel = document.getElementById('searchHotelSelect').value;
+      const date = document.getElementById('searchCheckIn').value;
 
       // Sync category tab highlight
       document.querySelectorAll('#roomCategoryTabs .filter-btn').forEach(b => {
@@ -1857,7 +1870,19 @@
         }
       });
 
-      renderRooms(cat, hotel);
+      let unavailableIds = [];
+      if (date) {
+        try {
+          const availRes = await fetch(`/api/availability?date=${date}`).then(r => r.json());
+          if (availRes && Array.isArray(availRes.unavailableRoomIds)) {
+            unavailableIds = availRes.unavailableRoomIds;
+          }
+        } catch (err) {
+          console.error('Error checking room availability for date:', err);
+        }
+      }
+
+      renderRooms(cat, hotel, unavailableIds, date);
       document.getElementById('rooms').scrollIntoView({ behavior: 'smooth' });
     });
 
