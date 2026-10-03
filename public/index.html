@@ -1615,7 +1615,7 @@
       container.innerHTML = '';
       APP_STATE.hotels.forEach(h => {
         const card = document.createElement('div');
-        card.className = 'hotel-card reveal';
+        card.className = 'hotel-card reveal active';
         card.innerHTML = `
           <div class="hotel-card-img">
             <img src="${h.image || '/images/hero-bg.jpg'}" alt="${h.name}">
@@ -1640,12 +1640,16 @@
       const container = document.getElementById('roomsGridContainer');
       container.innerHTML = '';
 
-      let list = APP_STATE.rooms;
-      if (catFilter !== 'all') list = list.filter(r => r.cat === catFilter);
-      if (hotelFilter !== 'all') list = list.filter(r => r.hotel === hotelFilter);
+      let list = APP_STATE.rooms || [];
+      if (catFilter && catFilter !== 'all') {
+        list = list.filter(r => r.cat && r.cat.toLowerCase() === catFilter.toLowerCase());
+      }
+      if (hotelFilter && hotelFilter !== 'all') {
+        list = list.filter(r => r.hotel === hotelFilter);
+      }
 
       if (!list.length) {
-        container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:50px; color:var(--slate-500);">No rooms available for the selected criteria.</div>';
+        container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:50px; color:var(--slate-500); font-weight:600; font-size:1.1rem;">No rooms found matching your search criteria. Please select another category or property.</div>';
         return;
       }
 
@@ -1654,7 +1658,7 @@
         const photo = r.photo || (r.cat === 'Suite' ? '/images/room-suite.jpg' : '/images/hero-bg.jpg');
         
         const card = document.createElement('div');
-        card.className = 'room-card reveal';
+        card.className = 'room-card reveal active';
         card.innerHTML = `
           <div class="room-thumb">
             <img src="${photo}" alt="Room ${r.num}">
@@ -1701,7 +1705,7 @@
       APP_STATE.amenities.forEach(a => {
         const iconClass = a.icon.startsWith('fa') ? a.icon : 'fa-solid fa-' + a.icon;
         const card = document.createElement('div');
-        card.className = 'amenity-card reveal';
+        card.className = 'amenity-card reveal active';
         card.innerHTML = `
           <div class="amenity-icon"><i class="${iconClass}"></i></div>
           <h3 class="amenity-title">${a.name}</h3>
@@ -1717,7 +1721,7 @@
       container.innerHTML = '';
       APP_STATE.offers.filter(o => o.is_active).forEach(o => {
         const card = document.createElement('div');
-        card.className = 'offer-card reveal';
+        card.className = 'offer-card reveal active';
         card.innerHTML = `
           <div class="offer-banner">
             <img src="${o.image || '/images/room-suite.jpg'}" alt="${o.title}">
@@ -1750,7 +1754,7 @@
       container.innerHTML = '';
       APP_STATE.gallery.forEach(g => {
         const item = document.createElement('div');
-        item.className = 'gallery-item reveal';
+        item.className = 'gallery-item reveal active';
         item.onclick = () => openImageLightbox(g.image, g.title);
         item.innerHTML = `
           <img src="${g.image}" alt="${g.title}">
@@ -1800,7 +1804,7 @@
       container.innerHTML = '';
       APP_STATE.reviews.forEach(r => {
         const card = document.createElement('div');
-        card.className = 'review-card reveal';
+        card.className = 'review-card reveal active';
         const initials = r.guest_name ? r.guest_name.substring(0, 2).toUpperCase() : 'G';
         card.innerHTML = `
           <div class="stars">${'★'.repeat(r.rating || 5)}</div>
@@ -1843,6 +1847,16 @@
       e.preventDefault();
       const cat = document.getElementById('searchCategorySelect').value;
       const hotel = document.getElementById('searchHotelSelect').value;
+
+      // Sync category tab highlight
+      document.querySelectorAll('#roomCategoryTabs .filter-btn').forEach(b => {
+        if (b.dataset.cat.toLowerCase() === (cat || 'all').toLowerCase()) {
+          b.classList.add('active');
+        } else {
+          b.classList.remove('active');
+        }
+      });
+
       renderRooms(cat, hotel);
       document.getElementById('rooms').scrollIntoView({ behavior: 'smooth' });
     });
