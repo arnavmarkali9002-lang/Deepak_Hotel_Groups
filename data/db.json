@@ -30,16 +30,6 @@
       "accent": "#7C2D2D",
       "image": "/images/hotel-om-sai.jpg",
       "desc": "Convenient for travellers passing through, 10 rooms with easy parking and quick check-in."
-    },
-    {
-      "id": "h_musezqyz",
-      "name": "Hotel Sai Comfort",
-      "tag": "Executive Wing",
-      "locality": "Shirdi, Maharashtra",
-      "phone": "+91 98514 15415",
-      "accent": "#E8A33D",
-      "image": "/images/hero-bg.jpg",
-      "desc": "Deepak Hotels Group Property"
     }
   ],
   "rooms": [
@@ -726,6 +716,24 @@
       "desc": "",
       "video_url": "",
       "discount_price": 0
+    },
+    {
+      "id": "sv1-123",
+      "hotel": "sv1",
+      "num": "123",
+      "floor": 1,
+      "ac": true,
+      "cat": "Couple",
+      "price24": 2200,
+      "price6": 1300,
+      "photo": null,
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, Smart TV, Room Service",
+      "status": "available",
+      "desc": "",
+      "video_url": "",
+      "discount_price": 0
     }
   ],
   "menuItems": [
@@ -976,6 +984,23 @@
       "food": [],
       "status": "confirmed",
       "createdAt": "2026-10-02T18:43:06.807Z"
+    },
+    {
+      "id": "SV10480015",
+      "hotelRoom": "sv1-104",
+      "name": "Test Guest",
+      "phone": "9876543210",
+      "email": "",
+      "guests": 2,
+      "stay": "24hr",
+      "date": "2026-10-28",
+      "time": "12:00",
+      "idMethod": "reception",
+      "idPhotoBase64": null,
+      "requests": "",
+      "food": [],
+      "status": "pending",
+      "createdAt": "2026-10-03T18:39:27.476Z"
     }
   ],
   "admins": [
@@ -1296,7 +1321,21 @@
       "attempts": 1,
       "created_at": "2026-10-02T18:43:06.826Z",
       "sent_at": "2026-10-02T18:43:06.846Z"
+    },
+    {
+      "id": "notif_musqko3x_7e68b3",
+      "booking_id": "SV10480015",
+      "recipient": "919851415415",
+      "recipient_number": "919851415415",
+      "notification_type": "whatsapp",
+      "message": "🔔 NEW ROOM BOOKING - DEEPAK HOTELS GROUP\n\nBooking ID: #SV10480015\n\nCustomer: Test Guest\nPhone: 9876543210\n\nHotel: Hotel Sai View\nRoom: Room 104 (Couple)\n\nCheck-in: 2026-10-28 at 12:00\nCheck-out: 2026-10-29\n\nGuests: 2\nRooms: 1\n\nTotal Amount: ₹1500\n\nPlease check the admin panel for complete booking details.",
+      "status": "sent",
+      "provider_message_id": "wamid.HBgL_1791052767507_2k83j0",
+      "error_message": null,
+      "attempts": 1,
+      "created_at": "2026-10-03T18:39:27.503Z",
+      "sent_at": "2026-10-03T18:39:27.507Z"
     }
   ],
-  "nextBookingSeq": 15
+  "nextBookingSeq": 16
 }
