@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=1280, initial-scale=0.35, maximum-scale=3.0, user-scalable=yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
   <title>Deepak Hotels Group — Master Admin Control Panel</title>
 
   <!-- Google Fonts -->
@@ -57,7 +57,8 @@
       color: var(--text);
       line-height: 1.5;
       min-height: 100vh;
-      min-width: 1200px;
+      width: 100%;
+      overflow-x: hidden;
       display: flex;
     }
 
@@ -447,23 +448,198 @@
       position: fixed;
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(11, 17, 29, 0.82);
+      width: 100%;
+      height: 100%;
+      background: rgba(11, 17, 29, 0.85);
       backdrop-filter: blur(8px);
-      z-index: 9999;
-      display: flex;
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 99999;
+      display: none;
       align-items: center;
       justify-content: center;
       padding: 20px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
     }
 
     .modal-backdrop.active {
-      opacity: 1;
-      pointer-events: auto;
+      display: flex !important;
+    }
+
+    /* MODAL FORM STYLING */
+    .modal-form-group {
+      margin-bottom: 16px;
+      text-align: left;
+    }
+
+    .modal-form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+
+    .modal-form-control {
+      width: 100%;
+      background: #F8FAFC;
+      border: 1px solid #CBD5E1;
+      color: #0B111D;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .modal-form-control:focus {
+      border-color: #D4AF37;
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+    }
+
+    /* MOBILE NAVIGATION & RESPONSIVE ADMIN STYLES */
+    .admin-mobile-toggle {
+      display: none;
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      color: var(--gold);
+      font-size: 1.2rem;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 998;
+    }
+
+    .sidebar-overlay.active {
+      display: block;
+    }
+
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    @media (max-width: 991px) {
+      body {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: -280px;
+        width: 270px;
+        height: 100vh;
+        z-index: 999;
+        transition: left 0.3s ease;
+        box-shadow: var(--shadow);
+      }
+
+      .sidebar.active {
+        left: 0;
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 16px;
+        width: 100%;
+      }
+
+      .admin-header {
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .admin-mobile-toggle {
+        display: flex;
+      }
+
+      .admin-page-title {
+        font-size: 1.35rem;
+      }
+
+      .user-pill {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .stat-card {
+        padding: 14px;
+        gap: 12px;
+      }
+
+      .stat-icon {
+        width: 44px;
+        height: 44px;
+        font-size: 1.2rem;
+      }
+
+      .stat-val {
+        font-size: 1.4rem;
+      }
+
+      .card-box {
+        padding: 16px;
+        margin-bottom: 20px;
+      }
+
+      .card-title {
+        font-size: 1.1rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .modal-window,
+      #modalBox {
+        max-width: 94vw !important;
+        width: 94vw !important;
+        padding: 20px 16px !important;
+        margin: 10px auto !important;
+      }
+
+      .data-table th,
+      .data-table td {
+        padding: 10px 12px;
+        font-size: 0.82rem;
+        white-space: nowrap;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .btn {
+        padding: 10px 14px;
+        font-size: 0.85rem;
+      }
     }
   </style>
 </head>
@@ -495,6 +671,9 @@
 
   <!-- ADMIN APP MAIN LAYOUT -->
   <div id="adminApp" style="display:none;">
+    <!-- SIDEBAR OVERLAY -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeAdminSidebar()"></div>
+
     <!-- SIDEBAR -->
     <aside class="sidebar">
       <div class="sidebar-brand">
@@ -545,7 +724,12 @@
     <!-- MAIN CONTENT AREA -->
     <main class="main-content">
       <div class="admin-header">
-        <h1 class="admin-page-title" id="adminPageTitle">Dashboard Overview</h1>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <button class="admin-mobile-toggle" id="adminMobileToggle" onclick="toggleAdminSidebar()" aria-label="Toggle navigation">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <h1 class="admin-page-title" id="adminPageTitle">Dashboard Overview</h1>
+        </div>
         <div class="user-pill">
           <span style="font-weight:700;" id="adminUsernameDisplay">deepakhotelgroup</span>
           <button class="btn btn-secondary btn-sm" onclick="logoutAdmin()"><i class="fa-solid fa-power-off"></i>
@@ -694,7 +878,7 @@
         <div class="card-box">
           <div class="card-title">
             <span>Manage Properties</span>
-            <button class="btn btn-gold btn-sm" onclick="showAddHotelModal()"><i class="fa-solid fa-plus"></i> Add
+            <button class="btn btn-gold btn-sm" onclick="openHotelModal()"><i class="fa-solid fa-plus"></i> Add
               Property</button>
           </div>
           <div style="overflow-x:auto;">
@@ -720,7 +904,7 @@
         <div class="card-box">
           <div class="card-title">
             <span>Rooms Management</span>
-            <button class="btn btn-gold btn-sm" onclick="showAddRoomModal()"><i class="fa-solid fa-plus"></i> Add New
+            <button class="btn btn-gold btn-sm" onclick="openRoomModal()"><i class="fa-solid fa-plus"></i> Add New
               Room</button>
           </div>
           <div style="overflow-x:auto;">
@@ -748,12 +932,8 @@
         <div class="card-box">
           <div class="card-title">
             <span>Photo Gallery Management</span>
-            <div>
-              <input type="file" id="galleryUploadInput" accept="image/*" style="display:none;"
-                onchange="uploadGalleryImage(this)">
-              <button class="btn btn-gold btn-sm" onclick="document.getElementById('galleryUploadInput').click()"><i
-                  class="fa-solid fa-upload"></i> Upload Image</button>
-            </div>
+            <button class="btn btn-gold btn-sm" onclick="openGalleryModal()"><i class="fa-solid fa-plus"></i> Add
+              Photo</button>
           </div>
           <div style="overflow-x:auto;">
             <table class="data-table">
@@ -803,7 +983,7 @@
         <div class="card-box">
           <div class="card-title">
             <span>All Hotel Videos Library</span>
-            <button class="btn btn-gold btn-sm" onclick="showAddVideoModal()"><i class="fa-solid fa-plus"></i> Add
+            <button class="btn btn-gold btn-sm" onclick="openVideoModal()"><i class="fa-solid fa-plus"></i> Add
               Video</button>
           </div>
           <div style="overflow-x:auto;">
@@ -828,7 +1008,7 @@
         <div class="card-box">
           <div class="card-title">
             <span>Amenities Management</span>
-            <button class="btn btn-gold btn-sm" onclick="showAddAmenityModal()"><i class="fa-solid fa-plus"></i> Add
+            <button class="btn btn-gold btn-sm" onclick="openAmenityModal()"><i class="fa-solid fa-plus"></i> Add
               Amenity</button>
           </div>
           <div style="overflow-x:auto;">
@@ -853,7 +1033,7 @@
         <div class="card-box">
           <div class="card-title">
             <span>Offers & Deals Management</span>
-            <button class="btn btn-gold btn-sm" onclick="showAddOfferModal()"><i class="fa-solid fa-plus"></i> Add
+            <button class="btn btn-gold btn-sm" onclick="openOfferModal()"><i class="fa-solid fa-plus"></i> Add
               Offer</button>
           </div>
           <div style="overflow-x:auto;">
@@ -879,7 +1059,7 @@
         <div class="card-box">
           <div class="card-title">
             <span>Guest Reviews & Testimonials</span>
-            <button class="btn btn-gold btn-sm" onclick="showAddReviewModal()"><i class="fa-solid fa-plus"></i> Add
+            <button class="btn btn-gold btn-sm" onclick="openReviewModal()"><i class="fa-solid fa-plus"></i> Add
               Review</button>
           </div>
           <div style="overflow-x:auto;">
@@ -929,7 +1109,7 @@
         <div class="card-box">
           <div class="card-title">
             <span>Pure Veg Food Menu Management</span>
-            <button class="btn btn-gold btn-sm" onclick="showAddFoodModal()"><i class="fa-solid fa-plus"></i> Add
+            <button class="btn btn-gold btn-sm" onclick="openFoodModal()"><i class="fa-solid fa-plus"></i> Add
               Dish</button>
           </div>
           <div style="overflow-x:auto;">
@@ -1072,164 +1252,461 @@
     </div>
   </div>
 
-  <!-- JAVASCRIPT ENGINE -->
-  <script>
-    'use strict';
-    let ADMIN_DATA = { settings: {}, hero: {}, hotels: [], rooms: [], gallery: [], videos: [], amenities: [], offers: [], reviews: [], bookings: [], menuItems: [] };
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toastContainer"
+    style="position:fixed; top:20px; right:20px; z-index:10000; display:flex; flex-direction:column; gap:10px; pointer-events:none;">
+  </div>
 
-    // Check Active Session on Page Load
-    async function checkSession() {
-      try {
-        const res = await fetch('/api/admin/me');
-        const data = await res.json();
-        if (data.ok) {
-          document.getElementById('loginScreen').style.display = 'none';
-          document.getElementById('adminApp').style.display = 'flex';
-          if (document.getElementById('adminUsernameDisplay')) {
-            document.getElementById('adminUsernameDisplay').textContent = data.username || 'deepakhotelgroup';
+  <!-- ADMIN GENERIC FORM MODAL -->
+  <div class="modal-backdrop" id="adminFormModalBackdrop">
+    <div class="modal-window"
+      style="max-width: 620px; width: 92%; background: #FFFFFF; color: #0B111D; padding: 28px; border-radius: 20px; box-shadow: 0 25px 70px rgba(0,0,0,0.5); position: relative; max-height: 90vh; overflow-y: auto;">
+      <button class="modal-close" onclick="closeAdminFormModal()"
+        style="background: #F1F5F9; color: #475569; width: 36px; height: 36px; border-radius: 50%; border: none; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; position: absolute; top: 20px; right: 20px;">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div
+        style="font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: #D4AF37; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px;"
+        id="adminModalCategory">ADMIN MANAGEMENT</div>
+      <h2
+        style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.5rem; font-weight: 800; color: #0B111D; margin-bottom: 16px;"
+        id="adminModalTitle">Form Modal Title</h2>
+
+      <!-- INLINE ERROR CONTAINER -->
+      <div id="adminModalError"
+        style="display:none; background: #FEE2E2; border: 1px solid #EF4444; color: #991B1B; padding: 12px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 600; margin-bottom: 16px;">
+      </div>
+
+      <form id="adminFormModalForm" onsubmit="event.preventDefault();">
+        <div id="adminFormModalBody">
+          <!-- Form fields dynamically rendered here -->
+        </div>
+
+        <div
+          style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; padding-top: 16px; border-top: 1px solid #E2E8F0;">
+          <button type="button" class="btn"
+            style="background: #E2E8F0; color: #334155; font-weight: 600; padding: 10px 18px;"
+            onclick="closeAdminFormModal()">Cancel</button>
+          <button type="submit" class="btn"
+            style="background: linear-gradient(135deg, #D4AF37, #C5A059); color: #0B111D; font-weight: 700; padding: 10px 22px;"
+            id="adminModalSubmitBtn">
+            <i class="fa-solid fa-floppy-disk"></i> Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- CONFIRMATION DIALOG MODAL -->
+  <div class="modal-backdrop" id="adminConfirmModalBackdrop">
+    <div class="modal-window"
+      style="max-width: 440px; width: 90%; background: #FFFFFF; color: #0B111D; padding: 28px; border-radius: 20px; box-shadow: 0 25px 70px rgba(0,0,0,0.5); text-align: center;">
+      <div
+        style="width: 60px; height: 60px; border-radius: 50%; background: #FEE2E2; color: #EF4444; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 16px auto;"
+        id="confirmIcon">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <h3 style="font-size: 1.3rem; font-weight: 800; color: #0B111D; margin-bottom: 8px;" id="confirmTitle">
+        Confirm Action</h3>
+      <p style="color: #64748B; font-size: 0.95rem; margin-bottom: 24px; line-height: 1.5;" id="confirmMessage">
+        Are you sure you want to proceed with this operation?</p>
+
+      <div style="display: flex; gap: 12px; justify-content: center;">
+        <button type="button" class="btn"
+          style="flex:1; background: #E2E8F0; color: #334155; font-weight: 600; padding: 12px;"
+          onclick="closeConfirmModal(false)">Cancel</button>
+        <button type="button" class="btn"
+          style="flex:1; background: #EF4444; color: #FFFFFF; font-weight: 700; padding: 12px;"
+          id="confirmActionBtn">Confirm Delete</button>
+      </div>
+    </div>
+  </div>
+
+        <!-- JAVASCRIPT ENGINE -->
+        <script>
+          'use strict';
+          let ADMIN_DATA = { settings: {}, hero: {}, hotels: [], rooms: [], gallery: [], videos: [], amenities: [], offers: [], reviews: [], bookings: [], menuItems: [] };
+
+          /* =========================================================================
+             UI ENGINE: Toast Notifications, Modal Dialogs & CRUD Operations
+             ========================================================================= */
+
+          // Toast Notifications
+          function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.style.pointerEvents = 'auto';
+            toast.style.minWidth = '280px';
+            toast.style.padding = '14px 20px';
+            toast.style.borderRadius = '12px';
+            toast.style.fontSize = '0.92rem';
+            toast.style.fontWeight = '600';
+            toast.style.display = 'flex';
+            toast.style.alignItems = 'center';
+            toast.style.gap = '12px';
+            toast.style.boxShadow = '0 10px 30px rgba(0,0,0,0.4)';
+            toast.style.transition = 'all 0.3s ease';
+
+            if (type === 'error') {
+              toast.style.background = '#7F1D1D';
+              toast.style.color = '#FEE2E2';
+              toast.style.border = '1px solid #EF4444';
+              toast.innerHTML = `<i class="fa-solid fa-circle-exclamation" style="font-size:1.2rem; color:#EF4444;"></i> <span>${message}</span>`;
+            } else if (type === 'info') {
+              toast.style.background = '#1E3A8A';
+              toast.style.color = '#DBEAFE';
+              toast.style.border = '1px solid #3B82F6';
+              toast.innerHTML = `<i class="fa-solid fa-circle-info" style="font-size:1.2rem; color:#3B82F6;"></i> <span>${message}</span>`;
+            } else {
+              toast.style.background = '#064E3B';
+              toast.style.color = '#D1FAE5';
+              toast.style.border = '1px solid #10B981';
+              toast.innerHTML = `<i class="fa-solid fa-circle-check" style="font-size:1.2rem; color:#10B981;"></i> <span>${message}</span>`;
+            }
+
+            container.appendChild(toast);
+            setTimeout(() => {
+              toast.style.opacity = '0';
+              toast.style.transform = 'translateY(-10px)';
+              setTimeout(() => toast.remove(), 300);
+            }, 4000);
           }
-          loadAdminData();
-        } else {
-          document.getElementById('loginScreen').style.display = 'flex';
-          document.getElementById('adminApp').style.display = 'none';
-        }
-      } catch (e) {
-        document.getElementById('loginScreen').style.display = 'flex';
-        document.getElementById('adminApp').style.display = 'none';
-      }
-    }
 
-    // Authentication Logic
-    document.getElementById('adminLoginForm').addEventListener('submit', async function (e) {
-      e.preventDefault();
-      const u = document.getElementById('loginUsername').value;
-      const p = document.getElementById('loginPassword').value;
+          // Confirmation Dialog Modal Handler (Replaces confirm())
+          let CONFIRM_CALLBACK = null;
+          function showConfirmDialog({ title, message, actionText = 'Delete Permanently', danger = true, onConfirm }) {
+            document.getElementById('confirmTitle').textContent = title || 'Confirm Action';
+            document.getElementById('confirmMessage').textContent = message || 'Are you sure you want to proceed?';
 
-      try {
-        const res = await fetch('/api/admin/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username: u, password: p })
-        });
-        const data = await res.json();
-        if (data.ok) {
-          document.getElementById('loginScreen').style.display = 'none';
-          document.getElementById('adminApp').style.display = 'flex';
-          if (document.getElementById('adminUsernameDisplay')) {
-            document.getElementById('adminUsernameDisplay').textContent = data.username || u;
+            const actionBtn = document.getElementById('confirmActionBtn');
+            actionBtn.disabled = false;
+            actionBtn.innerHTML = `<i class="fa-solid fa-trash"></i> ${actionText}`;
+            if (danger) {
+              actionBtn.style.background = '#EF4444';
+              actionBtn.style.color = '#FFFFFF';
+            } else {
+              actionBtn.style.background = 'linear-gradient(135deg, #D4AF37, #C5A059)';
+              actionBtn.style.color = '#0B111D';
+            }
+
+            CONFIRM_CALLBACK = onConfirm;
+            const backdrop = document.getElementById('adminConfirmModalBackdrop');
+            if (backdrop) {
+              backdrop.style.display = 'flex';
+              backdrop.classList.add('active');
+            }
           }
-          loadAdminData();
-        } else {
-          alert('Login failed: ' + (data.error || 'Invalid credentials'));
-        }
-      } catch (err) {
-        alert('Server login error: ' + err.message);
-      }
-    });
 
-    function logoutAdmin() {
-      fetch('/api/admin/logout', { method: 'POST' }).then(() => location.reload());
-    }
+          function closeConfirmModal() {
+            const backdrop = document.getElementById('adminConfirmModalBackdrop');
+            if (backdrop) {
+              backdrop.classList.remove('active');
+              backdrop.style.display = 'none';
+            }
+            CONFIRM_CALLBACK = null;
+          }
 
-    // Tab Navigation
-    document.querySelectorAll('.sidebar-link').forEach(link => {
-      link.addEventListener('click', function () {
-        document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+          document.getElementById('confirmActionBtn').onclick = async () => {
+            const actionBtn = document.getElementById('confirmActionBtn');
+            const origHtml = actionBtn.innerHTML;
+            if (typeof CONFIRM_CALLBACK === 'function') {
+              actionBtn.disabled = true;
+              actionBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing...`;
+              try {
+                await CONFIRM_CALLBACK();
+              } catch (e) {
+                showToast('Operation error: ' + e.message, 'error');
+              } finally {
+                actionBtn.disabled = false;
+                actionBtn.innerHTML = origHtml;
+                closeConfirmModal();
+              }
+            } else {
+              closeConfirmModal();
+            }
+          };
 
-        this.classList.add('active');
-        const tab = this.dataset.tab;
-        const targetTab = document.getElementById('tab-' + tab);
-        if (targetTab) targetTab.classList.add('active');
-        document.getElementById('adminPageTitle').textContent = this.innerText.trim();
-      });
-    });
+          // Generic Form Modal Handlers
+          let CURRENT_MODAL_SUBMIT_HANDLER = null;
 
-    // File Upload Handler
-    async function uploadFile(fileInput, targetId) {
-      const file = fileInput.files[0];
-      if (!file) return;
+          function openAdminFormModal({ category, title, bodyHtml, submitText, onSubmit }) {
+            document.getElementById('adminModalCategory').textContent = category || 'MANAGEMENT';
+            document.getElementById('adminModalTitle').textContent = title || 'Form Modal';
+            document.getElementById('adminFormModalBody').innerHTML = bodyHtml;
 
-      const reader = new FileReader();
-      reader.onload = async function () {
-        try {
-          const res = await fetch('/api/upload', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ filename: file.name, base64: reader.result })
+            const submitBtn = document.getElementById('adminModalSubmitBtn');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = submitText ? `<i class="fa-solid fa-floppy-disk"></i> ${submitText}` : `<i class="fa-solid fa-floppy-disk"></i> Save Changes`;
+
+            const errContainer = document.getElementById('adminModalError');
+            errContainer.style.display = 'none';
+            errContainer.textContent = '';
+
+            CURRENT_MODAL_SUBMIT_HANDLER = onSubmit;
+            const backdrop = document.getElementById('adminFormModalBackdrop');
+            if (backdrop) {
+              backdrop.style.display = 'flex';
+              backdrop.classList.add('active');
+            }
+          }
+
+          function closeAdminFormModal() {
+            const backdrop = document.getElementById('adminFormModalBackdrop');
+            if (backdrop) {
+              backdrop.classList.remove('active');
+              backdrop.style.display = 'none';
+            }
+            CURRENT_MODAL_SUBMIT_HANDLER = null;
+          }
+
+          function showModalError(msg) {
+            const errContainer = document.getElementById('adminModalError');
+            errContainer.textContent = msg;
+            errContainer.style.display = 'block';
+          }
+
+          document.getElementById('adminFormModalForm').onsubmit = async function (e) {
+            e.preventDefault();
+            if (typeof CURRENT_MODAL_SUBMIT_HANDLER === 'function') {
+              const submitBtn = document.getElementById('adminModalSubmitBtn');
+              const origHtml = submitBtn.innerHTML;
+              submitBtn.disabled = true;
+              submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Saving...`;
+              try {
+                const success = await CURRENT_MODAL_SUBMIT_HANDLER();
+                if (success !== false) {
+                  closeAdminFormModal();
+                }
+              } catch (err) {
+                showModalError(err.message || 'Operation failed');
+              } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = origHtml;
+              }
+            }
+          };
+
+          // Close Modals on Backdrop Click or Escape Key
+          ['adminFormModalBackdrop', 'adminConfirmModalBackdrop', 'receiptModalBackdrop'].forEach(id => {
+            const backdrop = document.getElementById(id);
+            if (backdrop) {
+              backdrop.addEventListener('click', function (e) {
+                if (e.target === this) {
+                  this.classList.remove('active');
+                  this.style.display = 'none';
+                }
+              });
+            }
           });
-          const data = await res.json();
-          if (data.ok) {
-            document.getElementById(targetId).value = data.url;
-            alert('File uploaded successfully!');
-          } else {
-            alert('Upload error: ' + data.error);
+
+          document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+              closeAdminFormModal();
+              closeConfirmModal();
+              closeReceiptModal();
+            }
+          });
+
+          // Check Active Session on Page Load
+          async function checkSession() {
+            try {
+              const res = await fetch('/api/admin/me');
+              const data = await res.json();
+              if (data.ok) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('adminApp').style.display = 'flex';
+                if (document.getElementById('adminUsernameDisplay')) {
+                  document.getElementById('adminUsernameDisplay').textContent = data.username || 'deepakhotelgroup';
+                }
+                loadAdminData();
+              } else {
+                document.getElementById('loginScreen').style.display = 'flex';
+                document.getElementById('adminApp').style.display = 'none';
+              }
+            } catch (e) {
+              document.getElementById('loginScreen').style.display = 'flex';
+              document.getElementById('adminApp').style.display = 'none';
+            }
           }
-        } catch (e) {
-          alert('Upload failed: ' + e.message);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
 
-    // Load Admin Data from Server APIs
-    async function loadAdminData() {
-      try {
-        const [settRes, heroRes, hotRes, rmRes, galRes, vidRes, amRes, offRes, revRes, bkRes, menuRes] = await Promise.all([
-          fetch('/api/settings').then(r => r.json()),
-          fetch('/api/hero').then(r => r.json()),
-          fetch('/api/hotels').then(r => r.json()),
-          fetch('/api/rooms').then(r => r.json()),
-          fetch('/api/gallery').then(r => r.json()),
-          fetch('/api/videos').then(r => r.json()),
-          fetch('/api/amenities').then(r => r.json()),
-          fetch('/api/offers').then(r => r.json()),
-          fetch('/api/reviews').then(r => r.json()),
-          fetch('/api/bookings').then(r => r.json()),
-          fetch('/api/menu/all').then(r => r.json())
-        ]);
+          // Authentication Logic
+          document.getElementById('adminLoginForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const u = document.getElementById('loginUsername').value;
+            const p = document.getElementById('loginPassword').value;
 
-        ADMIN_DATA.settings = settRes.settings || {};
-        ADMIN_DATA.hero = heroRes.hero || {};
-        ADMIN_DATA.hotels = hotRes.hotels || [];
-        ADMIN_DATA.rooms = rmRes.rooms || [];
-        ADMIN_DATA.gallery = galRes.gallery || [];
-        ADMIN_DATA.videos = vidRes.videos || [];
-        ADMIN_DATA.amenities = amRes.amenities || [];
-        ADMIN_DATA.offers = offRes.offers || [];
-        ADMIN_DATA.reviews = revRes.reviews || [];
-        ADMIN_DATA.bookings = bkRes.bookings || [];
-        ADMIN_DATA.menuItems = menuRes.items || [];
+            try {
+              const res = await fetch('/api/admin/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: u, password: p })
+              });
+              const data = await res.json();
+              if (data.ok) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('adminApp').style.display = 'flex';
+                if (document.getElementById('adminUsernameDisplay')) {
+                  document.getElementById('adminUsernameDisplay').textContent = data.username || u;
+                }
+                showToast('Login successful!');
+                loadAdminData();
+              } else {
+                showToast('Login failed: ' + (data.error || 'Invalid credentials'), 'error');
+              }
+            } catch (err) {
+              showToast('Server login error: ' + err.message, 'error');
+            }
+          });
 
-        renderDashboardStats();
-        populateSettingsForms();
-        renderHotelsTable();
-        renderRoomsTable();
-        renderGalleryTable();
-        renderVideosTable();
-        renderAmenitiesTable();
-        renderOffersTable();
-        renderReviewsTable();
-        renderBookingsTable();
-        renderFoodTable();
-      } catch (err) {
-        console.error('Failed to load admin data:', err);
-      }
-    }
+          function logoutAdmin() {
+            fetch('/api/admin/logout', { method: 'POST' }).then(() => location.reload());
+          }
 
-    function renderDashboardStats() {
-      document.getElementById('statBookings').textContent = ADMIN_DATA.bookings.length;
-      document.getElementById('statRooms').textContent = ADMIN_DATA.rooms.length;
-      document.getElementById('statHotels').textContent = ADMIN_DATA.hotels.length;
-      document.getElementById('statOffers').textContent = ADMIN_DATA.offers.filter(o => o.is_active).length;
+          function toggleAdminSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (sidebar && overlay) {
+              sidebar.classList.toggle('active');
+              overlay.classList.toggle('active');
+            }
+          }
 
-      const body = document.getElementById('dashboardRecentBookingsBody');
-      body.innerHTML = '';
-      ADMIN_DATA.bookings.slice(-8).reverse().forEach(b => {
-        const tr = document.createElement('tr');
-        tr.style.cursor = 'pointer';
-        tr.onclick = () => showBookingReceiptModal(b.id);
-        tr.innerHTML = `
+          function closeAdminSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (sidebar && overlay) {
+              sidebar.classList.remove('active');
+              overlay.classList.remove('active');
+            }
+          }
+
+          // Tab Navigation
+          document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', function () {
+              document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+              document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+
+              this.classList.add('active');
+              const tab = this.dataset.tab;
+              const targetTab = document.getElementById('tab-' + tab);
+              if (targetTab) targetTab.classList.add('active');
+              document.getElementById('adminPageTitle').textContent = this.innerText.trim();
+              closeAdminSidebar();
+            });
+          });
+
+          // File Upload Handler
+          async function uploadFile(fileInput, targetId) {
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function () {
+              try {
+                const res = await fetch('/api/upload', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ filename: file.name, base64: reader.result })
+                });
+                const data = await res.json();
+                if (data.ok) {
+                  document.getElementById(targetId).value = data.url;
+                  showToast('File uploaded successfully!');
+                } else {
+                  showToast('Upload error: ' + data.error, 'error');
+                }
+              } catch (e) {
+                showToast('Upload failed: ' + e.message, 'error');
+              }
+            };
+            reader.readAsDataURL(file);
+          }
+
+          async function uploadModalFile(fileInput, targetId) {
+            const file = fileInput.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async function () {
+              try {
+                const res = await fetch('/api/upload', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ filename: file.name, base64: reader.result })
+                });
+                const data = await res.json();
+                if (data.ok) {
+                  document.getElementById(targetId).value = data.url;
+                  showToast('File uploaded successfully!');
+                } else {
+                  showToast('Upload error: ' + data.error, 'error');
+                }
+              } catch (e) {
+                showToast('Upload failed: ' + e.message, 'error');
+              }
+            };
+            reader.readAsDataURL(file);
+          }
+
+          // Load Admin Data from Server APIs
+          async function loadAdminData() {
+            try {
+              const [settRes, heroRes, hotRes, rmRes, galRes, vidRes, amRes, offRes, revRes, bkRes, menuRes] = await Promise.all([
+                fetch('/api/settings').then(r => r.json()),
+                fetch('/api/hero').then(r => r.json()),
+                fetch('/api/hotels').then(r => r.json()),
+                fetch('/api/rooms').then(r => r.json()),
+                fetch('/api/gallery').then(r => r.json()),
+                fetch('/api/videos').then(r => r.json()),
+                fetch('/api/amenities').then(r => r.json()),
+                fetch('/api/offers').then(r => r.json()),
+                fetch('/api/reviews').then(r => r.json()),
+                fetch('/api/bookings').then(r => r.json()),
+                fetch('/api/menu/all').then(r => r.json())
+              ]);
+
+              ADMIN_DATA.settings = settRes.settings || {};
+              ADMIN_DATA.hero = heroRes.hero || {};
+              ADMIN_DATA.hotels = hotRes.hotels || [];
+              ADMIN_DATA.rooms = rmRes.rooms || [];
+              ADMIN_DATA.gallery = galRes.gallery || [];
+              ADMIN_DATA.videos = vidRes.videos || [];
+              ADMIN_DATA.amenities = amRes.amenities || [];
+              ADMIN_DATA.offers = offRes.offers || [];
+              ADMIN_DATA.reviews = revRes.reviews || [];
+              ADMIN_DATA.bookings = bkRes.bookings || [];
+              ADMIN_DATA.menuItems = menuRes.items || [];
+
+              renderDashboardStats();
+              populateSettingsForms();
+              renderHotelsTable();
+              renderRoomsTable();
+              renderGalleryTable();
+              renderVideosTable();
+              renderAmenitiesTable();
+              renderOffersTable();
+              renderReviewsTable();
+              renderBookingsTable();
+              renderFoodTable();
+            } catch (err) {
+              console.error('Failed to load admin data:', err);
+            }
+          }
+
+          function renderDashboardStats() {
+            document.getElementById('statBookings').textContent = ADMIN_DATA.bookings.length;
+            document.getElementById('statRooms').textContent = ADMIN_DATA.rooms.length;
+            document.getElementById('statHotels').textContent = ADMIN_DATA.hotels.length;
+            document.getElementById('statOffers').textContent = ADMIN_DATA.offers.filter(o => o.is_active).length;
+
+            const body = document.getElementById('dashboardRecentBookingsBody');
+            body.innerHTML = '';
+            ADMIN_DATA.bookings.slice(-8).reverse().forEach(b => {
+              const tr = document.createElement('tr');
+              tr.style.cursor = 'pointer';
+              tr.onclick = () => showBookingReceiptModal(b.id);
+              tr.innerHTML = `
           <td><strong style="color:var(--gold);">#${b.id}</strong></td>
           <td>${b.name}</td>
           <td>${b.phone}</td>
@@ -1242,214 +1719,257 @@
             </button>
           </td>
         `;
-        body.appendChild(tr);
-      });
-    }
+              body.appendChild(tr);
+            });
+          }
 
-    function populateSettingsForms() {
-      const s = ADMIN_DATA.settings;
-      document.getElementById('sett_hotel_name').value = s.hotel_name || '';
-      document.getElementById('sett_tagline').value = s.tagline || '';
-      document.getElementById('sett_phone').value = s.phone || '';
-      document.getElementById('sett_email').value = s.email || '';
-      document.getElementById('sett_logo').value = s.logo || '';
-      document.getElementById('sett_favicon').value = s.favicon || '';
-      document.getElementById('sett_address').value = s.address || '';
-      document.getElementById('sett_footer_text').value = s.footer_text || '';
+          function populateSettingsForms() {
+            const s = ADMIN_DATA.settings;
+            document.getElementById('sett_hotel_name').value = s.hotel_name || '';
+            document.getElementById('sett_tagline').value = s.tagline || '';
+            document.getElementById('sett_phone').value = s.phone || '';
+            document.getElementById('sett_email').value = s.email || '';
+            document.getElementById('sett_logo').value = s.logo || '';
+            document.getElementById('sett_favicon').value = s.favicon || '';
+            document.getElementById('sett_address').value = s.address || '';
+            document.getElementById('sett_footer_text').value = s.footer_text || '';
 
-      const h = ADMIN_DATA.hero;
-      document.getElementById('hero_title').value = h.title || '';
-      document.getElementById('hero_subtitle').value = h.subtitle || '';
-      document.getElementById('hero_bg_image').value = h.bg_image || '';
-      document.getElementById('hero_cta_text').value = h.cta_text || '';
-    }
+            const h = ADMIN_DATA.hero;
+            document.getElementById('hero_title').value = h.title || '';
+            document.getElementById('hero_subtitle').value = h.subtitle || '';
+            document.getElementById('hero_bg_image').value = h.bg_image || '';
+            document.getElementById('hero_cta_text').value = h.cta_text || '';
+          }
 
-    // Save Website Settings
-    document.getElementById('settingsForm').addEventListener('submit', async function (e) {
-      e.preventDefault();
-      const body = {
-        hotel_name: document.getElementById('sett_hotel_name').value,
-        tagline: document.getElementById('sett_tagline').value,
-        phone: document.getElementById('sett_phone').value,
-        email: document.getElementById('sett_email').value,
-        logo: document.getElementById('sett_logo').value,
-        favicon: document.getElementById('sett_favicon').value,
-        address: document.getElementById('sett_address').value,
-        footer_text: document.getElementById('sett_footer_text').value
-      };
-      await fetch('/api/settings', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-      alert('Settings updated in SQL Database successfully!');
-    });
+          // Save Website Settings
+          document.getElementById('settingsForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const body = {
+              hotel_name: document.getElementById('sett_hotel_name').value,
+              tagline: document.getElementById('sett_tagline').value,
+              phone: document.getElementById('sett_phone').value,
+              email: document.getElementById('sett_email').value,
+              logo: document.getElementById('sett_logo').value,
+              favicon: document.getElementById('sett_favicon').value,
+              address: document.getElementById('sett_address').value,
+              footer_text: document.getElementById('sett_footer_text').value
+            };
+            await fetch('/api/settings', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+            showToast('Website Settings updated in SQL Database successfully!');
+          });
 
-    // Save Hero Settings
-    document.getElementById('heroForm').addEventListener('submit', async function (e) {
-      e.preventDefault();
-      const body = {
-        title: document.getElementById('hero_title').value,
-        subtitle: document.getElementById('hero_subtitle').value,
-        bg_image: document.getElementById('hero_bg_image').value,
-        cta_text: document.getElementById('hero_cta_text').value
-      };
-      await fetch('/api/hero', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-      alert('Hero settings updated in SQL Database successfully!');
-    });
+          // Save Hero Settings
+          document.getElementById('heroForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const body = {
+              title: document.getElementById('hero_title').value,
+              subtitle: document.getElementById('hero_subtitle').value,
+              bg_image: document.getElementById('hero_bg_image').value,
+              cta_text: document.getElementById('hero_cta_text').value
+            };
+            await fetch('/api/hero', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+            showToast('Hero settings updated in SQL Database successfully!');
+          });
 
-    // Render Tables
-    function renderHotelsTable() {
-      const tbody = document.getElementById('hotelsTableBody');
-      tbody.innerHTML = '';
-      ADMIN_DATA.hotels.forEach(h => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${h.id}</td><td><strong>${h.name}</strong></td><td>${h.tag || ''}</td><td>${h.phone || ''}</td><td>${h.locality || ''}</td>
-          <td><button class="btn btn-danger btn-sm" onclick="deleteHotel('${h.id}')">Delete</button></td>
+          // Render Tables
+          function renderHotelsTable() {
+            const tbody = document.getElementById('hotelsTableBody');
+            tbody.innerHTML = '';
+            ADMIN_DATA.hotels.forEach(h => {
+              const tr = document.createElement('tr');
+              tr.innerHTML = `
+          <td><strong>${h.id}</strong></td>
+          <td><strong>${h.name}</strong></td>
+          <td>${h.tag || ''}</td>
+          <td>${h.phone || ''}</td>
+          <td>${h.locality || ''}</td>
+          <td>
+            <button class="btn btn-gold btn-sm" onclick="openHotelModal('${h.id}')" style="margin-right:6px;"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="confirmDeleteHotel('${h.id}')"><i class="fa-solid fa-trash"></i> Delete</button>
+          </td>
         `;
-        tbody.appendChild(tr);
-      });
-    }
+              tbody.appendChild(tr);
+            });
+          }
 
-    function renderRoomsTable() {
-      const tbody = document.getElementById('roomsTableBody');
-      tbody.innerHTML = '';
-      ADMIN_DATA.rooms.forEach(r => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td><strong>${r.id}</strong></td><td>${r.hotel}</td><td>${r.cat}</td><td>${r.ac ? 'Yes' : 'No'}</td>
-          <td>₹${r.price24}</td><td>₹${r.price6}</td><td>${r.status}</td>
-          <td><button class="btn btn-danger btn-sm" onclick="deleteRoom('${r.id}')">Delete</button></td>
+          function renderRoomsTable() {
+            const tbody = document.getElementById('roomsTableBody');
+            tbody.innerHTML = '';
+            ADMIN_DATA.rooms.forEach(r => {
+              const hotel = ADMIN_DATA.hotels.find(h => h.id === r.hotel || h.name === r.hotel);
+              const hotelName = hotel ? hotel.name : r.hotel;
+
+              const tr = document.createElement('tr');
+              tr.innerHTML = `
+          <td><strong style="color:var(--gold);">${r.id}</strong></td>
+          <td><strong>${hotelName}</strong></td>
+          <td><span class="badge" style="background:#1E293B; color:#F8FAFC; border:1px solid #475569;">${r.cat}</span></td>
+          <td>${r.ac ? '<span style="color:#10B981; font-weight:700;">AC</span>' : '<span style="color:#94A3B8;">Non-AC</span>'}</td>
+          <td>₹${r.price24}</td>
+          <td>₹${r.price6}</td>
+          <td><span class="badge ${r.status === 'available' ? 'badge-confirmed' : 'badge-pending'}">${(r.status || 'available').toUpperCase()}</span></td>
+          <td>
+            <button class="btn btn-gold btn-sm" onclick="openRoomModal('${r.id}')" style="margin-right:6px;"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="confirmDeleteRoom('${r.id}')"><i class="fa-solid fa-trash"></i> Delete</button>
+          </td>
         `;
-        tbody.appendChild(tr);
-      });
-    }
+              tbody.appendChild(tr);
+            });
+          }
 
-    function renderGalleryTable() {
-      const tbody = document.getElementById('galleryTableBody');
-      tbody.innerHTML = '';
-      ADMIN_DATA.gallery.forEach(g => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td><img src="${g.image}" style="height:40px; border-radius:4px;"></td><td>${g.title}</td><td>${g.category}</td><td>${g.display_order}</td>
-          <td><button class="btn btn-danger btn-sm" onclick="deleteGalleryItem('${g.id}')">Delete</button></td>
+          function renderGalleryTable() {
+            const tbody = document.getElementById('galleryTableBody');
+            tbody.innerHTML = '';
+            ADMIN_DATA.gallery.forEach(g => {
+              const tr = document.createElement('tr');
+              tr.innerHTML = `
+          <td><img src="${g.image}" style="height:44px; width:60px; object-fit:cover; border-radius:6px;"></td>
+          <td><strong>${g.title || 'Untitled'}</strong></td>
+          <td>${g.category || 'General'}</td>
+          <td>${g.display_order || 1}</td>
+          <td>
+            <button class="btn btn-gold btn-sm" onclick="openGalleryModal('${g.id}')" style="margin-right:6px;"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="confirmDeleteGalleryItem('${g.id}')"><i class="fa-solid fa-trash"></i> Delete</button>
+          </td>
         `;
-        tbody.appendChild(tr);
-      });
-    }
+              tbody.appendChild(tr);
+            });
+          }
 
-    function renderVideosTable() {
-      const tbody = document.getElementById('videosTableBody');
-      tbody.innerHTML = '';
-      ADMIN_DATA.videos.forEach(v => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
+          function renderVideosTable() {
+            const tbody = document.getElementById('videosTableBody');
+            tbody.innerHTML = '';
+            ADMIN_DATA.videos.forEach(v => {
+              const tr = document.createElement('tr');
+              tr.innerHTML = `
           <td><strong>${v.title}</strong></td>
-          <td style="max-width:220px; overflow:hidden; text-overflow:ellipsis;">${v.video_url}</td>
+          <td style="max-width:220px; overflow:hidden; text-overflow:ellipsis; font-size:0.85rem;">${v.video_url}</td>
           <td><span class="badge ${v.is_homepage ? 'badge-confirmed' : 'badge-pending'}">${v.is_homepage ? 'Featured About Video' : 'Standard'}</span></td>
           <td>${v.is_active ? 'Active' : 'Inactive'}</td>
           <td>
-            <button class="btn btn-secondary btn-sm" onclick="setFeaturedVideo('${v.id}')">Set Featured</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteVideo('${v.id}')">Delete</button>
+            <button class="btn btn-gold btn-sm" onclick="openVideoModal('${v.id}')" style="margin-right:6px;"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="confirmDeleteVideo('${v.id}')"><i class="fa-solid fa-trash"></i> Delete</button>
           </td>
         `;
-        tbody.appendChild(tr);
-      });
+              tbody.appendChild(tr);
+            });
 
-      const featVid = ADMIN_DATA.videos.find(v => v.is_homepage && v.is_active) || ADMIN_DATA.videos[0];
-      if (featVid) {
-        document.getElementById('feat_video_title').value = featVid.title || '';
-        document.getElementById('feat_video_url').value = featVid.video_url || '';
-      }
-    }
+            const featVid = ADMIN_DATA.videos.find(v => v.is_homepage && v.is_active) || ADMIN_DATA.videos[0];
+            if (featVid) {
+              document.getElementById('feat_video_title').value = featVid.title || '';
+              document.getElementById('feat_video_url').value = featVid.video_url || '';
+            }
+          }
 
-    async function setFeaturedVideo(id) {
-      await fetch('/api/videos/' + id, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ is_homepage: true, is_active: true })
-      });
-      alert('Set as Featured About Section Hotel Video!');
-      loadAdminData();
-    }
+          async function setFeaturedVideo(id) {
+            await fetch('/api/videos/' + id, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ is_homepage: true, is_active: true })
+            });
+            showToast('Set as Featured About Section Hotel Video!');
+            loadAdminData();
+          }
 
-    async function uploadVideoFile(fileInput, targetId) {
-      const file = fileInput.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = async function () {
-        const upRes = await fetch('/api/upload', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ filename: file.name, base64: reader.result })
-        }).then(r => r.json());
-        if (upRes.ok) {
-          document.getElementById(targetId).value = upRes.url;
-          alert('Video file uploaded successfully to server disk!');
-        } else {
-          alert('Upload failed: ' + upRes.error);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
+          async function uploadVideoFile(fileInput, targetId) {
+            const file = fileInput.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async function () {
+              const upRes = await fetch('/api/upload', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filename: file.name, base64: reader.result })
+              }).then(r => r.json());
+              if (upRes.ok) {
+                document.getElementById(targetId).value = upRes.url;
+                showToast('Video file uploaded successfully to server disk!');
+              } else {
+                showToast('Upload failed: ' + upRes.error, 'error');
+              }
+            };
+            reader.readAsDataURL(file);
+          }
 
-    document.getElementById('featuredVideoForm').addEventListener('submit', async function (e) {
-      e.preventDefault();
-      const title = document.getElementById('feat_video_title').value;
-      const url = document.getElementById('feat_video_url').value;
-      await fetch('/api/videos', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, video_url: url, is_homepage: true, is_active: true })
-      });
-      alert('Featured Hotel Video saved to SQL Database and set for About Section!');
-      loadAdminData();
-    });
+          document.getElementById('featuredVideoForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const title = document.getElementById('feat_video_title').value;
+            const url = document.getElementById('feat_video_url').value;
+            await fetch('/api/videos', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ title, video_url: url, is_homepage: true, is_active: true })
+            });
+            showToast('Featured Hotel Video saved to SQL Database and set for About Section!');
+            loadAdminData();
+          });
 
-    function renderAmenitiesTable() {
-      const tbody = document.getElementById('amenitiesTableBody');
-      tbody.innerHTML = '';
-      ADMIN_DATA.amenities.forEach(a => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td><i class="fa-solid fa-${a.icon}"></i></td><td><strong>${a.name}</strong></td><td>${a.category}</td><td>${a.desc || ''}</td>
-          <td><button class="btn btn-danger btn-sm" onclick="deleteAmenity('${a.id}')">Delete</button></td>
+          function renderAmenitiesTable() {
+            const tbody = document.getElementById('amenitiesTableBody');
+            tbody.innerHTML = '';
+            ADMIN_DATA.amenities.forEach(a => {
+              const tr = document.createElement('tr');
+              tr.innerHTML = `
+          <td><i class="fa-solid fa-${a.icon}" style="font-size:1.2rem; color:var(--gold);"></i></td>
+          <td><strong>${a.name}</strong></td>
+          <td>${a.category || 'General'}</td>
+          <td>${a.desc || ''}</td>
+          <td>
+            <button class="btn btn-gold btn-sm" onclick="openAmenityModal('${a.id}')" style="margin-right:6px;"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="confirmDeleteAmenity('${a.id}')"><i class="fa-solid fa-trash"></i> Delete</button>
+          </td>
         `;
-        tbody.appendChild(tr);
-      });
-    }
+              tbody.appendChild(tr);
+            });
+          }
 
-    function renderOffersTable() {
-      const tbody = document.getElementById('offersTableBody');
-      tbody.innerHTML = '';
-      ADMIN_DATA.offers.forEach(o => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td><strong>${o.title}</strong></td><td>${o.discount}</td><td><code>${o.code}</code></td><td>${o.valid_from} to ${o.valid_to}</td><td>${o.is_active ? 'Active' : 'Inactive'}</td>
-          <td><button class="btn btn-danger btn-sm" onclick="deleteOffer('${o.id}')">Delete</button></td>
+          function renderOffersTable() {
+            const tbody = document.getElementById('offersTableBody');
+            tbody.innerHTML = '';
+            ADMIN_DATA.offers.forEach(o => {
+              const tr = document.createElement('tr');
+              tr.innerHTML = `
+          <td><strong>${o.title}</strong></td>
+          <td><span class="badge badge-confirmed">${o.discount}</span></td>
+          <td><code style="background:#1E293B; padding:2px 6px; border-radius:4px; color:var(--gold);">${o.code}</code></td>
+          <td>${o.valid_from} to ${o.valid_to}</td>
+          <td><span class="badge ${o.is_active ? 'badge-confirmed' : 'badge-pending'}">${o.is_active ? 'Active' : 'Inactive'}</span></td>
+          <td>
+            <button class="btn btn-gold btn-sm" onclick="openOfferModal('${o.id}')" style="margin-right:6px;"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="confirmDeleteOffer('${o.id}')"><i class="fa-solid fa-trash"></i> Delete</button>
+          </td>
         `;
-        tbody.appendChild(tr);
-      });
-    }
+              tbody.appendChild(tr);
+            });
+          }
 
-    function renderReviewsTable() {
-      const tbody = document.getElementById('reviewsTableBody');
-      tbody.innerHTML = '';
-      ADMIN_DATA.reviews.forEach(r => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td><strong>${r.guest_name}</strong></td><td>${'★'.repeat(r.rating)}</td><td>${r.review_text}</td><td>${r.hotel_tag}</td>
-          <td><button class="btn btn-danger btn-sm" onclick="deleteReview('${r.id}')">Delete</button></td>
+          function renderReviewsTable() {
+            const tbody = document.getElementById('reviewsTableBody');
+            tbody.innerHTML = '';
+            ADMIN_DATA.reviews.forEach(r => {
+              const tr = document.createElement('tr');
+              tr.innerHTML = `
+          <td><strong>${r.guest_name}</strong></td>
+          <td style="color:#F59E0B;">${'★'.repeat(r.rating)}</td>
+          <td>${r.review_text}</td>
+          <td>${r.hotel_tag || 'Deepak Hotels Group'}</td>
+          <td>
+            <button class="btn btn-gold btn-sm" onclick="openReviewModal('${r.id}')" style="margin-right:6px;"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="confirmDeleteReview('${r.id}')"><i class="fa-solid fa-trash"></i> Delete</button>
+          </td>
         `;
-        tbody.appendChild(tr);
-      });
-    }
+              tbody.appendChild(tr);
+            });
+          }
 
-    function renderBookingsTable() {
-      const tbody = document.getElementById('bookingsTableBody');
-      tbody.innerHTML = '';
-      ADMIN_DATA.bookings.forEach(b => {
-        const tr = document.createElement('tr');
-        tr.style.cursor = 'pointer';
-        tr.onclick = () => showBookingReceiptModal(b.id);
-        tr.innerHTML = `
+          function renderBookingsTable() {
+            const tbody = document.getElementById('bookingsTableBody');
+            tbody.innerHTML = '';
+            ADMIN_DATA.bookings.forEach(b => {
+              const tr = document.createElement('tr');
+              tr.style.cursor = 'pointer';
+              tr.onclick = () => showBookingReceiptModal(b.id);
+              tr.innerHTML = `
           <td><strong style="color:var(--gold);">#${b.id}</strong></td>
           <td>${b.name}</td>
           <td>${b.phone}</td>
@@ -1468,381 +1988,1096 @@
           </td>
           <td onclick="event.stopPropagation();">
             <button class="btn btn-gold btn-sm" onclick="showBookingReceiptModal('${b.id}')" style="margin-right:6px;"><i class="fa-solid fa-receipt"></i> View Receipt</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteBooking('${b.id}')">Delete</button>
+            <button class="btn btn-danger btn-sm" onclick="confirmDeleteBooking('${b.id}')"><i class="fa-solid fa-trash"></i> Delete</button>
           </td>
         `;
-        tbody.appendChild(tr);
-      });
-    }
+              tbody.appendChild(tr);
+            });
+          }
 
-    // Delete Operations with Confirmation & Real-time Database Persistence
-    async function deleteAmenity(id) {
-      if (!confirm(`Are you sure you want to permanently delete amenity "${id}"?`)) return;
-      try {
-        const res = await fetch('/api/amenities/' + id, { method: 'DELETE' });
-        const data = await res.json();
-        if (data.ok) {
-          alert('Amenity permanently deleted from database!');
-          loadAdminData();
-        } else {
-          alert('Failed to delete amenity: ' + (data.error || 'Unknown error'));
-        }
-      } catch (err) {
-        alert('Server connection error while deleting amenity: ' + err.message);
-      }
-    }
-
-    async function deleteRoom(id) {
-      if (!confirm(`Are you sure you want to delete room "${id}"?`)) return;
-      try {
-        const res = await fetch('/api/rooms/' + id, { method: 'DELETE' });
-        const data = await res.json();
-        if (data.ok) {
-          alert('Room deleted from database!');
-          loadAdminData();
-        } else {
-          alert('Failed to delete room: ' + (data.error || 'Unknown error'));
-        }
-      } catch (err) {
-        alert('Error: ' + err.message);
-      }
-    }
-
-    async function deleteHotel(id) {
-      if (!confirm(`Are you sure you want to delete property "${id}"?`)) return;
-      try {
-        const res = await fetch('/api/hotels/' + id, { method: 'DELETE' });
-        const data = await res.json();
-        if (data.ok) {
-          alert('Property deleted from database!');
-          loadAdminData();
-        } else {
-          alert('Failed to delete property: ' + (data.error || 'Unknown error'));
-        }
-      } catch (err) {
-        alert('Error: ' + err.message);
-      }
-    }
-
-    async function deleteGalleryItem(id) {
-      if (!confirm('Delete this gallery photo?')) return;
-      try {
-        const res = await fetch('/api/gallery/' + id, { method: 'DELETE' });
-        const data = await res.json();
-        if (data.ok) { loadAdminData(); }
-        else { alert('Error: ' + (data.error || 'Failed')); }
-      } catch (err) { alert('Error: ' + err.message); }
-    }
-
-    async function deleteVideo(id) {
-      if (!confirm('Delete this video?')) return;
-      try {
-        const res = await fetch('/api/videos/' + id, { method: 'DELETE' });
-        const data = await res.json();
-        if (data.ok) { loadAdminData(); }
-        else { alert('Error: ' + (data.error || 'Failed')); }
-      } catch (err) { alert('Error: ' + err.message); }
-    }
-
-    async function deleteOffer(id) {
-      if (!confirm('Delete this offer?')) return;
-      try {
-        const res = await fetch('/api/offers/' + id, { method: 'DELETE' });
-        const data = await res.json();
-        if (data.ok) { loadAdminData(); }
-        else { alert('Error: ' + (data.error || 'Failed')); }
-      } catch (err) { alert('Error: ' + err.message); }
-    }
-
-    async function deleteReview(id) {
-      if (!confirm('Delete this guest review?')) return;
-      try {
-        const res = await fetch('/api/reviews/' + id, { method: 'DELETE' });
-        const data = await res.json();
-        if (data.ok) { loadAdminData(); }
-        else { alert('Error: ' + (data.error || 'Failed')); }
-      } catch (err) { alert('Error: ' + err.message); }
-    }
-
-    async function deleteBooking(id) {
-      if (!confirm(`Permanently delete booking #${id}?`)) return;
-      try {
-        const res = await fetch('/api/bookings/' + id, { method: 'DELETE' });
-        const data = await res.json();
-        if (data.ok) { loadAdminData(); }
-        else { alert('Error: ' + (data.error || 'Failed')); }
-      } catch (err) { alert('Error: ' + err.message); }
-    }
-
-    async function updateBookingStatus(id, status) {
-      try {
-        const res = await fetch('/api/bookings/' + id + '/status', {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status })
-        });
-        const data = await res.json();
-        if (data.ok) { loadAdminData(); }
-        else { alert('Failed to update status: ' + (data.error || 'Error')); }
-      } catch (err) { alert('Error: ' + err.message); }
-    }
-
-    // Modal Functions for Creating Entities
-    function showAddHotelModal() {
-      const name = prompt('Property Name (e.g. Hotel Sai Comfort):');
-      if (!name) return;
-      const tag = prompt('Tagline (e.g. Executive Wing):') || 'Luxury Wing';
-      const locality = prompt('Locality / Address:') || 'Shirdi, Maharashtra';
-      const phone = prompt('Contact Phone Number:') || '+91 98601 90506';
-
-      fetch('/api/hotels', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, tag, locality, phone, accent: '#E8A33D', image: '/images/hero-bg.jpg', desc: 'Luxury property near Shirdi Sai Baba Temple.' })
-      }).then(r => r.json()).then(data => {
-        if (data.ok) { alert('Hotel property added successfully!'); loadAdminData(); }
-        else alert('Error: ' + data.error);
-      });
-    }
-
-    function showAddRoomModal() {
-      const hotel = prompt('Hotel ID (sv1 for Sai View, sv2 for Sai Santosh, sv3 for Om Sai):', 'sv1');
-      if (!hotel) return;
-      const num = prompt('Room Number (e.g. 501):');
-      if (!num) return;
-      const cat = prompt('Category (Single, Couple, Family, Suite):', 'Couple');
-      const price24 = prompt('24-Hour Rate (₹):', '2200');
-      const price6 = prompt('6-Hour Rate (₹):', '1300');
-      const ac = confirm('Is this Room Air Conditioned (AC)?');
-
-      fetch('/api/rooms', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          hotel, num, cat, floor: 1, ac,
-          price24: Number(price24) || 2000,
-          price6: Number(price6) || 1200,
-          maxGuests: cat === 'Family' || cat === 'Suite' ? 4 : 2,
-          bedType: 'King Bed',
-          amenities: 'Wi-Fi, AC, Smart TV, Room Service',
-          status: 'available'
-        })
-      }).then(r => r.json()).then(data => {
-        if (data.ok) { alert('Room added to database!'); loadAdminData(); }
-        else alert('Error: ' + data.error);
-      });
-    }
-
-    function showAddVideoModal() {
-      const title = prompt('Video Title:');
-      if (!title) return;
-      const url = prompt('Video URL (MP4 / WebM link):', 'https://www.w3schools.com/html/mov_bbb.mp4');
-      if (!url) return;
-
-      fetch('/api/videos', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, video_url: url, is_homepage: true, is_active: true })
-      }).then(r => r.json()).then(data => {
-        if (data.ok) { alert('Video added to database!'); loadAdminData(); }
-        else alert('Error: ' + data.error);
-      });
-    }
-
-    function showAddAmenityModal() {
-      const name = prompt('Amenity Name (e.g. Swimming Pool):');
-      if (!name) return;
-      const icon = prompt('FontAwesome Icon Name (e.g. wifi, utensils, car, pool):', 'sparkles');
-      const desc = prompt('Short Description:') || '';
-
-      fetch('/api/amenities', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, icon, category: 'General', desc })
-      }).then(r => r.json()).then(data => {
-        if (data.ok) { alert('Amenity added!'); loadAdminData(); }
-        else alert('Error: ' + data.error);
-      });
-    }
-
-    function showAddOfferModal() {
-      const title = prompt('Offer Title:');
-      if (!title) return;
-      const discount = prompt('Discount (e.g. 20% OFF or Flat ₹500 Off):', '15% OFF');
-      const code = prompt('Promo Code:', 'SAIBABA15') || 'SAIBABA15';
-      const desc = prompt('Offer Description:') || '';
-
-      fetch('/api/offers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, discount, code, desc, is_active: true, valid_from: '2026-10-01', valid_to: '2026-12-31' })
-      }).then(r => r.json()).then(data => {
-        if (data.ok) { alert('Offer created!'); loadAdminData(); }
-        else alert('Error: ' + data.error);
-      });
-    }
-
-    let CURRENT_RECEIPT_BOOKING_ID = null;
-
-    function showBookingReceiptModal(bookingId) {
-      const b = ADMIN_DATA.bookings.find(x => x.id === bookingId);
-      if (!b) return;
-      CURRENT_RECEIPT_BOOKING_ID = b.id;
-
-      const room = ADMIN_DATA.rooms.find(r => r.id === b.hotelRoom) || {};
-      const hotel = ADMIN_DATA.hotels.find(h => h.id === room.hotel) || {};
-
-      document.getElementById('receiptId').textContent = '#' + b.id;
-      document.getElementById('receiptGuestName').textContent = b.name;
-
-      const statusBadge = document.getElementById('receiptStatusBadge');
-      const statusText = (b.status || 'PENDING').toUpperCase();
-      statusBadge.textContent = statusText;
-      statusBadge.className = 'badge badge-' + (b.status || 'pending');
-
-      const hotelLoc = hotel.locality ? ` — ${hotel.locality}` : '';
-      document.getElementById('receiptHotelName').textContent = (hotel.name || 'Deepak Hotels Group') + hotelLoc;
-      document.getElementById('receiptRoomName').textContent = `Room ${room.num || b.hotelRoom} • ${room.cat || 'Executive'} • ${room.ac ? 'AC' : 'Non-AC'}`;
-      document.getElementById('receiptStayType').textContent = b.stay === '24hr' ? '24-Hour Stay' : '6-Hour Express Stay';
-      document.getElementById('receiptCheckIn').textContent = `${b.date} at ${b.time || '12:00'}`;
-      document.getElementById('receiptGuests').textContent = b.guests || 1;
-
-      const roomPrice = b.stay === '24hr' ? (room.price24 || 0) : (room.price6 || 0);
-      document.getElementById('receiptRoomCharge').textContent = `₹${roomPrice}`;
-
-      // Food Orders
-      const foodWrap = document.getElementById('receiptFoodWrap');
-      const foodItems = document.getElementById('receiptFoodItems');
-      if (Array.isArray(b.food) && b.food.length > 0) {
-        foodWrap.style.display = 'block';
-        foodItems.innerHTML = b.food.map(f => `<div>${f.qty}x ${f.name} (₹${f.price} ea)</div>`).join('');
-      } else {
-        foodWrap.style.display = 'none';
-      }
-
-      // Guest & ID Verification
-      document.getElementById('receiptPhone').textContent = b.phone || 'N/A';
-
-      const idText = document.getElementById('receiptIdText');
-      const idPhotoWrap = document.getElementById('receiptIdPhotoPreview');
-      const idImg = document.getElementById('receiptIdImg');
-
-      if (b.idMethod === 'upload' && b.idPhotoBase64) {
-        idText.textContent = 'Uploaded Photo ID';
-        idPhotoWrap.style.display = 'block';
-        idImg.src = b.idPhotoBase64;
-      } else {
-        idText.textContent = 'Will show at hotel reception';
-        idPhotoWrap.style.display = 'none';
-      }
-
-      // Requests
-      const reqWrap = document.getElementById('receiptRequestsWrap');
-      if (b.requests) {
-        reqWrap.style.display = 'block';
-        document.getElementById('receiptRequests').textContent = b.requests;
-      } else {
-        reqWrap.style.display = 'none';
-      }
-
-      // Total
-      const total = calculateBookingTotal(b);
-      document.getElementById('receiptTotal').textContent = `₹${total}`;
-
-      document.getElementById('receiptModalBackdrop').classList.add('active');
-    }
-
-    function closeReceiptModal() {
-      document.getElementById('receiptModalBackdrop').classList.remove('active');
-    }
-
-    async function receiptAction(action) {
-      if (!CURRENT_RECEIPT_BOOKING_ID) return;
-      const b = ADMIN_DATA.bookings.find(x => x.id === CURRENT_RECEIPT_BOOKING_ID);
-      if (!b) return;
-
-      if (action === 'confirm') {
-        await updateBookingStatus(b.id, 'confirmed');
-        showBookingReceiptModal(b.id);
-      } else if (action === 'cancel') {
-        if (confirm(`Are you sure you want to cancel booking #${b.id}?`)) {
-          await updateBookingStatus(b.id, 'cancelled');
-          showBookingReceiptModal(b.id);
-        }
-      } else if (action === 'call') {
-        window.open('tel:' + b.phone);
-      }
-    }
-
-    function calculateBookingTotal(b) {
-      const room = ADMIN_DATA.rooms.find(r => r.id === b.hotelRoom);
-      const roomPrice = room ? (b.stay === '24hr' ? room.price24 : room.price6) : 0;
-      const foodTotal = (b.food || []).reduce((sum, item) => sum + (item.price * item.qty), 0);
-      return roomPrice || 485;
-    }
-
-    // Pure Veg Food Menu Table & Functions
-    function renderFoodTable() {
-      const tbody = document.getElementById('foodTableBody');
-      if (!tbody) return;
-      tbody.innerHTML = '';
-      ADMIN_DATA.menuItems.forEach(i => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${i.photo ? `<img src="${i.photo}" style="height:40px; border-radius:4px;">` : '<span style="color:var(--text-muted);">No photo</span>'}</td>
+          function renderFoodTable() {
+            const tbody = document.getElementById('foodTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            ADMIN_DATA.menuItems.forEach(i => {
+              const tr = document.createElement('tr');
+              tr.innerHTML = `
+          <td>${i.photo ? `<img src="${i.photo}" style="height:40px; width:40px; object-fit:cover; border-radius:6px;">` : '<span style="color:var(--text-muted); font-size:0.8rem;">No photo</span>'}</td>
           <td><strong>${i.name}</strong></td>
           <td>${i.category || 'Other'}</td>
           <td>₹${i.price}</td>
-          <td><button class="badge ${i.available ? 'badge-confirmed' : 'badge-cancelled'}" style="border:none; cursor:pointer;" onclick="toggleFoodAvailable('${i.id}', ${!i.available})">${i.available ? 'AVAILABLE' : 'UNAVAILABLE'}</button></td>
-          <td><button class="btn btn-danger btn-sm" onclick="deleteFoodItem('${i.id}')">Delete</button></td>
+          <td>
+            <button class="badge ${i.available ? 'badge-confirmed' : 'badge-cancelled'}" style="border:none; cursor:pointer;" onclick="toggleFoodAvailable('${i.id}', ${!i.available})">
+              ${i.available ? 'AVAILABLE' : 'UNAVAILABLE'}
+            </button>
+          </td>
+          <td>
+            <button class="btn btn-gold btn-sm" onclick="openFoodModal('${i.id}')" style="margin-right:6px;"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="confirmDeleteFoodItem('${i.id}')"><i class="fa-solid fa-trash"></i> Delete</button>
+          </td>
         `;
-        tbody.appendChild(tr);
-      });
-    }
+              tbody.appendChild(tr);
+            });
+          }
 
-    async function toggleFoodAvailable(id, available) {
-      try {
-        const res = await fetch('/api/menu/' + id, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ available })
-        });
-        const data = await res.json();
-        if (data.ok) { loadAdminData(); }
-        else { alert('Failed to update food item: ' + data.error); }
-      } catch (e) { alert('Error: ' + e.message); }
-    }
+          // Modal Form Builders & Handlers
+          function openHotelModal(hotelId = null) {
+            const isEdit = Boolean(hotelId);
+            const hotel = isEdit ? ADMIN_DATA.hotels.find(h => h.id === hotelId) : null;
+            if (isEdit && !hotel) {
+              showToast('Hotel record not found', 'error');
+              return;
+            }
 
-    async function deleteFoodItem(id) {
-      if (!confirm('Permanently delete this food dish from menu?')) return;
-      try {
-        const res = await fetch('/api/menu/' + id, { method: 'DELETE' });
-        const data = await res.json();
-        if (data.ok) { alert('Food item deleted from database!'); loadAdminData(); }
-        else { alert('Failed to delete dish: ' + data.error); }
-      } catch (e) { alert('Error: ' + e.message); }
-    }
+            const bodyHtml = `
+        <div class="modal-form-group">
+          <label class="modal-form-label">Hotel Property Name <span style="color:#EF4444;">*</span></label>
+          <input type="text" class="modal-form-control" id="mh_name" value="${hotel ? hotel.name : ''}" placeholder="e.g. Hotel Sai Comfort" required>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+          <div class="modal-form-group">
+            <label class="modal-form-label">Tagline</label>
+            <input type="text" class="modal-form-control" id="mh_tag" value="${hotel ? (hotel.tag || '') : ''}" placeholder="e.g. The Grand Executive Wing">
+          </div>
+          <div class="modal-form-group">
+            <label class="modal-form-label">Contact Phone</label>
+            <input type="text" class="modal-form-control" id="mh_phone" value="${hotel ? (hotel.phone || '') : ''}" placeholder="+91 98514 15415">
+          </div>
+        </div>
+        <div class="modal-form-group">
+          <label class="modal-form-label">Locality / Address</label>
+          <input type="text" class="modal-form-control" id="mh_locality" value="${hotel ? (hotel.locality || '') : ''}" placeholder="e.g. Vivekanand nagar, Manmad Rd, Shirdi 423109">
+        </div>
+        <div class="modal-form-group">
+          <label class="modal-form-label">Property Description</label>
+          <textarea class="modal-form-control" id="mh_desc" placeholder="Luxury property featuring executive rooms, 24/7 dining, and panoramic temple views.">${hotel ? (hotel.desc || '') : ''}</textarea>
+        </div>
+        <div class="modal-form-group">
+          <label class="modal-form-label">Property Image URL</label>
+          <div style="display:flex; gap:10px;">
+            <input type="text" class="modal-form-control" id="mh_image" value="${hotel ? (hotel.image || '') : ''}" placeholder="/images/hero-bg.jpg">
+            <input type="file" id="mh_image_file" accept="image/*" style="display:none;" onchange="uploadModalFile(this, 'mh_image')">
+            <button type="button" class="btn" style="background:#CBD5E1; color:#0B111D; white-space:nowrap; padding:8px 14px; font-size:0.85rem;" onclick="document.getElementById('mh_image_file').click()">
+              <i class="fa-solid fa-upload"></i> Upload
+            </button>
+          </div>
+        </div>
+      `;
 
-    function showAddFoodModal() {
-      const name = prompt('Dish Name (e.g. Maharashtrian Thali, Paneer Butter Masala):');
-      if (!name) return;
-      const category = prompt('Category (Thalis, Main Course, Snacks, Beverages):', 'Main Course') || 'Other';
-      const price = prompt('Price in ₹:', '180');
-      if (!price) return;
+            openAdminFormModal({
+              category: 'PROPERTY MANAGEMENT',
+              title: isEdit ? `EDIT PROPERTY (${hotel.name})` : 'ADD NEW HOTEL PROPERTY',
+              bodyHtml,
+              submitText: isEdit ? 'Save Property Changes' : 'Add Property to Database',
+              onSubmit: async () => {
+                const name = document.getElementById('mh_name').value.trim();
+                if (!name) { showModalError('Hotel Name is required'); return false; }
 
-      fetch('/api/menu', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, category, price: Number(price), available: true })
-      }).then(r => r.json()).then(data => {
-        if (data.ok) { alert('Food item added to database!'); loadAdminData(); }
-        else alert('Error: ' + data.error);
-      });
-    }
+                const payload = {
+                  name,
+                  tag: document.getElementById('mh_tag').value.trim(),
+                  locality: document.getElementById('mh_locality').value.trim(),
+                  phone: document.getElementById('mh_phone').value.trim(),
+                  desc: document.getElementById('mh_desc').value.trim(),
+                  image: document.getElementById('mh_image').value.trim() || '/images/hero-bg.jpg'
+                };
 
-    // Run session check on page load
-    document.addEventListener('DOMContentLoaded', checkSession);
-  </script>
+                const url = isEdit ? '/api/hotels/' + hotel.id : '/api/hotels';
+                const method = isEdit ? 'PATCH' : 'POST';
+
+                const res = await fetch(url, {
+                  method,
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!data.ok) {
+                  showModalError(data.error || 'Failed to save property');
+                  return false;
+                }
+
+                showToast(isEdit ? 'Hotel property updated successfully!' : 'New hotel property created!');
+                loadAdminData();
+                return true;
+              }
+            });
+          }
+
+          function openRoomModal(roomId = null) {
+            const isEdit = Boolean(roomId);
+            let room = isEdit ? (ADMIN_DATA.rooms.find(r => r.id === roomId || String(r.id) === String(roomId)) || ADMIN_DATA.rooms.find(r => String(r.num) === String(roomId))) : null;
+
+            if (isEdit && !room) {
+              room = { id: roomId, hotel: 'sv1', num: String(roomId).replace(/^[^-]+-/, ''), cat: 'Executive', ac: true, price24: 2200, price6: 1300, status: 'available', desc: '' };
+            }
+
+            const hotelsOptions = ADMIN_DATA.hotels.map(h =>
+              `<option value="${h.id}" ${room && (room.hotel === h.id || room.hotel === h.name) ? 'selected' : ''}>${h.name}</option>`
+            ).join('');
+
+            const bodyHtml = `
+        <div class="modal-form-group">
+          <label class="modal-form-label">Hotel Property <span style="color:#EF4444;">*</span></label>
+          <select class="modal-form-control" id="m_hotel" onchange="toggleCustomHotelInput(this.value)">
+            ${hotelsOptions}
+            <option value="__custom__">+ Add / Enter Custom Hotel Name...</option>
+          </select>
+        </div>
+        <div class="modal-form-group" id="m_custom_hotel_wrap" style="display:none;">
+          <label class="modal-form-label">Custom Hotel Name <span style="color:#EF4444;">*</span></label>
+          <input type="text" class="modal-form-control" id="m_custom_hotel" placeholder="e.g. Hotel Sai View Executive">
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+          <div class="modal-form-group">
+            <label class="modal-form-label">Room Number <span style="color:#EF4444;">*</span></label>
+            <input type="text" class="modal-form-control" id="m_num" value="${room ? room.num : ''}" placeholder="e.g. 101, 204, A-5" required>
+          </div>
+          <div class="modal-form-group">
+            <label class="modal-form-label">Category <span style="color:#EF4444;">*</span></label>
+            <select class="modal-form-control" id="m_cat" onchange="toggleCustomCatInput(this.value)">
+              <option value="Executive" ${room && room.cat === 'Executive' ? 'selected' : ''}>Executive</option>
+              <option value="Couple" ${room && room.cat === 'Couple' ? 'selected' : ''}>Couple</option>
+              <option value="Family" ${room && room.cat === 'Family' ? 'selected' : ''}>Family</option>
+              <option value="Suite" ${room && room.cat === 'Suite' ? 'selected' : ''}>Suite</option>
+              <option value="Deluxe" ${room && room.cat === 'Deluxe' ? 'selected' : ''}>Deluxe</option>
+              <option value="Single" ${room && room.cat === 'Single' ? 'selected' : ''}>Single</option>
+              <option value="__custom__" ${room && !['Executive', 'Couple', 'Family', 'Suite', 'Deluxe', 'Single'].includes(room.cat) ? 'selected' : ''}>+ Custom Category...</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-form-group" id="m_custom_cat_wrap" style="${room && !['Executive', 'Couple', 'Family', 'Suite', 'Deluxe', 'Single'].includes(room.cat) ? 'display:block;' : 'display:none;'}">
+          <label class="modal-form-label">Custom Category Name</label>
+          <input type="text" class="modal-form-control" id="m_custom_cat" value="${room && !['Executive', 'Couple', 'Family', 'Suite', 'Deluxe', 'Single'].includes(room.cat) ? room.cat : ''}" placeholder="e.g. Presidential Suite">
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:16px;">
+          <div class="modal-form-group">
+            <label class="modal-form-label">Air Condition (AC)</label>
+            <select class="modal-form-control" id="m_ac">
+              <option value="1" ${room && room.ac ? 'selected' : ''}>AC (Air Conditioned)</option>
+              <option value="0" ${room && !room.ac ? 'selected' : ''}>Non-AC</option>
+            </select>
+          </div>
+          <div class="modal-form-group">
+            <label class="modal-form-label">24-Hour Price (₹) <span style="color:#EF4444;">*</span></label>
+            <input type="number" class="modal-form-control" id="m_price24" value="${room ? room.price24 : '2200'}" min="0" required>
+          </div>
+          <div class="modal-form-group">
+            <label class="modal-form-label">6-Hour Price (₹) <span style="color:#EF4444;">*</span></label>
+            <input type="number" class="modal-form-control" id="m_price6" value="${room ? room.price6 : '1300'}" min="0" required>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+          <div class="modal-form-group">
+            <label class="modal-form-label">Room Status</label>
+            <select class="modal-form-control" id="m_status">
+              <option value="available" ${room && room.status === 'available' ? 'selected' : ''}>Available</option>
+              <option value="occupied" ${room && room.status === 'occupied' ? 'selected' : ''}>Occupied</option>
+              <option value="maintenance" ${room && room.status === 'maintenance' ? 'selected' : ''}>Maintenance</option>
+              <option value="inactive" ${room && room.status === 'inactive' ? 'selected' : ''}>Inactive</option>
+            </select>
+          </div>
+          <div class="modal-form-group">
+            <label class="modal-form-label">Max Guests</label>
+            <input type="number" class="modal-form-control" id="m_maxGuests" value="${room ? (room.maxGuests || 2) : 2}" min="1" max="10">
+          </div>
+        </div>
+
+        <div class="modal-form-group">
+          <label class="modal-form-label">Room Description</label>
+          <textarea class="modal-form-control" id="m_desc" placeholder="Spacious executive room with private balcony, 24/7 hot water, and temple views.">${room ? (room.desc || '') : ''}</textarea>
+        </div>
+
+        <div class="modal-form-group">
+          <label class="modal-form-label">Optional Room Image URL</label>
+          <div style="display:flex; gap:10px;">
+            <input type="text" class="modal-form-control" id="m_photo" value="${room ? (room.photo || '') : ''}" placeholder="/images/room-suite.jpg or https://...">
+            <input type="file" id="m_photo_file" accept="image/*" style="display:none;" onchange="uploadModalFile(this, 'm_photo')">
+            <button type="button" class="btn" style="background:#CBD5E1; color:#0B111D; white-space:nowrap; padding:8px 14px; font-size:0.85rem;" onclick="document.getElementById('m_photo_file').click()">
+              <i class="fa-solid fa-upload"></i> Upload
+            </button>
+          </div>
+        </div>
+      `;
+
+            openAdminFormModal({
+              category: 'ROOM MANAGEMENT',
+              title: isEdit ? `EDIT ROOM ${room.num} (${room.hotel})` : 'ADD NEW ROOM',
+              bodyHtml,
+              submitText: isEdit ? 'Save Room Changes' : 'Add Room to Database',
+              onSubmit: async () => {
+                const selHotel = document.getElementById('m_hotel').value;
+                const customHotel = document.getElementById('m_custom_hotel').value.trim();
+                const hotelVal = selHotel === '__custom__' ? customHotel : selHotel;
+
+                const numVal = document.getElementById('m_num').value.trim();
+                if (!hotelVal) { showModalError('Hotel Name is required'); return false; }
+                if (!numVal) { showModalError('Room Number is required'); return false; }
+
+                const selCat = document.getElementById('m_cat').value;
+                const customCat = document.getElementById('m_custom_cat').value.trim();
+                const catVal = selCat === '__custom__' ? (customCat || 'Executive') : selCat;
+
+                const price24Val = Number(document.getElementById('m_price24').value);
+                const price6Val = Number(document.getElementById('m_price6').value);
+                if (isNaN(price24Val) || price24Val < 0) { showModalError('Enter a valid 24-Hour Price'); return false; }
+                if (isNaN(price6Val) || price6Val < 0) { showModalError('Enter a valid 6-Hour Price'); return false; }
+
+                const acVal = document.getElementById('m_ac').value === '1';
+                const statusVal = document.getElementById('m_status').value;
+                const maxGuestsVal = Number(document.getElementById('m_maxGuests').value) || 2;
+                const descVal = document.getElementById('m_desc').value.trim();
+                const photoVal = document.getElementById('m_photo').value.trim();
+
+                const payload = {
+                  hotel: hotelVal,
+                  num: numVal,
+                  cat: catVal,
+                  ac: acVal,
+                  price24: price24Val,
+                  price6: price6Val,
+                  status: statusVal,
+                  maxGuests: maxGuestsVal,
+                  desc: descVal,
+                  photo: photoVal || null
+                };
+
+                const url = isEdit ? '/api/rooms/' + room.id : '/api/rooms';
+                const method = isEdit ? 'PATCH' : 'POST';
+
+                const res = await fetch(url, {
+                  method,
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!data.ok) {
+                  showModalError(data.error || 'Failed to save room');
+                  return false;
+                }
+
+                showToast(isEdit ? 'Room updated in SQL database successfully!' : 'New room added to SQL database successfully!');
+                loadAdminData();
+                return true;
+              }
+            });
+          }
+
+          function toggleCustomHotelInput(val) {
+            const wrap = document.getElementById('m_custom_hotel_wrap');
+            if (wrap) wrap.style.display = val === '__custom__' ? 'block' : 'none';
+          }
+
+          function toggleCustomCatInput(val) {
+            const wrap = document.getElementById('m_custom_cat_wrap');
+            if (wrap) wrap.style.display = val === '__custom__' ? 'block' : 'none';
+          }
+
+          function openAmenityModal(amenityId = null) {
+            const isEdit = Boolean(amenityId);
+            const am = isEdit ? ADMIN_DATA.amenities.find(a => a.id === amenityId) : null;
+
+            const iconOptions = ['wifi', 'utensils', 'snowflake', 'car', 'zap', 'parking', 'tv', 'sparkles', 'bell-concierge', 'mug-hot', 'shield', 'key'].map(ic =>
+              `<option value="${ic}" ${am && am.icon === ic ? 'selected' : ''}>${ic}</option>`
+            ).join('');
+
+            const bodyHtml = `
+        <div class="modal-form-group">
+          <label class="modal-form-label">Amenity Name <span style="color:#EF4444;">*</span></label>
+          <input type="text" class="modal-form-control" id="ma_name" value="${am ? am.name : ''}" placeholder="e.g. Free High-Speed Wi-Fi" required>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+          <div class="modal-form-group">
+            <label class="modal-form-label">FontAwesome Icon</label>
+            <select class="modal-form-control" id="ma_icon">
+              ${iconOptions}
+            </select>
+          </div>
+          <div class="modal-form-group">
+            <label class="modal-form-label">Category</label>
+            <input type="text" class="modal-form-control" id="ma_category" value="${am ? am.category : 'General'}" placeholder="e.g. Technology, Comfort, Dining">
+          </div>
+        </div>
+        <div class="modal-form-group">
+          <label class="modal-form-label">Description</label>
+          <textarea class="modal-form-control" id="ma_desc" placeholder="Seamless wireless Internet coverage in all rooms and lounges.">${am ? (am.desc || '') : ''}</textarea>
+        </div>
+      `;
+
+            openAdminFormModal({
+              category: 'AMENITY MANAGEMENT',
+              title: isEdit ? `EDIT AMENITY (${am.name})` : 'ADD NEW AMENITY',
+              bodyHtml,
+              submitText: isEdit ? 'Save Amenity Changes' : 'Add Amenity to Database',
+              onSubmit: async () => {
+                const name = document.getElementById('ma_name').value.trim();
+                if (!name) { showModalError('Amenity name is required'); return false; }
+
+                const payload = {
+                  name,
+                  icon: document.getElementById('ma_icon').value,
+                  category: document.getElementById('ma_category').value.trim() || 'General',
+                  desc: document.getElementById('ma_desc').value.trim()
+                };
+
+                const url = isEdit ? '/api/amenities/' + am.id : '/api/amenities';
+                const method = isEdit ? 'PATCH' : 'POST';
+
+                const res = await fetch(url, {
+                  method,
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!data.ok) {
+                  showModalError(data.error || 'Failed to save amenity');
+                  return false;
+                }
+
+                showToast(isEdit ? 'Amenity updated successfully!' : 'Amenity added to database!');
+                loadAdminData();
+                return true;
+              }
+            });
+          }
+
+          function openGalleryModal(galleryId = null) {
+            const isEdit = Boolean(galleryId);
+            const gal = isEdit ? ADMIN_DATA.gallery.find(g => g.id === galleryId) : null;
+
+            const bodyHtml = `
+        <div class="modal-form-group">
+          <label class="modal-form-label">Photo Title</label>
+          <input type="text" class="modal-form-control" id="mg_title" value="${gal ? gal.title : ''}" placeholder="e.g. Executive Suite View">
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+          <div class="modal-form-group">
+            <label class="modal-form-label">Category</label>
+            <select class="modal-form-control" id="mg_category">
+              <option value="Exterior" ${gal && gal.category === 'Exterior' ? 'selected' : ''}>Exterior</option>
+              <option value="Rooms" ${gal && gal.category === 'Rooms' ? 'selected' : ''}>Rooms</option>
+              <option value="Dining" ${gal && gal.category === 'Dining' ? 'selected' : ''}>Dining</option>
+              <option value="Facility" ${gal && gal.category === 'Facility' ? 'selected' : ''}>Facility</option>
+              <option value="General" ${gal && gal.category === 'General' ? 'selected' : ''}>General</option>
+            </select>
+          </div>
+          <div class="modal-form-group">
+            <label class="modal-form-label">Display Order</label>
+            <input type="number" class="modal-form-control" id="mg_order" value="${gal ? gal.display_order : ADMIN_DATA.gallery.length + 1}" min="1">
+          </div>
+        </div>
+        <div class="modal-form-group">
+          <label class="modal-form-label">Image URL <span style="color:#EF4444;">*</span></label>
+          <div style="display:flex; gap:10px;">
+            <input type="text" class="modal-form-control" id="mg_image" value="${gal ? gal.image : ''}" placeholder="/images/hero-bg.jpg" required>
+            <input type="file" id="mg_image_file" accept="image/*" style="display:none;" onchange="uploadModalFile(this, 'mg_image')">
+            <button type="button" class="btn" style="background:#CBD5E1; color:#0B111D; white-space:nowrap; padding:8px 14px; font-size:0.85rem;" onclick="document.getElementById('mg_image_file').click()">
+              <i class="fa-solid fa-upload"></i> Upload
+            </button>
+          </div>
+        </div>
+      `;
+
+            openAdminFormModal({
+              category: 'PHOTO GALLERY',
+              title: isEdit ? 'EDIT GALLERY PHOTO' : 'ADD GALLERY PHOTO',
+              bodyHtml,
+              submitText: isEdit ? 'Save Changes' : 'Upload & Add to Gallery',
+              onSubmit: async () => {
+                const image = document.getElementById('mg_image').value.trim();
+                if (!image) { showModalError('Image URL or Upload is required'); return false; }
+
+                const payload = {
+                  title: document.getElementById('mg_title').value.trim() || 'Hotel Photo',
+                  category: document.getElementById('mg_category').value,
+                  display_order: Number(document.getElementById('mg_order').value) || 1,
+                  image
+                };
+
+                const url = isEdit ? '/api/gallery/' + gal.id : '/api/gallery';
+                const method = isEdit ? 'PATCH' : 'POST';
+
+                const res = await fetch(url, {
+                  method,
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!data.ok) {
+                  showModalError(data.error || 'Failed to save gallery photo');
+                  return false;
+                }
+
+                showToast(isEdit ? 'Gallery item updated!' : 'Photo added to gallery database!');
+                loadAdminData();
+                return true;
+              }
+            });
+          }
+
+          function openFoodModal(foodId = null) {
+            const isEdit = Boolean(foodId);
+            const dish = isEdit ? ADMIN_DATA.menuItems.find(m => m.id === foodId) : null;
+
+            const bodyHtml = `
+        <div class="modal-form-group">
+          <label class="modal-form-label">Dish Name <span style="color:#EF4444;">*</span></label>
+          <input type="text" class="modal-form-control" id="mf_name" value="${dish ? dish.name : ''}" placeholder="e.g. Maharashtrian Special Thali" required>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+          <div class="modal-form-group">
+            <label class="modal-form-label">Category</label>
+            <select class="modal-form-control" id="mf_category">
+              <option value="Thalis" ${dish && dish.category === 'Thalis' ? 'selected' : ''}>Thalis</option>
+              <option value="Main Course" ${dish && dish.category === 'Main Course' ? 'selected' : ''}>Main Course</option>
+              <option value="Snacks" ${dish && dish.category === 'Snacks' ? 'selected' : ''}>Snacks</option>
+              <option value="Beverages" ${dish && dish.category === 'Beverages' ? 'selected' : ''}>Beverages</option>
+              <option value="South Indian" ${dish && dish.category === 'South Indian' ? 'selected' : ''}>South Indian</option>
+              <option value="Other" ${dish && dish.category === 'Other' ? 'selected' : ''}>Other</option>
+            </select>
+          </div>
+          <div class="modal-form-group">
+            <label class="modal-form-label">Price (₹) <span style="color:#EF4444;">*</span></label>
+            <input type="number" class="modal-form-control" id="mf_price" value="${dish ? dish.price : '180'}" min="0" required>
+          </div>
+        </div>
+        <div class="modal-form-group">
+          <label class="modal-form-label">Availability Status</label>
+          <select class="modal-form-control" id="mf_available">
+            <option value="1" ${!dish || dish.available ? 'selected' : ''}>Available</option>
+            <option value="0" ${dish && !dish.available ? 'selected' : ''}>Unavailable / Out of Stock</option>
+          </select>
+        </div>
+        <div class="modal-form-group">
+          <label class="modal-form-label">Photo URL</label>
+          <div style="display:flex; gap:10px;">
+            <input type="text" class="modal-form-control" id="mf_photo" value="${dish ? (dish.photo || '') : ''}" placeholder="/images/dining-bg.jpg">
+            <input type="file" id="mf_photo_file" accept="image/*" style="display:none;" onchange="uploadModalFile(this, 'mf_photo')">
+            <button type="button" class="btn" style="background:#CBD5E1; color:#0B111D; white-space:nowrap; padding:8px 14px; font-size:0.85rem;" onclick="document.getElementById('mf_photo_file').click()">
+              <i class="fa-solid fa-upload"></i> Upload
+            </button>
+          </div>
+        </div>
+      `;
+
+            openAdminFormModal({
+              category: 'FOOD MENU MANAGEMENT',
+              title: isEdit ? `EDIT DISH (${dish.name})` : 'ADD NEW PURE VEG DISH',
+              bodyHtml,
+              submitText: isEdit ? 'Save Dish Changes' : 'Add Dish to Menu',
+              onSubmit: async () => {
+                const name = document.getElementById('mf_name').value.trim();
+                const priceVal = Number(document.getElementById('mf_price').value);
+
+                if (!name) { showModalError('Dish name is required'); return false; }
+                if (isNaN(priceVal) || priceVal < 0) { showModalError('Enter a valid price'); return false; }
+
+                const payload = {
+                  name,
+                  category: document.getElementById('mf_category').value,
+                  price: priceVal,
+                  available: document.getElementById('mf_available').value === '1',
+                  photo: document.getElementById('mf_photo').value.trim() || null
+                };
+
+                const url = isEdit ? '/api/menu/' + dish.id : '/api/menu';
+                const method = isEdit ? 'PATCH' : 'POST';
+
+                const res = await fetch(url, {
+                  method,
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!data.ok) {
+                  showModalError(data.error || 'Failed to save dish');
+                  return false;
+                }
+
+                showToast(isEdit ? 'Dish updated successfully!' : 'Dish added to menu database!');
+                loadAdminData();
+                return true;
+              }
+            });
+          }
+
+          function openOfferModal(offerId = null) {
+            const isEdit = Boolean(offerId);
+            const off = isEdit ? ADMIN_DATA.offers.find(o => o.id === offerId) : null;
+
+            const bodyHtml = `
+        <div class="modal-form-group">
+          <label class="modal-form-label">Offer Title <span style="color:#EF4444;">*</span></label>
+          <input type="text" class="modal-form-control" id="mo_title" value="${off ? off.title : ''}" placeholder="e.g. Pilgrimage Special Family Discount" required>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+          <div class="modal-form-group">
+            <label class="modal-form-label">Discount Badge</label>
+            <input type="text" class="modal-form-control" id="mo_discount" value="${off ? off.discount : '15% OFF'}" placeholder="e.g. 15% OFF, Flat ₹500 OFF">
+          </div>
+          <div class="modal-form-group">
+            <label class="modal-form-label">Promo Code</label>
+            <input type="text" class="modal-form-control" id="mo_code" value="${off ? off.code : 'SAIBABA15'}" placeholder="SAIBABA15">
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+          <div class="modal-form-group">
+            <label class="modal-form-label">Valid From</label>
+            <input type="date" class="modal-form-control" id="mo_valid_from" value="${off ? off.valid_from : '2026-10-01'}">
+          </div>
+          <div class="modal-form-group">
+            <label class="modal-form-label">Valid To</label>
+            <input type="date" class="modal-form-control" id="mo_valid_to" value="${off ? off.valid_to : '2026-12-31'}">
+          </div>
+        </div>
+        <div class="modal-form-group">
+          <label class="modal-form-label">Offer Description</label>
+          <textarea class="modal-form-control" id="mo_desc" placeholder="Book a Family Room for 2+ nights and get 15% discount.">${off ? (off.desc || '') : ''}</textarea>
+        </div>
+        <div class="modal-form-group">
+          <label class="modal-form-label">Status</label>
+          <select class="modal-form-control" id="mo_active">
+            <option value="1" ${!off || off.is_active ? 'selected' : ''}>Active</option>
+            <option value="0" ${off && !off.is_active ? 'selected' : ''}>Inactive</option>
+          </select>
+        </div>
+      `;
+
+            openAdminFormModal({
+              category: 'OFFERS & DEALS',
+              title: isEdit ? 'EDIT PROMO OFFER' : 'CREATE NEW PROMO OFFER',
+              bodyHtml,
+              submitText: isEdit ? 'Save Changes' : 'Create Offer',
+              onSubmit: async () => {
+                const title = document.getElementById('mo_title').value.trim();
+                if (!title) { showModalError('Offer Title is required'); return false; }
+
+                const payload = {
+                  title,
+                  discount: document.getElementById('mo_discount').value.trim(),
+                  code: document.getElementById('mo_code').value.trim(),
+                  valid_from: document.getElementById('mo_valid_from').value,
+                  valid_to: document.getElementById('mo_valid_to').value,
+                  desc: document.getElementById('mo_desc').value.trim(),
+                  is_active: document.getElementById('mo_active').value === '1',
+                  image: '/images/hero-bg.jpg'
+                };
+
+                const url = isEdit ? '/api/offers/' + off.id : '/api/offers';
+                const method = isEdit ? 'PATCH' : 'POST';
+
+                const res = await fetch(url, {
+                  method,
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!data.ok) {
+                  showModalError(data.error || 'Failed to save offer');
+                  return false;
+                }
+
+                showToast(isEdit ? 'Offer updated!' : 'New offer created in database!');
+                loadAdminData();
+                return true;
+              }
+            });
+          }
+
+          function openReviewModal(reviewId = null) {
+            const isEdit = Boolean(reviewId);
+            const rev = isEdit ? ADMIN_DATA.reviews.find(r => r.id === reviewId) : null;
+
+            const bodyHtml = `
+        <div class="modal-form-group">
+          <label class="modal-form-label">Guest Name <span style="color:#EF4444;">*</span></label>
+          <input type="text" class="modal-form-control" id="mr_guest_name" value="${rev ? rev.guest_name : ''}" placeholder="e.g. Rahul & Swati Deshmukh" required>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+          <div class="modal-form-group">
+            <label class="modal-form-label">Rating (Stars)</label>
+            <select class="modal-form-control" id="mr_rating">
+              <option value="5" ${!rev || rev.rating === 5 ? 'selected' : ''}>★★★★★ (5 Stars)</option>
+              <option value="4" ${rev && rev.rating === 4 ? 'selected' : ''}>★★★★☆ (4 Stars)</option>
+              <option value="3" ${rev && rev.rating === 3 ? 'selected' : ''}>★★★☆☆ (3 Stars)</option>
+            </select>
+          </div>
+          <div class="modal-form-group">
+            <label class="modal-form-label">Hotel Property Tag</label>
+            <input type="text" class="modal-form-control" id="mr_hotel_tag" value="${rev ? rev.hotel_tag : 'Deepak Hotels Group'}" placeholder="e.g. Hotel Sai View">
+          </div>
+        </div>
+        <div class="modal-form-group">
+          <label class="modal-form-label">Review Text <span style="color:#EF4444;">*</span></label>
+          <textarea class="modal-form-control" id="mr_review_text" placeholder="Outstanding experience! Clean rooms and polite staff." required>${rev ? rev.review_text : ''}</textarea>
+        </div>
+      `;
+
+            openAdminFormModal({
+              category: 'GUEST REVIEWS',
+              title: isEdit ? 'EDIT GUEST REVIEW' : 'ADD GUEST REVIEW',
+              bodyHtml,
+              submitText: isEdit ? 'Save Review' : 'Add Review',
+              onSubmit: async () => {
+                const guest_name = document.getElementById('mr_guest_name').value.trim();
+                const review_text = document.getElementById('mr_review_text').value.trim();
+
+                if (!guest_name) { showModalError('Guest name is required'); return false; }
+                if (!review_text) { showModalError('Review text is required'); return false; }
+
+                const payload = {
+                  guest_name,
+                  rating: Number(document.getElementById('mr_rating').value) || 5,
+                  hotel_tag: document.getElementById('mr_hotel_tag').value.trim() || 'Deepak Hotels Group',
+                  review_text
+                };
+
+                const url = isEdit ? '/api/reviews/' + rev.id : '/api/reviews';
+                const method = isEdit ? 'PATCH' : 'POST';
+
+                const res = await fetch(url, {
+                  method,
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!data.ok) {
+                  showModalError(data.error || 'Failed to save review');
+                  return false;
+                }
+
+                showToast(isEdit ? 'Review updated!' : 'Review added to database!');
+                loadAdminData();
+                return true;
+              }
+            });
+          }
+
+          function openVideoModal(videoId = null) {
+            const isEdit = Boolean(videoId);
+            const vid = isEdit ? ADMIN_DATA.videos.find(v => v.id === videoId) : null;
+
+            const bodyHtml = `
+        <div class="modal-form-group">
+          <label class="modal-form-label">Video Title <span style="color:#EF4444;">*</span></label>
+          <input type="text" class="modal-form-control" id="mv_title" value="${vid ? vid.title : ''}" placeholder="e.g. Deepak Hotels Luxury Tour" required>
+        </div>
+        <div class="modal-form-group">
+          <label class="modal-form-label">Video URL or File Upload <span style="color:#EF4444;">*</span></label>
+          <div style="display:flex; gap:10px;">
+            <input type="text" class="modal-form-control" id="mv_url" value="${vid ? vid.video_url : ''}" placeholder="/uploads/video.mp4 or https://..." required>
+            <input type="file" id="mv_url_file" accept="video/*" style="display:none;" onchange="uploadModalFile(this, 'mv_url')">
+            <button type="button" class="btn" style="background:#CBD5E1; color:#0B111D; white-space:nowrap; padding:8px 14px; font-size:0.85rem;" onclick="document.getElementById('mv_url_file').click()">
+              <i class="fa-solid fa-upload"></i> Upload
+            </button>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+          <div class="modal-form-group">
+            <label class="modal-form-label">Featured Homepage Video</label>
+            <select class="modal-form-control" id="mv_homepage">
+              <option value="1" ${vid && vid.is_homepage ? 'selected' : ''}>Yes (Featured in About Section)</option>
+              <option value="0" ${!vid || !vid.is_homepage ? 'selected' : ''}>No (Standard Video)</option>
+            </select>
+          </div>
+          <div class="modal-form-group">
+            <label class="modal-form-label">Status</label>
+            <select class="modal-form-control" id="mv_active">
+              <option value="1" ${!vid || vid.is_active ? 'selected' : ''}>Active</option>
+              <option value="0" ${vid && vid.is_active === false ? 'selected' : ''}>Inactive</option>
+            </select>
+          </div>
+        </div>
+      `;
+
+            openAdminFormModal({
+              category: 'HOTEL VIDEOS',
+              title: isEdit ? 'EDIT HOTEL VIDEO' : 'ADD HOTEL VIDEO',
+              bodyHtml,
+              submitText: isEdit ? 'Save Video Changes' : 'Add Video to Library',
+              onSubmit: async () => {
+                const title = document.getElementById('mv_title').value.trim();
+                const video_url = document.getElementById('mv_url').value.trim();
+
+                if (!title) { showModalError('Video Title is required'); return false; }
+                if (!video_url) { showModalError('Video URL or upload file is required'); return false; }
+
+                const payload = {
+                  title,
+                  video_url,
+                  is_homepage: document.getElementById('mv_homepage').value === '1',
+                  is_active: document.getElementById('mv_active').value === '1'
+                };
+
+                const url = isEdit ? '/api/videos/' + vid.id : '/api/videos';
+                const method = isEdit ? 'PATCH' : 'POST';
+
+                const res = await fetch(url, {
+                  method,
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!data.ok) {
+                  showModalError(data.error || 'Failed to save video');
+                  return false;
+                }
+
+                showToast(isEdit ? 'Video updated!' : 'Video added to library!');
+                loadAdminData();
+                return true;
+              }
+            });
+          }
+
+          // Confirmation Deletion Handlers (No browser confirm calls)
+          function confirmDeleteRoom(id) {
+            const room = ADMIN_DATA.rooms.find(r => r.id === id || String(r.id) === String(id)) || { num: String(id).replace(/^[^-]+-/, '') };
+            const roomNum = room ? room.num : id;
+            showConfirmDialog({
+              title: 'Delete Room?',
+              message: `Are you sure you want to permanently delete Room ${roomNum} (${id}) from the database? This operation cannot be undone.`,
+              actionText: 'Delete Room',
+              danger: true,
+              onConfirm: async () => {
+                try {
+                  const res = await fetch('/api/rooms/' + encodeURIComponent(id), { method: 'DELETE' });
+                  const data = await res.json();
+                  if (data.ok) {
+                    showToast('Room permanently deleted from database!');
+                    loadAdminData();
+                  } else {
+                    showToast('Failed to delete room: ' + (data.error || 'Error'), 'error');
+                  }
+                } catch (err) {
+                  showToast('Server connection error: ' + err.message, 'error');
+                }
+              }
+            });
+          }
+
+          function confirmDeleteHotel(id) {
+            const hotel = ADMIN_DATA.hotels.find(h => h.id === id);
+            const name = hotel ? hotel.name : id;
+            showConfirmDialog({
+              title: 'Delete Hotel Property',
+              message: `Are you sure you want to delete property "${name}"? All rooms associated with this hotel will also be removed from the database.`,
+              onConfirm: async () => {
+                try {
+                  const res = await fetch('/api/hotels/' + id, { method: 'DELETE' });
+                  const data = await res.json();
+                  if (data.ok) {
+                    showToast('Property deleted from database!');
+                    loadAdminData();
+                  } else {
+                    showToast('Failed to delete property: ' + (data.error || 'Error'), 'error');
+                  }
+                } catch (err) {
+                  showToast('Error: ' + err.message, 'error');
+                }
+              }
+            });
+          }
+
+          function confirmDeleteAmenity(id) {
+            const am = ADMIN_DATA.amenities.find(a => a.id === id);
+            const name = am ? am.name : id;
+            showConfirmDialog({
+              title: 'Delete Amenity',
+              message: `Are you sure you want to delete amenity "${name}"?`,
+              onConfirm: async () => {
+                try {
+                  const res = await fetch('/api/amenities/' + id, { method: 'DELETE' });
+                  const data = await res.json();
+                  if (data.ok) {
+                    showToast('Amenity deleted from database!');
+                    loadAdminData();
+                  } else {
+                    showToast('Failed to delete amenity: ' + (data.error || 'Error'), 'error');
+                  }
+                } catch (err) {
+                  showToast('Error: ' + err.message, 'error');
+                }
+              }
+            });
+          }
+
+          function confirmDeleteGalleryItem(id) {
+            showConfirmDialog({
+              title: 'Delete Gallery Photo',
+              message: 'Are you sure you want to delete this photo from the gallery?',
+              onConfirm: async () => {
+                try {
+                  const res = await fetch('/api/gallery/' + id, { method: 'DELETE' });
+                  const data = await res.json();
+                  if (data.ok) {
+                    showToast('Photo removed from gallery!');
+                    loadAdminData();
+                  } else {
+                    showToast('Error: ' + (data.error || 'Failed'), 'error');
+                  }
+                } catch (err) {
+                  showToast('Error: ' + err.message, 'error');
+                }
+              }
+            });
+          }
+
+          function confirmDeleteFoodItem(id) {
+            const item = ADMIN_DATA.menuItems.find(m => m.id === id);
+            const name = item ? item.name : id;
+            showConfirmDialog({
+              title: 'Delete Food Dish',
+              message: `Are you sure you want to remove "${name}" from the pure veg menu?`,
+              onConfirm: async () => {
+                try {
+                  const res = await fetch('/api/menu/' + id, { method: 'DELETE' });
+                  const data = await res.json();
+                  if (data.ok) {
+                    showToast('Dish deleted from menu database!');
+                    loadAdminData();
+                  } else {
+                    showToast('Failed to delete dish: ' + (data.error || 'Error'), 'error');
+                  }
+                } catch (err) {
+                  showToast('Error: ' + err.message, 'error');
+                }
+              }
+            });
+          }
+
+          function confirmDeleteOffer(id) {
+            showConfirmDialog({
+              title: 'Delete Offer',
+              message: 'Are you sure you want to delete this promo offer?',
+              onConfirm: async () => {
+                try {
+                  const res = await fetch('/api/offers/' + id, { method: 'DELETE' });
+                  const data = await res.json();
+                  if (data.ok) {
+                    showToast('Offer deleted!');
+                    loadAdminData();
+                  } else {
+                    showToast('Error: ' + (data.error || 'Failed'), 'error');
+                  }
+                } catch (err) {
+                  showToast('Error: ' + err.message, 'error');
+                }
+              }
+            });
+          }
+
+          function confirmDeleteReview(id) {
+            showConfirmDialog({
+              title: 'Delete Review',
+              message: 'Are you sure you want to delete this guest review?',
+              onConfirm: async () => {
+                try {
+                  const res = await fetch('/api/reviews/' + id, { method: 'DELETE' });
+                  const data = await res.json();
+                  if (data.ok) {
+                    showToast('Review deleted!');
+                    loadAdminData();
+                  } else {
+                    showToast('Error: ' + (data.error || 'Failed'), 'error');
+                  }
+                } catch (err) {
+                  showToast('Error: ' + err.message, 'error');
+                }
+              }
+            });
+          }
+
+          function confirmDeleteVideo(id) {
+            showConfirmDialog({
+              title: 'Delete Video',
+              message: 'Are you sure you want to delete this video from the library?',
+              onConfirm: async () => {
+                try {
+                  const res = await fetch('/api/videos/' + id, { method: 'DELETE' });
+                  const data = await res.json();
+                  if (data.ok) {
+                    showToast('Video deleted!');
+                    loadAdminData();
+                  } else {
+                    showToast('Error: ' + (data.error || 'Failed'), 'error');
+                  }
+                } catch (err) {
+                  showToast('Error: ' + err.message, 'error');
+                }
+              }
+            });
+          }
+
+          function confirmDeleteBooking(id) {
+            showConfirmDialog({
+              title: 'Delete Booking Record',
+              message: `Are you sure you want to permanently delete booking #${id}?`,
+              onConfirm: async () => {
+                try {
+                  const res = await fetch('/api/bookings/' + id, { method: 'DELETE' });
+                  const data = await res.json();
+                  if (data.ok) {
+                    showToast('Booking record deleted!');
+                    loadAdminData();
+                  } else {
+                    showToast('Error: ' + (data.error || 'Failed'), 'error');
+                  }
+                } catch (err) {
+                  showToast('Error: ' + err.message, 'error');
+                }
+              }
+            });
+          }
+
+          async function toggleFoodAvailable(id, available) {
+            try {
+              const res = await fetch('/api/menu/' + id, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ available })
+              });
+              const data = await res.json();
+              if (data.ok) {
+                showToast(`Dish status updated to ${available ? 'AVAILABLE' : 'UNAVAILABLE'}`);
+                loadAdminData();
+              } else {
+                showToast('Failed to update food item: ' + data.error, 'error');
+              }
+            } catch (e) {
+              showToast('Error: ' + e.message, 'error');
+            }
+          }
+
+          async function updateBookingStatus(id, status) {
+            try {
+              const res = await fetch('/api/bookings/' + id + '/status', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status })
+              });
+              const data = await res.json();
+              if (data.ok) {
+                showToast(`Booking status updated to ${status.toUpperCase()}`);
+                loadAdminData();
+              } else {
+                showToast('Failed to update status: ' + (data.error || 'Error'), 'error');
+              }
+            } catch (err) {
+              showToast('Error: ' + err.message, 'error');
+            }
+          }
+
+          // Receipt Modal Logic
+          let CURRENT_RECEIPT_BOOKING_ID = null;
+
+          function showBookingReceiptModal(bookingId) {
+            const b = ADMIN_DATA.bookings.find(x => x.id === bookingId);
+            if (!b) return;
+            CURRENT_RECEIPT_BOOKING_ID = b.id;
+
+            const room = ADMIN_DATA.rooms.find(r => r.id === b.hotelRoom) || {};
+            const hotel = ADMIN_DATA.hotels.find(h => h.id === room.hotel || h.name === room.hotel) || {};
+
+            document.getElementById('receiptId').textContent = '#' + b.id;
+            document.getElementById('receiptGuestName').textContent = b.name;
+
+            const statusBadge = document.getElementById('receiptStatusBadge');
+            const statusText = (b.status || 'PENDING').toUpperCase();
+            statusBadge.textContent = statusText;
+            statusBadge.className = 'badge badge-' + (b.status || 'pending');
+
+            const hotelLoc = hotel.locality ? ` — ${hotel.locality}` : '';
+            document.getElementById('receiptHotelName').textContent = (hotel.name || 'Deepak Hotels Group') + hotelLoc;
+            document.getElementById('receiptRoomName').textContent = `Room ${room.num || b.hotelRoom} • ${room.cat || 'Executive'} • ${room.ac ? 'AC' : 'Non-AC'}`;
+            document.getElementById('receiptStayType').textContent = b.stay === '24hr' ? '24-Hour Stay' : '6-Hour Express Stay';
+            document.getElementById('receiptCheckIn').textContent = `${b.date} at ${b.time || '12:00'}`;
+            document.getElementById('receiptGuests').textContent = b.guests || 1;
+
+            const roomPrice = b.stay === '24hr' ? (room.price24 || 0) : (room.price6 || 0);
+            document.getElementById('receiptRoomCharge').textContent = `₹${roomPrice}`;
+
+            // Food Orders
+            const foodWrap = document.getElementById('receiptFoodWrap');
+            const foodItems = document.getElementById('receiptFoodItems');
+            if (Array.isArray(b.food) && b.food.length > 0) {
+              foodWrap.style.display = 'block';
+              foodItems.innerHTML = b.food.map(f => `<div>${f.qty}x ${f.name} (₹${f.price} ea)</div>`).join('');
+            } else {
+              foodWrap.style.display = 'none';
+            }
+
+            // Guest & ID Verification
+            document.getElementById('receiptPhone').textContent = b.phone || 'N/A';
+
+            const idText = document.getElementById('receiptIdText');
+            const idPhotoWrap = document.getElementById('receiptIdPhotoPreview');
+            const idImg = document.getElementById('receiptIdImg');
+
+            if (b.idMethod === 'upload' && b.idPhotoBase64) {
+              idText.textContent = 'Uploaded Photo ID';
+              idPhotoWrap.style.display = 'block';
+              idImg.src = b.idPhotoBase64;
+            } else {
+              idText.textContent = 'Will show at hotel reception';
+              idPhotoWrap.style.display = 'none';
+            }
+
+            // Requests
+            const reqWrap = document.getElementById('receiptRequestsWrap');
+            if (b.requests) {
+              reqWrap.style.display = 'block';
+              document.getElementById('receiptRequests').textContent = b.requests;
+            } else {
+              reqWrap.style.display = 'none';
+            }
+
+            // Total
+            const total = calculateBookingTotal(b);
+            document.getElementById('receiptTotal').textContent = `₹${total}`;
+
+            document.getElementById('receiptModalBackdrop').classList.add('active');
+          }
+
+          function closeReceiptModal() {
+            document.getElementById('receiptModalBackdrop').classList.remove('active');
+          }
+
+          async function receiptAction(action) {
+            if (!CURRENT_RECEIPT_BOOKING_ID) return;
+            const b = ADMIN_DATA.bookings.find(x => x.id === CURRENT_RECEIPT_BOOKING_ID);
+            if (!b) return;
+
+            if (action === 'confirm') {
+              await updateBookingStatus(b.id, 'confirmed');
+              showBookingReceiptModal(b.id);
+            } else if (action === 'cancel') {
+              showConfirmDialog({
+                title: 'Cancel Booking',
+                message: `Are you sure you want to cancel booking #${b.id}?`,
+                onConfirm: async () => {
+                  await updateBookingStatus(b.id, 'cancelled');
+                  showBookingReceiptModal(b.id);
+                }
+              });
+            } else if (action === 'call') {
+              window.open('tel:' + b.phone);
+            }
+          }
+
+          function calculateBookingTotal(b) {
+            const room = ADMIN_DATA.rooms.find(r => r.id === b.hotelRoom);
+            const roomPrice = room ? (b.stay === '24hr' ? room.price24 : room.price6) : 0;
+            const foodTotal = (b.food || []).reduce((sum, item) => sum + (item.price * item.qty), 0);
+            return roomPrice || 485;
+          }
+
+          // Run session check on page load
+          document.addEventListener('DOMContentLoaded', checkSession);
+        </script>
 </body>
 
 </html>

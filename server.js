@@ -163,6 +163,7 @@ function verifyPassword(password, salt, hash) {
 function seedDb() {
   const admin = hashPassword('deepakhotelgroup@123');
   return {
+    is_seeded: true,
     hotels: SEED_HOTELS,
     rooms: SEED_ROOMS,
     menuItems: [],
@@ -181,10 +182,28 @@ function seedDb() {
 }
 
 /* ---------------------------------------------------------------------
-   DATABASE ENGINE — SQLite Database (via node:sqlite) with dual-sync
+   DATABASE ENGINE — Persistent SQLite Database (via node:sqlite)
+   Single source of truth for all Admin & Public Website data
 --------------------------------------------------------------------- */
 const SQLITE_PATH = path.join(DATA_DIR, 'deepak_hotels.db');
 let sqliteDb = null;
+let DB = {
+  is_seeded: true,
+  hotels: [],
+  rooms: [],
+  menuItems: [],
+  bookings: [],
+  admins: [],
+  settings: {},
+  hero: {},
+  amenities: [],
+  offers: [],
+  reviews: [],
+  gallery: [],
+  videos: [],
+  notifications: [],
+  nextBookingSeq: 1
+};
 
 function initSqliteDatabase() {
   fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -339,122 +358,114 @@ function initSqliteDatabase() {
   }
 }
 
-function syncDbToSqlite() {
-  if (!sqliteDb || !DB) return;
+function countRows(table) {
+  if (!sqliteDb) return 0;
+  try {
+    const row = sqliteDb.prepare(`SELECT COUNT(*) as c FROM ${table}`).get();
+    return row ? Number(row.c) || 0 : 0;
+  } catch (e) {
+    return 0;
+  }
+}
+
+function seedSqliteIfEmpty() {
+  if (!sqliteDb) return;
   try {
     sqliteDb.exec('BEGIN TRANSACTION;');
 
-    // Hotels
-    sqliteDb.exec('DELETE FROM hotels;');
-    const insertHotel = sqliteDb.prepare(`INSERT INTO hotels (id, name, tag, locality, phone, accent, image, desc) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`);
-    (DB.hotels || []).forEach(h => insertHotel.run(
-      String(h.id || ''), String(h.name || ''), String(h.tag || ''), String(h.locality || ''), String(h.phone || ''), String(h.accent || ''), String(h.image || ''), String(h.desc || '')
-    ));
+    // 1. Hotels
+    if (countRows('hotels') === 0) {
+      const ins = sqliteDb.prepare(`INSERT INTO hotels (id, name, tag, locality, phone, accent, image, desc) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`);
+      SEED_HOTELS.forEach(h => ins.run(h.id, h.name, h.tag, h.locality, h.phone, h.accent, h.image, h.desc));
+    }
 
-    // Rooms
-    sqliteDb.exec('DELETE FROM rooms;');
-    const insertRoom = sqliteDb.prepare(`INSERT INTO rooms (id, hotel, num, floor, ac, cat, price24, price6, photo, max_guests, bed_type, amenities, status, desc, video_url, discount_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
-    (DB.rooms || []).forEach(r => insertRoom.run(
-      String(r.id || ''), String(r.hotel || ''), String(r.num || ''), Number(r.floor) || 1, r.ac ? 1 : 0, String(r.cat || 'Single'),
-      Number(r.price24) || 0, Number(r.price6) || 0, r.photo || null, Number(r.maxGuests || r.max_guests) || 2, String(r.bedType || r.bed_type || 'King Bed'), String(r.amenities || 'Wi-Fi, AC, TV'), String(r.status || 'available'),
-      String(r.desc || ''), String(r.video_url || ''), Number(r.discount_price || r.discountPrice) || 0
-    ));
+    // 2. Rooms
+    if (countRows('rooms') === 0) {
+      const ins = sqliteDb.prepare(`INSERT INTO rooms (id, hotel, num, floor, ac, cat, price24, price6, photo, max_guests, bed_type, amenities, status, desc, video_url, discount_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+      SEED_ROOMS.forEach(r => ins.run(r.id, r.hotel, r.num, r.floor, r.ac ? 1 : 0, r.cat, r.price24, r.price6, r.photo, r.maxGuests, r.bedType, r.amenities, r.status, r.desc || '', r.video_url || '', r.discount_price || 0));
+    }
 
-    // Menu items
-    sqliteDb.exec('DELETE FROM menu_items;');
-    const insertMenu = sqliteDb.prepare(`INSERT INTO menu_items (id, name, category, price, photo, available) VALUES (?, ?, ?, ?, ?, ?)`);
-    (DB.menuItems || []).forEach(i => insertMenu.run(
-      String(i.id || ''), String(i.name || ''), String(i.category || 'Other'), Number(i.price) || 0, i.photo || null, i.available ? 1 : 0
-    ));
+    // 3. Settings
+    if (countRows('website_settings') === 0) {
+      const ins = sqliteDb.prepare(`INSERT INTO website_settings (key, value) VALUES (?, ?)`);
+      Object.entries(SEED_SETTINGS).forEach(([k, v]) => ins.run(k, String(v)));
+    }
 
-    // Bookings
-    sqliteDb.exec('DELETE FROM bookings;');
-    const insertBooking = sqliteDb.prepare(`INSERT INTO bookings (id, hotelRoom, name, phone, email, guests, stay, date, time, idMethod, idPhotoBase64, requests, food, status, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
-    (DB.bookings || []).forEach(b => insertBooking.run(
-      String(b.id || ''), String(b.hotelRoom || ''), String(b.name || ''), String(b.phone || ''), String(b.email || ''), Number(b.guests) || 1, String(b.stay || '24hr'), String(b.date || ''), String(b.time || ''), String(b.idMethod || 'hotel'), b.idPhotoBase64 || null, String(b.requests || ''), JSON.stringify(b.food || []), String(b.status || 'pending'), String(b.createdAt || new Date().toISOString())
-    ));
+    // 4. Hero
+    if (countRows('hero_settings') === 0) {
+      const ins = sqliteDb.prepare(`INSERT INTO hero_settings (key, value) VALUES (?, ?)`);
+      Object.entries(SEED_HERO).forEach(([k, v]) => ins.run(k, String(v)));
+    }
 
-    // Admins
-    sqliteDb.exec('DELETE FROM admins;');
-    const insertAdmin = sqliteDb.prepare(`INSERT INTO admins (username, salt, hash) VALUES (?, ?, ?)`);
-    (DB.admins || []).forEach(a => insertAdmin.run(
-      String(a.username || ''), String(a.salt || ''), String(a.hash || '')
-    ));
+    // 5. Amenities
+    if (countRows('amenities') === 0) {
+      const ins = sqliteDb.prepare(`INSERT INTO amenities (id, name, icon, category, desc) VALUES (?, ?, ?, ?, ?)`);
+      SEED_AMENITIES.forEach(a => ins.run(a.id, a.name, a.icon, a.category, a.desc));
+    }
 
-    // Metadata
-    const insertMeta = sqliteDb.prepare(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)`);
-    insertMeta.run('nextBookingSeq', String(DB.nextBookingSeq || 1));
+    // 6. Offers
+    if (countRows('offers') === 0) {
+      const ins = sqliteDb.prepare(`INSERT INTO offers (id, title, desc, discount, image, valid_from, valid_to, code, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+      SEED_OFFERS.forEach(o => ins.run(o.id, o.title, o.desc, o.discount, o.image, o.valid_from, o.valid_to, o.code, o.is_active));
+    }
 
-    // Settings
-    sqliteDb.exec('DELETE FROM website_settings;');
-    const insertSetting = sqliteDb.prepare(`INSERT INTO website_settings (key, value) VALUES (?, ?)`);
-    Object.entries(DB.settings || {}).forEach(([k, v]) => insertSetting.run(String(k), String(v || '')));
+    // 7. Reviews
+    if (countRows('reviews') === 0) {
+      const ins = sqliteDb.prepare(`INSERT INTO reviews (id, guest_name, rating, review_text, guest_image, hotel_tag) VALUES (?, ?, ?, ?, ?, ?)`);
+      SEED_REVIEWS.forEach(r => ins.run(r.id, r.guest_name, r.rating, r.review_text, r.guest_image, r.hotel_tag));
+    }
 
-    // Hero
-    sqliteDb.exec('DELETE FROM hero_settings;');
-    const insertHero = sqliteDb.prepare(`INSERT INTO hero_settings (key, value) VALUES (?, ?)`);
-    Object.entries(DB.hero || {}).forEach(([k, v]) => insertHero.run(String(k), String(v || '')));
+    // 8. Gallery
+    if (countRows('gallery') === 0) {
+      const ins = sqliteDb.prepare(`INSERT INTO gallery (id, title, category, image, display_order) VALUES (?, ?, ?, ?, ?)`);
+      SEED_GALLERY.forEach(g => ins.run(g.id, g.title, g.category, g.image, g.display_order));
+    }
 
-    // Gallery
-    sqliteDb.exec('DELETE FROM gallery;');
-    const insertGal = sqliteDb.prepare(`INSERT INTO gallery (id, title, category, image, display_order) VALUES (?, ?, ?, ?, ?)`);
-    (DB.gallery || []).forEach(g => insertGal.run(String(g.id || ''), String(g.title || ''), String(g.category || 'General'), String(g.image || ''), Number(g.display_order) || 0));
+    // 9. Videos
+    if (countRows('videos') === 0) {
+      const ins = sqliteDb.prepare(`INSERT INTO videos (id, title, video_url, is_homepage, is_active) VALUES (?, ?, ?, ?, ?)`);
+      SEED_VIDEOS.forEach(v => ins.run(v.id, v.title, v.video_url, v.is_homepage, v.is_active));
+    }
 
-    // Videos
-    sqliteDb.exec('DELETE FROM videos;');
-    const insertVid = sqliteDb.prepare(`INSERT INTO videos (id, title, video_url, is_homepage, is_active) VALUES (?, ?, ?, ?, ?)`);
-    (DB.videos || []).forEach(v => insertVid.run(String(v.id || ''), String(v.title || ''), String(v.video_url || ''), v.is_homepage ? 1 : 0, v.is_active ? 1 : 0));
+    // 10. Admins (Default credentials created ONLY if admins table is completely empty)
+    if (countRows('admins') === 0) {
+      const adminCreds = hashPassword('deepakhotelgroup@123');
+      const ins = sqliteDb.prepare(`INSERT INTO admins (username, salt, hash) VALUES (?, ?, ?)`);
+      ins.run('deepakhotelgroup', adminCreds.salt, adminCreds.hash);
+    }
 
-    // Amenities
-    sqliteDb.exec('DELETE FROM amenities;');
-    const insertAm = sqliteDb.prepare(`INSERT INTO amenities (id, name, icon, category, desc) VALUES (?, ?, ?, ?, ?)`);
-    (DB.amenities || []).forEach(a => insertAm.run(String(a.id || ''), String(a.name || ''), String(a.icon || ''), String(a.category || 'General'), String(a.desc || '')));
-
-    // Offers
-    sqliteDb.exec('DELETE FROM offers;');
-    const insertOff = sqliteDb.prepare(`INSERT INTO offers (id, title, desc, discount, image, valid_from, valid_to, code, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`);
-    (DB.offers || []).forEach(o => insertOff.run(String(o.id || ''), String(o.title || ''), String(o.desc || ''), String(o.discount || ''), String(o.image || ''), String(o.valid_from || ''), String(o.valid_to || ''), String(o.code || ''), o.is_active ? 1 : 0));
-
-    // Reviews
-    sqliteDb.exec('DELETE FROM reviews;');
-    const insertRev = sqliteDb.prepare(`INSERT INTO reviews (id, guest_name, rating, review_text, guest_image, hotel_tag) VALUES (?, ?, ?, ?, ?, ?)`);
-    (DB.reviews || []).forEach(r => insertRev.run(String(r.id || ''), String(r.guest_name || ''), Number(r.rating) || 5, String(r.review_text || ''), String(r.guest_image || ''), String(r.hotel_tag || '')));
-
-    // Notifications
-    sqliteDb.exec('DELETE FROM notifications;');
-    const insertNotif = sqliteDb.prepare(`INSERT INTO notifications (id, booking_id, recipient_number, notification_type, message, status, provider_message_id, error_message, attempts, created_at, sent_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
-    (DB.notifications || []).forEach(n => insertNotif.run(
-      String(n.id || ''), String(n.booking_id || ''), String(n.recipient_number || n.recipient || ADMIN_MOBILE), String(n.notification_type || 'sms'), String(n.message || ''),
-      String(n.status || 'pending'), n.provider_message_id || null, n.error_message || null, Number(n.attempts) || 1, String(n.created_at || ''), n.sent_at || null
-    ));
+    // 11. Metadata
+    const metaSeq = sqliteDb.prepare("SELECT value FROM metadata WHERE key = 'nextBookingSeq'").get();
+    if (!metaSeq) {
+      sqliteDb.prepare("INSERT INTO metadata (key, value) VALUES ('nextBookingSeq', '1')").run();
+    }
 
     sqliteDb.exec('COMMIT;');
-  } catch (err) {
-    try { sqliteDb.exec('ROLLBACK;'); } catch (e) { }
-    console.error('[Database] SQLite sync warning:', err.message);
+  } catch (e) {
+    try { sqliteDb.exec('ROLLBACK;'); } catch (err) { }
+    console.error('[Database] Error seeding SQLite database:', e.message);
   }
 }
 
 function loadDbFromSqlite() {
   if (!sqliteDb) return false;
   try {
-    const hotelRows = sqliteDb.prepare('SELECT * FROM hotels').all();
-    if (!hotelRows || !hotelRows.length) return false;
+    seedSqliteIfEmpty();
 
+    const hotelRows = sqliteDb.prepare('SELECT * FROM hotels').all() || [];
     const roomRows = sqliteDb.prepare('SELECT * FROM rooms').all() || [];
     const menuRows = sqliteDb.prepare('SELECT * FROM menu_items').all() || [];
     const bookingRows = sqliteDb.prepare('SELECT * FROM bookings').all() || [];
     const adminRows = sqliteDb.prepare('SELECT * FROM admins').all() || [];
-    const metaRow = sqliteDb.prepare("SELECT value FROM metadata WHERE key = 'nextBookingSeq'").get();
     const settingRows = sqliteDb.prepare('SELECT * FROM website_settings').all() || [];
     const heroRows = sqliteDb.prepare('SELECT * FROM hero_settings').all() || [];
-    const galleryRows = sqliteDb.prepare('SELECT * FROM gallery').all() || [];
+    const galleryRows = sqliteDb.prepare('SELECT * FROM gallery ORDER BY display_order ASC').all() || [];
     const videoRows = sqliteDb.prepare('SELECT * FROM videos').all() || [];
     const amenityRows = sqliteDb.prepare('SELECT * FROM amenities').all() || [];
     const offerRows = sqliteDb.prepare('SELECT * FROM offers').all() || [];
     const reviewRows = sqliteDb.prepare('SELECT * FROM reviews').all() || [];
-    let notifRows = [];
-    try { notifRows = sqliteDb.prepare('SELECT * FROM notifications').all() || []; } catch (e) { }
+    const notifRows = sqliteDb.prepare('SELECT * FROM notifications').all() || [];
+    const metaRow = sqliteDb.prepare("SELECT value FROM metadata WHERE key = 'nextBookingSeq'").get();
 
     const settings = { ...SEED_SETTINGS };
     settingRows.forEach(s => { settings[s.key] = s.value; });
@@ -463,6 +474,7 @@ function loadDbFromSqlite() {
     heroRows.forEach(h => { hero[h.key] = h.value; });
 
     DB = {
+      is_seeded: true,
       hotels: hotelRows.map(h => ({
         id: h.id, name: h.name, tag: h.tag, locality: h.locality, phone: h.phone, accent: h.accent, image: h.image, desc: h.desc
       })),
@@ -493,12 +505,11 @@ function loadDbFromSqlite() {
     };
     return true;
   } catch (err) {
-    console.error('[Database] Failed to read from SQLite database:', err.message);
+    console.error('[Database] Failed to load from SQLite:', err.message);
     return false;
   }
 }
 
-let DB;
 function loadDb() {
   fs.mkdirSync(DATA_DIR, { recursive: true });
   initSqliteDatabase();
@@ -512,7 +523,7 @@ function loadDb() {
     try {
       const raw = fs.readFileSync(DB_PATH, 'utf8');
       const parsed = JSON.parse(raw);
-      if (parsed && Array.isArray(parsed.hotels) && parsed.hotels.length > 0) {
+      if (parsed && parsed.is_seeded) {
         DB = parsed;
         loaded = true;
       }
@@ -525,38 +536,11 @@ function loadDb() {
     DB = seedDb();
   }
 
-  // Schema fallbacks
-  if (!Array.isArray(DB.hotels) || DB.hotels.length === 0) DB.hotels = SEED_HOTELS;
-  if (!Array.isArray(DB.rooms) || DB.rooms.length === 0) DB.rooms = SEED_ROOMS;
-  if (!Array.isArray(DB.menuItems)) DB.menuItems = [];
-  if (!Array.isArray(DB.bookings)) DB.bookings = [];
-  if (!DB.settings) DB.settings = { ...SEED_SETTINGS };
-  if (!DB.hero) DB.hero = { ...SEED_HERO };
-  if (!Array.isArray(DB.amenities) || DB.amenities.length === 0) DB.amenities = SEED_AMENITIES;
-  if (!Array.isArray(DB.offers) || DB.offers.length === 0) DB.offers = SEED_OFFERS;
-  if (!Array.isArray(DB.reviews) || DB.reviews.length === 0) DB.reviews = SEED_REVIEWS;
-  if (!Array.isArray(DB.gallery) || DB.gallery.length === 0) DB.gallery = SEED_GALLERY;
-  if (!Array.isArray(DB.videos) || DB.videos.length === 0) DB.videos = SEED_VIDEOS;
-  if (!Array.isArray(DB.notifications)) DB.notifications = [];
-  if (!DB.nextBookingSeq) DB.nextBookingSeq = 1;
-
-  // Ensure default admin user
-  const adminCreds = hashPassword('deepakhotelgroup@123');
-  if (!Array.isArray(DB.admins) || DB.admins.length === 0) {
-    DB.admins = [{ username: 'deepakhotelgroup', salt: adminCreds.salt, hash: adminCreds.hash }];
-  } else {
-    const idx = DB.admins.findIndex(a => a.username === 'deepakhotelgroup');
-    if (idx >= 0) {
-      DB.admins[idx] = { username: 'deepakhotelgroup', salt: adminCreds.salt, hash: adminCreds.hash };
-    } else {
-      DB.admins.unshift({ username: 'deepakhotelgroup', salt: adminCreds.salt, hash: adminCreds.hash });
-    }
-  }
-
-  saveDb();
+  DB.is_seeded = true;
+  saveDbMirrorOnly();
 }
 
-function saveDb() {
+function saveDbMirrorOnly() {
   const tmpPath = DB_PATH + '.tmp';
   try {
     fs.writeFileSync(tmpPath, JSON.stringify(DB, null, 2));
@@ -564,12 +548,19 @@ function saveDb() {
   } catch (err) {
     fs.writeFileSync(DB_PATH, JSON.stringify(DB, null, 2));
   }
-  syncDbToSqlite();
+}
+
+function saveDb() {
+  saveDbMirrorOnly();
 }
 loadDb();
 
 const roomOf = id => DB.rooms.find(r => r.id === id);
-const hotelOf = id => DB.hotels.find(h => h.id === id);
+function hotelOf(identifier) {
+  if (!identifier) return null;
+  const target = String(identifier).trim().toLowerCase();
+  return DB.hotels.find(h => String(h.id).toLowerCase() === target || String(h.name).trim().toLowerCase() === target);
+}
 
 /* ---------------------------------------------------------------------
    NOTIFICATION SYSTEM (Official Meta WhatsApp Business Cloud API Integration)
@@ -994,11 +985,32 @@ route('GET', '/api/hero', async (req, res) => {
   sendJson(res, 200, { hero: DB.hero });
 });
 
+route('PATCH', '/api/settings', async (req, res) => {
+  if (!requireAdmin(req, res)) return;
+  const body = await readBody(req);
+  Object.assign(DB.settings, body);
+  if (sqliteDb) {
+    const ins = sqliteDb.prepare('INSERT OR REPLACE INTO website_settings (key, value) VALUES (?, ?)');
+    Object.entries(body).forEach(([k, v]) => ins.run(String(k), String(v || '')));
+  }
+  saveDbMirrorOnly();
+  sendJson(res, 200, { ok: true, settings: DB.settings });
+});
+
+// Hero Settings
+route('GET', '/api/hero', async (req, res) => {
+  sendJson(res, 200, { hero: DB.hero });
+});
+
 route('PATCH', '/api/hero', async (req, res) => {
   if (!requireAdmin(req, res)) return;
   const body = await readBody(req);
   Object.assign(DB.hero, body);
-  saveDb();
+  if (sqliteDb) {
+    const ins = sqliteDb.prepare('INSERT OR REPLACE INTO hero_settings (key, value) VALUES (?, ?)');
+    Object.entries(body).forEach(([k, v]) => ins.run(String(k), String(v || '')));
+  }
+  saveDbMirrorOnly();
   sendJson(res, 200, { ok: true, hero: DB.hero });
 });
 
@@ -1028,7 +1040,12 @@ route('POST', '/api/hotels', async (req, res) => {
   };
 
   DB.hotels.push(hotel);
-  saveDb();
+  if (sqliteDb) {
+    sqliteDb.prepare(`INSERT INTO hotels (id, name, tag, locality, phone, accent, image, desc) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`).run(
+      hotel.id, hotel.name, hotel.tag, hotel.locality, hotel.phone, hotel.accent, hotel.image, hotel.desc
+    );
+  }
+  saveDbMirrorOnly();
   sendJson(res, 201, { ok: true, hotel });
 });
 
@@ -1046,7 +1063,13 @@ route('PATCH', '/api/hotels/:id', async (req, res, params) => {
   if (typeof body.image === 'string') h.image = body.image;
   if (typeof body.photo === 'string') h.image = body.photo;
   if (typeof body.accent === 'string') h.accent = body.accent;
-  saveDb();
+
+  if (sqliteDb) {
+    sqliteDb.prepare(`UPDATE hotels SET name=?, tag=?, locality=?, phone=?, accent=?, image=?, desc=? WHERE id=?`).run(
+      h.name, h.tag, h.locality, h.phone, h.accent, h.image, h.desc, h.id
+    );
+  }
+  saveDbMirrorOnly();
   sendJson(res, 200, { ok: true, hotel: h });
 });
 
@@ -1062,7 +1085,7 @@ route('DELETE', '/api/hotels/:id', async (req, res, params) => {
       sqliteDb.prepare('DELETE FROM rooms WHERE hotel = ?').run(params.id);
     } catch (e) { }
   }
-  saveDb();
+  saveDbMirrorOnly();
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 
@@ -1086,7 +1109,11 @@ route('PATCH', '/api/contact-details/:hotelId', async (req, res, params) => {
   if (typeof body.address === 'string') h.locality = body.address;
   if (typeof body.locality === 'string') h.locality = body.locality;
   if (typeof body.phone === 'string') h.phone = body.phone;
-  saveDb();
+
+  if (sqliteDb) {
+    sqliteDb.prepare(`UPDATE hotels SET locality=?, phone=? WHERE id=?`).run(h.locality, h.phone, h.id);
+  }
+  saveDbMirrorOnly();
   sendJson(res, 200, { ok: true, contact: { id: 'c_' + h.id, hotel_id: h.id, phone: h.phone, address: h.locality } });
 });
 
@@ -1108,8 +1135,12 @@ route('PATCH', '/api/rooms/bulk-pricing', async (req, res) => {
     if (typeof u.ac === 'boolean') r.ac = u.ac;
     if (typeof u.cat === 'string' && ROOM_CATEGORIES.includes(u.cat)) r.cat = u.cat;
     applied.push(r.id);
+
+    if (sqliteDb) {
+      sqliteDb.prepare(`UPDATE rooms SET price24=?, price6=?, ac=?, cat=? WHERE id=?`).run(r.price24, r.price6, r.ac ? 1 : 0, r.cat, r.id);
+    }
   });
-  saveDb();
+  saveDbMirrorOnly();
   sendJson(res, 200, { ok: true, updated: applied });
 });
 
@@ -1119,12 +1150,42 @@ route('PATCH', '/api/rooms/:id', async (req, res, params) => {
   if (!r) return sendJson(res, 404, { error: 'Room not found' });
   let body;
   try { body = await readBody(req); } catch (e) { return sendJson(res, 413, { error: e.message }); }
-  if (Number.isFinite(body.price24)) r.price24 = Math.max(0, Math.round(body.price24));
-  if (Number.isFinite(body.price6)) r.price6 = Math.max(0, Math.round(body.price6));
+  
+  if (body.hotel !== undefined && body.hotel !== null) {
+    let targetHotel = hotelOf(body.hotel);
+    if (!targetHotel) {
+      const newHotelId = 'h_' + Date.now().toString(36);
+      targetHotel = {
+        id: newHotelId,
+        name: String(body.hotel).trim(),
+        tag: 'Executive Wing',
+        locality: 'Shirdi, Maharashtra',
+        phone: '+91 98514 15415',
+        accent: '#E8A33D',
+        image: '/images/hero-bg.jpg',
+        desc: 'Deepak Hotels Group Property'
+      };
+      DB.hotels.push(targetHotel);
+      if (sqliteDb) {
+        sqliteDb.prepare(`INSERT INTO hotels (id, name, tag, locality, phone, accent, image, desc) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`).run(
+          targetHotel.id, targetHotel.name, targetHotel.tag, targetHotel.locality, targetHotel.phone, targetHotel.accent, targetHotel.image, targetHotel.desc
+        );
+      }
+    }
+    r.hotel = targetHotel.id;
+  }
+
+  if (body.price24 !== undefined && body.price24 !== null) {
+    const p24 = Number(body.price24);
+    if (Number.isFinite(p24)) r.price24 = Math.max(0, Math.round(p24));
+  }
+  if (body.price6 !== undefined && body.price6 !== null) {
+    const p6 = Number(body.price6);
+    if (Number.isFinite(p6)) r.price6 = Math.max(0, Math.round(p6));
+  }
   if (typeof body.ac === 'boolean') r.ac = body.ac;
-  if (typeof body.cat === 'string') {
-    if (!ROOM_CATEGORIES.includes(body.cat)) return sendJson(res, 400, { error: 'Invalid category' });
-    r.cat = body.cat;
+  if (typeof body.cat === 'string' && body.cat.trim()) {
+    r.cat = String(body.cat).trim();
   }
   if (typeof body.photo === 'string') {
     r.photo = body.photo;
@@ -1139,7 +1200,12 @@ route('PATCH', '/api/rooms/:id', async (req, res, params) => {
   if (body.video_url !== undefined) r.video_url = String(body.video_url);
   if (body.discount_price !== undefined || body.discountPrice !== undefined) r.discount_price = Number(body.discount_price || body.discountPrice) || 0;
 
-  saveDb();
+  if (sqliteDb) {
+    sqliteDb.prepare(`UPDATE rooms SET hotel=?, num=?, floor=?, ac=?, cat=?, price24=?, price6=?, photo=?, max_guests=?, bed_type=?, amenities=?, status=?, desc=?, video_url=?, discount_price=? WHERE id=?`).run(
+      r.hotel, r.num, r.floor, r.ac ? 1 : 0, r.cat, r.price24, r.price6, r.photo, r.maxGuests, r.bedType, r.amenities, r.status, r.desc, r.video_url, r.discount_price, r.id
+    );
+  }
+  saveDbMirrorOnly();
   sendJson(res, 200, { ok: true, room: r });
 });
 
@@ -1148,33 +1214,61 @@ route('POST', '/api/rooms', async (req, res) => {
   let body;
   try { body = await readBody(req); } catch (e) { return sendJson(res, 400, { error: e.message }); }
   const { hotel, num, floor, ac, cat, price24, price6, photo, maxGuests, bedType, amenities, status } = body;
-  if (!hotel || !hotelOf(hotel)) return sendJson(res, 400, { error: 'Invalid hotel' });
+  if (!hotel || !String(hotel).trim()) return sendJson(res, 400, { error: 'Hotel name or ID is required' });
   if (!num || (typeof num !== 'string' && typeof num !== 'number')) return sendJson(res, 400, { error: 'Room number is required' });
+
+  let targetHotel = hotelOf(hotel);
+  if (!targetHotel) {
+    const newHotelId = 'h_' + Date.now().toString(36);
+    targetHotel = {
+      id: newHotelId,
+      name: String(hotel).trim(),
+      tag: 'Executive Wing',
+      locality: 'Shirdi, Maharashtra',
+      phone: '+91 98514 15415',
+      accent: '#E8A33D',
+      image: '/images/hero-bg.jpg',
+      desc: 'Deepak Hotels Group Property'
+    };
+    DB.hotels.push(targetHotel);
+    if (sqliteDb) {
+      sqliteDb.prepare(`INSERT INTO hotels (id, name, tag, locality, phone, accent, image, desc) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`).run(
+        targetHotel.id, targetHotel.name, targetHotel.tag, targetHotel.locality, targetHotel.phone, targetHotel.accent, targetHotel.image, targetHotel.desc
+      );
+    }
+  }
+
   const strNum = String(num).trim();
-  const roomId = hotel + '-' + strNum;
-  if (DB.rooms.some(r => r.id === roomId)) return sendJson(res, 400, { error: `Room ${strNum} already exists for this hotel` });
-  if (!ROOM_CATEGORIES.includes(cat)) return sendJson(res, 400, { error: 'Invalid room category' });
+  const roomId = targetHotel.id + '-' + strNum;
+  if (DB.rooms.some(r => r.id === roomId)) return sendJson(res, 400, { error: `Room ${strNum} already exists for ${targetHotel.name}` });
+
+  const categoryName = String(cat || 'Executive').trim();
 
   const newRoom = {
     id: roomId,
-    hotel,
+    hotel: targetHotel.id,
     num: strNum,
     floor: Number(floor) || 1,
     ac: Boolean(ac),
-    cat,
+    cat: categoryName,
     price24: Math.max(0, Math.round(Number(price24) || 0)),
     price6: Math.max(0, Math.round(Number(price6) || 0)),
     photo: typeof photo === 'string' ? photo : null,
-    maxGuests: Number(maxGuests) || 2,
+    maxGuests: Number(maxGuests) || (categoryName === 'Family' || categoryName === 'Suite' ? 4 : 2),
     bedType: String(bedType || 'King Bed'),
-    amenities: String(amenities || 'Wi-Fi, AC, TV'),
+    amenities: String(amenities || 'Wi-Fi, AC, Smart TV, Room Service'),
     status: String(status || 'available'),
     desc: String(body.desc || ''),
     video_url: String(body.video_url || ''),
     discount_price: Number(body.discount_price || body.discountPrice) || 0
   };
   DB.rooms.push(newRoom);
-  saveDb();
+  if (sqliteDb) {
+    sqliteDb.prepare(`INSERT INTO rooms (id, hotel, num, floor, ac, cat, price24, price6, photo, max_guests, bed_type, amenities, status, desc, video_url, discount_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(
+      newRoom.id, newRoom.hotel, newRoom.num, newRoom.floor, newRoom.ac ? 1 : 0, newRoom.cat, newRoom.price24, newRoom.price6, newRoom.photo, newRoom.maxGuests, newRoom.bedType, newRoom.amenities, newRoom.status, newRoom.desc, newRoom.video_url, newRoom.discount_price
+    );
+  }
+  saveDbMirrorOnly();
   sendJson(res, 201, { ok: true, room: newRoom });
 });
 
@@ -1186,7 +1280,7 @@ route('DELETE', '/api/rooms/:id', async (req, res, params) => {
   if (sqliteDb) {
     try { sqliteDb.prepare('DELETE FROM rooms WHERE id = ?').run(params.id); } catch (e) { }
   }
-  saveDb();
+  saveDbMirrorOnly();
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 
@@ -1246,7 +1340,12 @@ route('POST', '/api/menu', async (req, res) => {
   const err = applyMenuFields(item, body);
   if (err) return sendJson(res, 400, { error: err });
   DB.menuItems.push(item);
-  saveDb();
+  if (sqliteDb) {
+    sqliteDb.prepare(`INSERT INTO menu_items (id, name, category, price, photo, available) VALUES (?, ?, ?, ?, ?, ?)`).run(
+      item.id, item.name, item.category, item.price, item.photo, item.available ? 1 : 0
+    );
+  }
+  saveDbMirrorOnly();
   sendJson(res, 201, { ok: true, item });
 });
 
@@ -1258,7 +1357,13 @@ route('PATCH', '/api/menu/:id', async (req, res, params) => {
   try { body = await readBody(req); } catch (e) { return sendJson(res, 413, { error: e.message }); }
   const err = applyMenuFields(item, body);
   if (err) return sendJson(res, 400, { error: err });
-  saveDb();
+
+  if (sqliteDb) {
+    sqliteDb.prepare(`UPDATE menu_items SET name=?, category=?, price=?, photo=?, available=? WHERE id=?`).run(
+      item.name, item.category, item.price, item.photo, item.available ? 1 : 0, item.id
+    );
+  }
+  saveDbMirrorOnly();
   sendJson(res, 200, { ok: true, item });
 });
 
@@ -1270,7 +1375,7 @@ route('DELETE', '/api/menu/:id', async (req, res, params) => {
   if (sqliteDb) {
     try { sqliteDb.prepare('DELETE FROM menu_items WHERE id = ?').run(params.id); } catch (e) { }
   }
-  saveDb();
+  saveDbMirrorOnly();
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 
@@ -1292,7 +1397,12 @@ route('POST', '/api/gallery', async (req, res) => {
     display_order: Number(display_order) || DB.gallery.length + 1
   };
   DB.gallery.push(item);
-  saveDb();
+  if (sqliteDb) {
+    sqliteDb.prepare(`INSERT INTO gallery (id, title, category, image, display_order) VALUES (?, ?, ?, ?, ?)`).run(
+      item.id, item.title, item.category, item.image, item.display_order
+    );
+  }
+  saveDbMirrorOnly();
   sendJson(res, 201, { ok: true, item });
 });
 
@@ -1305,7 +1415,13 @@ route('PATCH', '/api/gallery/:id', async (req, res, params) => {
   if (body.category !== undefined) item.category = String(body.category).trim();
   if (body.image !== undefined) item.image = String(body.image);
   if (body.display_order !== undefined) item.display_order = Number(body.display_order) || 0;
-  saveDb();
+
+  if (sqliteDb) {
+    sqliteDb.prepare(`UPDATE gallery SET title=?, category=?, image=?, display_order=? WHERE id=?`).run(
+      item.title, item.category, item.image, item.display_order, item.id
+    );
+  }
+  saveDbMirrorOnly();
   sendJson(res, 200, { ok: true, item });
 });
 
@@ -1317,7 +1433,7 @@ route('DELETE', '/api/gallery/:id', async (req, res, params) => {
   if (sqliteDb) {
     try { sqliteDb.prepare('DELETE FROM gallery WHERE id = ?').run(params.id); } catch (e) { }
   }
-  saveDb();
+  saveDbMirrorOnly();
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 
@@ -1340,9 +1456,15 @@ route('POST', '/api/videos', async (req, res) => {
   };
   if (video.is_homepage) {
     DB.videos.forEach(v => v.is_homepage = false);
+    if (sqliteDb) { sqliteDb.prepare('UPDATE videos SET is_homepage = 0').run(); }
   }
   DB.videos.push(video);
-  saveDb();
+  if (sqliteDb) {
+    sqliteDb.prepare(`INSERT INTO videos (id, title, video_url, is_homepage, is_active) VALUES (?, ?, ?, ?, ?)`).run(
+      video.id, video.title, video.video_url, video.is_homepage ? 1 : 0, video.is_active ? 1 : 0
+    );
+  }
+  saveDbMirrorOnly();
   sendJson(res, 201, { ok: true, video });
 });
 
@@ -1355,10 +1477,19 @@ route('PATCH', '/api/videos/:id', async (req, res, params) => {
   if (body.video_url !== undefined) v.video_url = String(body.video_url);
   if (typeof body.is_homepage === 'boolean') {
     v.is_homepage = body.is_homepage;
-    if (v.is_homepage) DB.videos.forEach(other => { if (other.id !== v.id) other.is_homepage = false; });
+    if (v.is_homepage) {
+      DB.videos.forEach(other => { if (other.id !== v.id) other.is_homepage = false; });
+      if (sqliteDb) { sqliteDb.prepare('UPDATE videos SET is_homepage = 0 WHERE id != ?').run(v.id); }
+    }
   }
   if (typeof body.is_active === 'boolean') v.is_active = body.is_active;
-  saveDb();
+
+  if (sqliteDb) {
+    sqliteDb.prepare(`UPDATE videos SET title=?, video_url=?, is_homepage=?, is_active=? WHERE id=?`).run(
+      v.title, v.video_url, v.is_homepage ? 1 : 0, v.is_active ? 1 : 0, v.id
+    );
+  }
+  saveDbMirrorOnly();
   sendJson(res, 200, { ok: true, video: v });
 });
 
@@ -1370,7 +1501,7 @@ route('DELETE', '/api/videos/:id', async (req, res, params) => {
   if (sqliteDb) {
     try { sqliteDb.prepare('DELETE FROM videos WHERE id = ?').run(params.id); } catch (e) { }
   }
-  saveDb();
+  saveDbMirrorOnly();
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 
@@ -1392,7 +1523,12 @@ route('POST', '/api/amenities', async (req, res) => {
     desc: String(desc || '').trim()
   };
   DB.amenities.push(amenity);
-  saveDb();
+  if (sqliteDb) {
+    sqliteDb.prepare(`INSERT INTO amenities (id, name, icon, category, desc) VALUES (?, ?, ?, ?, ?)`).run(
+      amenity.id, amenity.name, amenity.icon, amenity.category, amenity.desc
+    );
+  }
+  saveDbMirrorOnly();
   sendJson(res, 201, { ok: true, amenity });
 });
 
@@ -1405,7 +1541,13 @@ route('PATCH', '/api/amenities/:id', async (req, res, params) => {
   if (body.icon !== undefined) a.icon = String(body.icon);
   if (body.category !== undefined) a.category = String(body.category);
   if (body.desc !== undefined) a.desc = String(body.desc);
-  saveDb();
+
+  if (sqliteDb) {
+    sqliteDb.prepare(`UPDATE amenities SET name=?, icon=?, category=?, desc=? WHERE id=?`).run(
+      a.name, a.icon, a.category, a.desc, a.id
+    );
+  }
+  saveDbMirrorOnly();
   sendJson(res, 200, { ok: true, amenity: a });
 });
 
@@ -1417,7 +1559,7 @@ route('DELETE', '/api/amenities/:id', async (req, res, params) => {
   if (sqliteDb) {
     try { sqliteDb.prepare('DELETE FROM amenities WHERE id = ?').run(params.id); } catch (e) { }
   }
-  saveDb();
+  saveDbMirrorOnly();
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 
@@ -1443,7 +1585,12 @@ route('POST', '/api/offers', async (req, res) => {
     is_active: is_active !== undefined ? Boolean(is_active) : true
   };
   DB.offers.push(offer);
-  saveDb();
+  if (sqliteDb) {
+    sqliteDb.prepare(`INSERT INTO offers (id, title, desc, discount, image, valid_from, valid_to, code, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(
+      offer.id, offer.title, offer.desc, offer.discount, offer.image, offer.valid_from, offer.valid_to, offer.code, offer.is_active ? 1 : 0
+    );
+  }
+  saveDbMirrorOnly();
   sendJson(res, 201, { ok: true, offer });
 });
 
@@ -1460,7 +1607,13 @@ route('PATCH', '/api/offers/:id', async (req, res, params) => {
   if (body.valid_to !== undefined) o.valid_to = String(body.valid_to);
   if (body.code !== undefined) o.code = String(body.code);
   if (typeof body.is_active === 'boolean') o.is_active = body.is_active;
-  saveDb();
+
+  if (sqliteDb) {
+    sqliteDb.prepare(`UPDATE offers SET title=?, desc=?, discount=?, image=?, valid_from=?, valid_to=?, code=?, is_active=? WHERE id=?`).run(
+      o.title, o.desc, o.discount, o.image, o.valid_from, o.valid_to, o.code, o.is_active ? 1 : 0, o.id
+    );
+  }
+  saveDbMirrorOnly();
   sendJson(res, 200, { ok: true, offer: o });
 });
 
@@ -1472,7 +1625,7 @@ route('DELETE', '/api/offers/:id', async (req, res, params) => {
   if (sqliteDb) {
     try { sqliteDb.prepare('DELETE FROM offers WHERE id = ?').run(params.id); } catch (e) { }
   }
-  saveDb();
+  saveDbMirrorOnly();
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 
@@ -1495,7 +1648,12 @@ route('POST', '/api/reviews', async (req, res) => {
     hotel_tag: String(hotel_tag || 'Deepak Hotels Group').trim()
   };
   DB.reviews.push(review);
-  saveDb();
+  if (sqliteDb) {
+    sqliteDb.prepare(`INSERT INTO reviews (id, guest_name, rating, review_text, guest_image, hotel_tag) VALUES (?, ?, ?, ?, ?, ?)`).run(
+      review.id, review.guest_name, review.rating, review.review_text, review.guest_image, review.hotel_tag
+    );
+  }
+  saveDbMirrorOnly();
   sendJson(res, 201, { ok: true, review });
 });
 
@@ -1509,7 +1667,13 @@ route('PATCH', '/api/reviews/:id', async (req, res, params) => {
   if (body.review_text !== undefined) r.review_text = String(body.review_text);
   if (body.guest_image !== undefined) r.guest_image = String(body.guest_image);
   if (body.hotel_tag !== undefined) r.hotel_tag = String(body.hotel_tag);
-  saveDb();
+
+  if (sqliteDb) {
+    sqliteDb.prepare(`UPDATE reviews SET guest_name=?, rating=?, review_text=?, guest_image=?, hotel_tag=? WHERE id=?`).run(
+      r.guest_name, r.rating, r.review_text, r.guest_image, r.hotel_tag, r.id
+    );
+  }
+  saveDbMirrorOnly();
   sendJson(res, 200, { ok: true, review: r });
 });
 
@@ -1521,7 +1685,7 @@ route('DELETE', '/api/reviews/:id', async (req, res, params) => {
   if (sqliteDb) {
     try { sqliteDb.prepare('DELETE FROM reviews WHERE id = ?').run(params.id); } catch (e) { }
   }
-  saveDb();
+  saveDbMirrorOnly();
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 
@@ -1593,7 +1757,13 @@ route('POST', '/api/bookings', async (req, res) => {
   
   // SAVE BOOKING TO DATABASE
   DB.bookings.push(booking);
-  saveDb();
+  if (sqliteDb) {
+    sqliteDb.prepare(`INSERT INTO bookings (id, hotelRoom, name, phone, email, guests, stay, date, time, idMethod, idPhotoBase64, requests, food, status, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(
+      booking.id, booking.hotelRoom, booking.name, booking.phone, booking.email, booking.guests, booking.stay, booking.date, booking.time, booking.idMethod, booking.idPhotoBase64, booking.requests, JSON.stringify(booking.food || []), booking.status, booking.createdAt
+    );
+    sqliteDb.prepare("INSERT OR REPLACE INTO metadata (key, value) VALUES ('nextBookingSeq', ?)").run(String(DB.nextBookingSeq));
+  }
+  saveDbMirrorOnly();
 
   // DISPATCH REAL WHATSAPP NOTIFICATION
   try {
@@ -1618,7 +1788,10 @@ route('PATCH', '/api/bookings/:id/status', async (req, res, params) => {
   const body = await readBody(req);
   if (!VALID_STATUSES.includes(body.status)) return sendJson(res, 400, { error: 'Invalid status' });
   b.status = body.status;
-  saveDb();
+  if (sqliteDb) {
+    sqliteDb.prepare(`UPDATE bookings SET status=? WHERE id=?`).run(b.status, b.id);
+  }
+  saveDbMirrorOnly();
   sendJson(res, 200, { ok: true, booking: b });
 });
 
@@ -1630,7 +1803,7 @@ route('DELETE', '/api/bookings/:id', async (req, res, params) => {
   if (sqliteDb) {
     try { sqliteDb.prepare('DELETE FROM bookings WHERE id = ?').run(params.id); } catch (e) { }
   }
-  saveDb();
+  saveDbMirrorOnly();
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 

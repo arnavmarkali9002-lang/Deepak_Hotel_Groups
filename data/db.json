@@ -1,4 +1,5 @@
 {
+  "is_seeded": true,
   "hotels": [
     {
       "id": "sv1",
@@ -29,27 +30,19 @@
       "accent": "#7C2D2D",
       "image": "/images/hotel-om-sai.jpg",
       "desc": "Convenient for travellers passing through, 10 rooms with easy parking and quick check-in."
+    },
+    {
+      "id": "h_musezqyz",
+      "name": "Hotel Sai Comfort",
+      "tag": "Executive Wing",
+      "locality": "Shirdi, Maharashtra",
+      "phone": "+91 98514 15415",
+      "accent": "#E8A33D",
+      "image": "/images/hero-bg.jpg",
+      "desc": "Deepak Hotels Group Property"
     }
   ],
   "rooms": [
-    {
-      "id": "sv1-102",
-      "hotel": "sv1",
-      "num": "102",
-      "floor": 1,
-      "ac": false,
-      "cat": "Single",
-      "price24": 485,
-      "price6": 700,
-      "photo": null,
-      "maxGuests": 2,
-      "bedType": "King Bed",
-      "amenities": "Wi-Fi, AC, TV",
-      "status": "available",
-      "desc": "",
-      "video_url": "",
-      "discount_price": 0
-    },
     {
       "id": "sv1-104",
       "hotel": "sv1",
@@ -964,7 +957,7 @@
       "idPhotoBase64": null,
       "requests": "",
       "food": [],
-      "status": "pending",
+      "status": "confirmed",
       "createdAt": "2026-10-02T18:40:12.664Z"
     },
     {
@@ -988,8 +981,8 @@
   "admins": [
     {
       "username": "deepakhotelgroup",
-      "salt": "0817fa81abbd8a1c7139760368c8495d",
-      "hash": "3c89214fa86326a07631c111feb383ed435adda200d9aa8850a4764f06b3663277c7f53f635ef8ff52bd69c824f51f2d53563c1263ff359c5b6cd76befff805b"
+      "salt": "25d46ede985c244ccd204f19a5bcf96c",
+      "hash": "207370268e8014b16af15865558ea5ea3a3312aeeda1031ff3911997fc523a548e4920cbcbf1e5d0ebd8a40b4a7b6739658559640f598a5ccbcfe129c6a1f71a"
     }
   ],
   "settings": {
@@ -1015,13 +1008,6 @@
     "cta_link": "#availability"
   },
   "gallery": [
-    {
-      "id": "gal1",
-      "title": "Grand Hotel Façade",
-      "category": "Exterior",
-      "image": "/images/hero-bg.jpg",
-      "display_order": 1
-    },
     {
       "id": "gal2",
       "title": "Executive Bedroom Suite",
@@ -1070,7 +1056,7 @@
   "amenities": [
     {
       "id": "am1",
-      "name": "Free High-Speed Wi-Fi",
+      "name": "Ultra High-Speed 5G Wi-Fi",
       "icon": "wifi",
       "category": "Technology",
       "desc": "Seamless high-speed wireless Internet coverage in all rooms and common lounges."
@@ -1095,13 +1081,6 @@
       "icon": "zap",
       "category": "Facility",
       "desc": "Heavy-duty silent generator backup guaranteeing uninterrupted electricity."
-    },
-    {
-      "id": "am6",
-      "name": "Free Secure Parking",
-      "icon": "parking",
-      "category": "Facility",
-      "desc": "Spacious guarded parking space for private cars, travel coaches, and SUVs."
     }
   ],
   "offers": [
@@ -1295,7 +1274,6 @@
     {
       "id": "notif_murb5san_1140e0",
       "booking_id": "SV10480013",
-      "recipient": "919851415415",
       "recipient_number": "919851415415",
       "notification_type": "whatsapp",
       "message": "🔔 NEW ROOM BOOKING - DEEPAK HOTELS GROUP\n\nBooking ID: #SV10480013\n\nCustomer: Rohan Sharma\nPhone: 9851415415\n\nHotel: Hotel Sai View\nRoom: Room 102 (Single)\n\nCheck-in: 2026-10-28 at 12:00\nCheck-out: 2026-10-29\n\nGuests: 2\nRooms: 1\n\nTotal Amount: ₹485\n\nPlease check the admin panel for complete booking details.",
@@ -1309,7 +1287,6 @@
     {
       "id": "notif_murb9io9_ff03d3",
       "booking_id": "SV10480014",
-      "recipient": "919851415415",
       "recipient_number": "919851415415",
       "notification_type": "whatsapp",
       "message": "🔔 NEW ROOM BOOKING - DEEPAK HOTELS GROUP\n\nBooking ID: #SV10480014\n\nCustomer: Arnav Markali\nPhone: 9860190506\n\nHotel: Hotel Sai View\nRoom: Room 102 (Single)\n\nCheck-in: 2026-10-09 at 12:00\nCheck-out: 2026-10-10\n\nGuests: 2\nRooms: 1\n\nTotal Amount: ₹485\n\nPlease check the admin panel for complete booking details.",
