@@ -1187,7 +1187,10 @@
           <div class="card-box">
             <div class="card-title">
               <span><i class="fa-solid fa-key" style="color:var(--gold); margin-right:8px;"></i> Supabase Project Credentials</span>
-              <button class="btn btn-secondary btn-sm" onclick="testSupabase(true)"><i class="fa-solid fa-bolt"></i> Test Connection</button>
+              <div style="display:flex; gap:8px;">
+                <button type="button" class="btn btn-outline btn-sm" onclick="fillSupabaseCredentials()" style="font-size:0.75rem; border-color:var(--gold); color:var(--gold);"><i class="fa-solid fa-magic"></i> Auto-Fill Keys</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="testSupabase(true)"><i class="fa-solid fa-bolt"></i> Test Connection</button>
+              </div>
             </div>
 
             <form id="supabaseConfigForm" onsubmit="saveSupabaseSettings(event)">
@@ -1196,17 +1199,19 @@
                   <span>Supabase Project URL</span>
                   <span style="font-size:0.75rem; color:var(--text-muted);">https://[project-id].supabase.co</span>
                 </label>
-                <input type="url" class="modal-form-control" id="sb_project_url" placeholder="https://xyzabcdefg.supabase.co" required>
+                <input type="url" class="modal-form-control" id="sb_project_url" placeholder="https://wfxoyzrocifvtlopevjq.supabase.co" value="https://wfxoyzrocifvtlopevjq.supabase.co" required>
               </div>
 
               <div class="modal-form-group" style="margin-bottom:16px;">
-                <label class="modal-form-label" style="display:flex; justify-content:space-between;">
+                <label class="modal-form-label" style="display:flex; justify-content:space-between; align-items:center;">
                   <span>Supabase API Key (Service Role or Secret Key)</span>
-                  <span style="font-size:0.75rem; color:#10B981;">Recommended for full backend sync</span>
+                  <a href="javascript:void(0)" onclick="toggleSecretKeyVisibility()" style="font-size:0.75rem; color:var(--gold); text-decoration:none;">
+                    <i class="fa-solid fa-eye" id="toggleSecretKeyIcon"></i> Show
+                  </a>
                 </label>
-                <input type="password" class="modal-form-control" id="sb_service_key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." required>
+                <input type="password" class="modal-form-control" id="sb_service_key" placeholder="Enter sb_secret_... from Supabase">
                 <div style="font-size:0.78rem; color:var(--text-muted); margin-top:4px;">
-                  Found in Supabase: <strong>Project Settings &rarr; API &rarr; Project API keys (service_role secret or anon public)</strong>.
+                  Found in Supabase: <strong>Project Settings &rarr; API &rarr; Project API keys (service_role secret)</strong>.
                 </div>
               </div>
 
@@ -1215,7 +1220,7 @@
                   <span>Supabase Anon Public Key (Optional)</span>
                   <span style="font-size:0.75rem; color:var(--text-muted);">Enables client-side Realtime listeners</span>
                 </label>
-                <input type="text" class="modal-form-control" id="sb_anon_key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+                <input type="text" class="modal-form-control" id="sb_anon_key" placeholder="sb_publishable_..." value="sb_publishable_f_MCpE0P8l_4a51dBFsAXQ_sOM0DDSO">
               </div>
 
               <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
@@ -2040,6 +2045,32 @@
               `;
               body.appendChild(tr);
             });
+          }
+
+          function toggleSecretKeyVisibility() {
+            const inp = document.getElementById('sb_service_key');
+            const icon = document.getElementById('toggleSecretKeyIcon');
+            if (inp.type === 'password') {
+              inp.type = 'text';
+              icon.classList.remove('fa-eye');
+              icon.classList.add('fa-eye-slash');
+            } else {
+              inp.type = 'password';
+              icon.classList.remove('fa-eye-slash');
+              icon.classList.add('fa-eye');
+            }
+          }
+
+          function fillSupabaseCredentials() {
+            document.getElementById('sb_project_url').value = 'https://wfxoyzrocifvtlopevjq.supabase.co';
+            document.getElementById('sb_anon_key').value = 'sb_publishable_f_MCpE0P8l_4a51dBFsAXQ_sOM0DDSO';
+            const keyInp = document.getElementById('sb_service_key');
+            if (!keyInp.value) {
+              showToast('URL and Anon Key filled. Please paste your Supabase Secret Key (sb_secret_...) and click Save.');
+              keyInp.focus();
+            } else {
+              showToast('Project credentials ready! Click Save & Connect.');
+            }
           }
 
           async function testSupabase(interactive = true) {

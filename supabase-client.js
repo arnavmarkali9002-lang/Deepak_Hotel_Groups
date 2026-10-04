@@ -9,10 +9,22 @@ const fs = require('fs');
 const path = require('path');
 const { createClient } = require('@supabase/supabase-js');
 
+// Polyfill global WebSocket for Node.js environments (AWS Lambda / Netlify Functions)
+if (typeof globalThis.WebSocket === 'undefined') {
+  try {
+    globalThis.WebSocket = require('ws');
+  } catch (e) {
+    // ws package not present
+  }
+}
+
 const ROOT = __dirname;
 const DATA_DIR = process.env.DATA_DIR || path.join(ROOT, 'data');
 const CONFIG_FILE = path.join(DATA_DIR, 'supabase_config.json');
 const ENV_FILE = path.join(ROOT, '.env');
+
+const DEFAULT_SUPABASE_URL = 'https://wfxoyzrocifvtlopevjq.supabase.co';
+const DEFAULT_SUPABASE_ANON_KEY = 'sb_publishable_f_MCpE0P8l_4a51dBFsAXQ_sOM0DDSO';
 
 let supabaseClient = null;
 let activeConfig = {
@@ -35,7 +47,7 @@ function readConfigFile() {
 
 function resolveConfig() {
   const fileConfig = readConfigFile();
-  const url = (process.env.SUPABASE_URL || fileConfig.supabase_url || fileConfig.url || '').trim();
+  const url = (process.env.SUPABASE_URL || fileConfig.supabase_url || fileConfig.url || DEFAULT_SUPABASE_URL).trim();
   const key = (
     process.env.SUPABASE_SERVICE_ROLE_KEY ||
     process.env.SUPABASE_KEY ||
@@ -46,7 +58,12 @@ function resolveConfig() {
     fileConfig.supabase_anon_key ||
     ''
   ).trim();
-  const anonKey = (process.env.SUPABASE_ANON_KEY || fileConfig.supabase_anon_key || fileConfig.anonKey || '').trim();
+  const anonKey = (
+    process.env.SUPABASE_ANON_KEY ||
+    fileConfig.supabase_anon_key ||
+    fileConfig.anonKey ||
+    DEFAULT_SUPABASE_ANON_KEY
+  ).trim();
 
   return { url, key, anonKey };
 }
@@ -58,7 +75,8 @@ function initSupabase(customConfig = null) {
   if (config.url && config.key) {
     try {
       supabaseClient = createClient(config.url, config.key, {
-        auth: { persistSession: false, autoRefreshToken: false }
+        auth: { persistSession: false, autoRefreshToken: false },
+        realtime: { transport: globalThis.WebSocket || null }
       });
       console.log(`[Supabase] Client initialized for project: ${config.url}`);
       return true;
@@ -93,7 +111,10 @@ async function testConnection(customUrl = null, customKey = null) {
   }
 
   try {
-    const testClient = createClient(url, key, { auth: { persistSession: false } });
+    const testClient = createClient(url, key, {
+      auth: { persistSession: false },
+      realtime: { transport: globalThis.WebSocket || null }
+    });
     const start = Date.now();
     const { data, error } = await testClient.from('hotels').select('id, name').limit(1);
     const latency = Date.now() - start;

@@ -22,6 +22,7 @@
   "license": "ISC",
   "dependencies": {
     "@supabase/supabase-js": "^2.117.2",
-    "serverless-http": "^4.0.0"
+    "serverless-http": "^4.0.0",
+    "ws": "^8.22.0"
   }
 }
