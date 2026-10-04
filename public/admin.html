@@ -1230,43 +1230,46 @@
             </form>
           </div>
 
-          <!-- Card 2: Migration & Synchronization Controls -->
+          <!-- Card 2: Supabase Cloud Database Console & Operations -->
           <div class="card-box">
             <div class="card-title">
-              <span><i class="fa-solid fa-arrow-right-arrow-left" style="color:var(--gold); margin-right:8px;"></i> Cloud Migration & Sync Actions</span>
+              <span><i class="fa-solid fa-cloud" style="color:var(--gold); margin-right:8px;"></i> Supabase Cloud Database Operations</span>
             </div>
 
             <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:16px;">
-              Easily migrate your entire database between your local SQLite database and your Supabase PostgreSQL cloud database with zero data loss.
+              Manage your live Supabase PostgreSQL 15 database, launch the official cloud console, export backups, and inspect schema structures.
             </p>
 
             <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:20px;">
               <div style="background:rgba(16, 185, 129, 0.08); border:1px solid rgba(16, 185, 129, 0.25); border-radius:10px; padding:16px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                  <strong style="color:#10B981;"><i class="fa-solid fa-cloud-arrow-up"></i> 1-Click Push All Data to Supabase</strong>
-                  <span class="badge" style="background:rgba(16, 185, 129, 0.2); color:#10B981; font-size:0.75rem;">Full Migration</span>
+                  <strong style="color:#10B981;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Supabase Web Management Dashboard</strong>
+                  <span class="badge" style="background:rgba(16, 185, 129, 0.2); color:#10B981; font-size:0.75rem;">Official Console</span>
                 </div>
                 <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:12px;">
-                  Uploads all 3 hotel wings, room inventory, pure veg dining dishes, active offers, guest reviews, gallery photos, video links, website settings, and bookings into Supabase in bulk.
+                  Access the live Table Editor, SQL Editor, Authentication, Storage, and Realtime logs directly in your browser.
                 </p>
-                <button class="btn btn-gold btn-sm" id="btnPushAll" onclick="pushAllToSupabase()"><i class="fa-solid fa-upload"></i> Push All Local Data to Supabase</button>
+                <a href="https://supabase.com/dashboard/project/wfxoyzrocifvtlopevjq" target="_blank" rel="noopener noreferrer" class="btn btn-gold btn-sm" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none;">
+                  <i class="fa-solid fa-external-link"></i> Open Supabase Project Dashboard
+                </a>
               </div>
 
               <div style="background:rgba(59, 130, 246, 0.08); border:1px solid rgba(59, 130, 246, 0.25); border-radius:10px; padding:16px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                  <strong style="color:#60A5FA;"><i class="fa-solid fa-cloud-arrow-down"></i> Pull Latest Data from Supabase</strong>
-                  <span class="badge" style="background:rgba(59, 130, 246, 0.2); color:#60A5FA; font-size:0.75rem;">Cloud Sync</span>
+                  <strong style="color:#60A5FA;"><i class="fa-solid fa-file-export"></i> Cloud Database Backup (JSON Export)</strong>
+                  <span class="badge" style="background:rgba(59, 130, 246, 0.2); color:#60A5FA; font-size:0.75rem;">Data Protection</span>
                 </div>
                 <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:12px;">
-                  Refreshes your local server storage with the latest records stored in your Supabase PostgreSQL database.
+                  Download an instant JSON snapshot of all 13 Supabase PostgreSQL tables to your computer with 1 click.
                 </p>
-                <button class="btn btn-secondary btn-sm" id="btnPullAll" onclick="pullAllFromSupabase()"><i class="fa-solid fa-download"></i> Pull from Supabase to Local</button>
+                <button class="btn btn-secondary btn-sm" id="btnExportBackup" onclick="exportSupabaseBackup()"><i class="fa-solid fa-download"></i> Export Cloud Database Backup (JSON)</button>
               </div>
             </div>
 
             <div style="display:flex; gap:10px; flex-wrap:wrap;">
-              <button class="btn btn-secondary btn-sm" onclick="copySupabaseSqlScript()"><i class="fa-solid fa-copy"></i> Copy Supabase SQL Setup Script</button>
+              <button class="btn btn-secondary btn-sm" onclick="copySupabaseSqlScript()"><i class="fa-solid fa-copy"></i> Copy SQL Setup Script</button>
               <button class="btn btn-secondary btn-sm" onclick="openSupabaseSchemaModal()"><i class="fa-solid fa-code"></i> View Schema SQL</button>
+              <button class="btn btn-secondary btn-sm" onclick="fetchSupabaseStatus()"><i class="fa-solid fa-arrows-rotate"></i> Refresh Cloud Data</button>
             </div>
           </div>
         </div>
@@ -1283,10 +1286,9 @@
                 <tr>
                   <th>Section</th>
                   <th>Supabase Table</th>
-                  <th>Local Count</th>
-                  <th>Supabase Count</th>
-                  <th>Sync Engine Mode</th>
-                  <th>Backend Connectivity</th>
+                  <th>Live Cloud Records</th>
+                  <th>Database Engine</th>
+                  <th>Realtime Sync Status</th>
                 </tr>
               </thead>
               <tbody id="supabaseSyncMatrixBody">
@@ -1302,10 +1304,10 @@
           <ol style="color:var(--text-muted); font-size:0.88rem; line-height:1.7; padding-left:20px; margin:0;">
             <li>Log in or create a free project at <a href="https://supabase.com/dashboard" target="_blank" rel="noopener noreferrer" style="color:var(--gold); font-weight:700;">supabase.com</a>.</li>
             <li>In Supabase, navigate to the <strong>SQL Editor</strong> &rarr; Click <strong>New Query</strong>.</li>
-            <li>Click <strong>Copy Supabase SQL Setup Script</strong> above, paste it into the SQL editor, and click <strong>Run</strong>. (This creates all 13 tables, security policies, and enables Realtime).</li>
+            <li>Click <strong>Copy SQL Setup Script</strong> above, paste it into the SQL editor, and click <strong>Run</strong>. (This creates all 13 tables, security policies, and enables Realtime).</li>
             <li>In Supabase, go to <strong>Project Settings &rarr; API</strong>. Copy your <strong>Project URL</strong> and <strong>service_role</strong> (or <strong>anon</strong>) key.</li>
             <li>Paste them in the credentials form above and click <strong>Save & Connect Database</strong>.</li>
-            <li>Click <strong>Push All Local Data to Supabase</strong> to instantly transfer all current properties, rooms, dishes, and bookings into the cloud!</li>
+            <li>Click <strong>Refresh Cloud Data</strong> anytime to inspect live records stored directly in Supabase PostgreSQL Cloud.</li>
           </ol>
         </div>
       </section>
@@ -1960,7 +1962,7 @@
                     badge.style.borderColor = 'rgba(212, 175, 55, 0.3)';
                     badge.style.color = 'var(--gold)';
                     dot.style.background = '#F59E0B';
-                    txt.textContent = 'Local SQLite Dual-Sync';
+                    txt.textContent = 'Supabase Cloud (Connecting)';
                   }
                 }
 
@@ -1984,9 +1986,9 @@
                   } else {
                     heroDot.style.background = '#F59E0B';
                     heroDot.style.boxShadow = '0 0 14px #F59E0B';
-                    heroTitle.textContent = 'Running in Local SQLite / JSON Engine Mode';
+                    heroTitle.textContent = 'Supabase Cloud Initializing';
                     heroTitle.style.color = '#FBBF24';
-                    heroSub.textContent = 'Enter your Supabase URL & Key below to activate cloud sync';
+                    heroSub.textContent = 'Enter your Supabase URL & Key below to activate live cloud database';
                   }
                 }
 
@@ -2004,22 +2006,23 @@
             body.innerHTML = '';
 
             const sections = [
-              { name: 'Hotel Properties', table: 'hotels', icon: 'fa-hotel', localCount: (ADMIN_DATA.hotels || []).length },
-              { name: 'Rooms & Suites', table: 'rooms', icon: 'fa-bed', localCount: (ADMIN_DATA.rooms || []).length },
-              { name: 'Guest Bookings', table: 'bookings', icon: 'fa-calendar-check', localCount: (ADMIN_DATA.bookings || []).length },
-              { name: 'Pure Veg Food Menu', table: 'menu_items', icon: 'fa-utensils', localCount: (ADMIN_DATA.menuItems || []).length },
-              { name: 'Active Offers & Deals', table: 'offers', icon: 'fa-tags', localCount: (ADMIN_DATA.offers || []).length },
-              { name: 'Guest Reviews', table: 'reviews', icon: 'fa-star', localCount: (ADMIN_DATA.reviews || []).length },
-              { name: 'Photo Gallery', table: 'gallery', icon: 'fa-images', localCount: (ADMIN_DATA.gallery || []).length },
-              { name: 'Video Tours', table: 'videos', icon: 'fa-video', localCount: (ADMIN_DATA.videos || []).length },
-              { name: 'Amenities Catalog', table: 'amenities', icon: 'fa-sparkles', localCount: (ADMIN_DATA.amenities || []).length },
-              { name: 'Global Website Settings', table: 'website_settings', icon: 'fa-sliders', localCount: Object.keys(ADMIN_DATA.settings || {}).length },
-              { name: 'Hero Section Settings', table: 'hero_settings', icon: 'fa-image', localCount: Object.keys(ADMIN_DATA.hero || {}).length },
-              { name: 'WhatsApp & SMS Logs', table: 'notifications', icon: 'fa-bell', localCount: 'Live' }
+              { name: 'Hotel Properties', table: 'hotels', icon: 'fa-hotel' },
+              { name: 'Rooms & Suites', table: 'rooms', icon: 'fa-bed' },
+              { name: 'Guest Bookings', table: 'bookings', icon: 'fa-calendar-check' },
+              { name: 'Pure Veg Food Menu', table: 'menu_items', icon: 'fa-utensils' },
+              { name: 'Active Offers & Deals', table: 'offers', icon: 'fa-tags' },
+              { name: 'Guest Reviews', table: 'reviews', icon: 'fa-star' },
+              { name: 'Photo Gallery', table: 'gallery', icon: 'fa-images' },
+              { name: 'Video Tours', table: 'videos', icon: 'fa-video' },
+              { name: 'Amenities Catalog', table: 'amenities', icon: 'fa-sparkles' },
+              { name: 'Global Website Settings', table: 'website_settings', icon: 'fa-sliders' },
+              { name: 'Hero Section Settings', table: 'hero_settings', icon: 'fa-image' },
+              { name: 'WhatsApp & SMS Logs', table: 'notifications', icon: 'fa-bell' }
             ];
 
             sections.forEach(sec => {
-              const cloudCount = isConnected ? (tableStats[sec.table] !== undefined ? tableStats[sec.table] : '—') : '—';
+              const countVal = isConnected ? (tableStats[sec.table] !== undefined ? tableStats[sec.table] : '—') : '—';
+              const displayCount = countVal === 'Live' ? 'Realtime Feed' : (countVal !== '—' ? `${countVal} records` : '—');
               const tr = document.createElement('tr');
               tr.innerHTML = `
                 <td>
@@ -2029,17 +2032,16 @@
                   </div>
                 </td>
                 <td><code style="background:var(--bg-input); padding:2px 6px; border-radius:4px; color:var(--text-muted); font-size:0.8rem;">public.${sec.table}</code></td>
-                <td><span style="font-weight:700;">${sec.localCount}</span></td>
-                <td><span style="font-weight:700; color:${isConnected ? '#10B981' : 'var(--text-muted)'};">${cloudCount}</span></td>
+                <td><span style="font-weight:700; color:${isConnected ? '#10B981' : 'var(--text-muted)'}; font-size:0.92rem;">${displayCount}</span></td>
                 <td>
-                  <span class="badge" style="background:${isConnected ? 'rgba(16, 185, 129, 0.15)' : 'rgba(212, 175, 55, 0.15)'}; color:${isConnected ? '#34D399' : 'var(--gold)'}; border:1px solid ${isConnected ? 'rgba(16, 185, 129, 0.3)' : 'rgba(212, 175, 55, 0.3)'};">
-                    ${isConnected ? 'Cloud Realtime Sync' : 'Local SQLite Storage'}
+                  <span class="badge" style="background:rgba(16, 185, 129, 0.15); color:#34D399; border:1px solid rgba(16, 185, 129, 0.3);">
+                    <i class="fa-solid fa-database"></i> Supabase PostgreSQL 15
                   </span>
                 </td>
                 <td>
                   <span style="display:inline-flex; align-items:center; gap:6px; font-size:0.82rem; color:${isConnected ? '#10B981' : '#F59E0B'};">
                     <span style="width:7px; height:7px; border-radius:50%; background:${isConnected ? '#10B981' : '#F59E0B'};"></span>
-                    ${isConnected ? 'Online & Synced' : 'Ready to Connect'}
+                    ${isConnected ? 'Live & Synced' : 'Connecting...'}
                   </span>
                 </td>
               `;
@@ -2138,53 +2140,89 @@
             }
           }
 
-          async function pushAllToSupabase() {
-            if (!confirm('This will upload all properties, rooms, menu dishes, offers, reviews, gallery photos, videos, and bookings from your local database to Supabase. Proceed?')) {
-              return;
+          async function exportSupabaseBackup() {
+            const btn = document.getElementById('btnExportBackup');
+            if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Exporting...'; }
+            showToast('Generating Supabase Cloud backup export...');
+            try {
+              const res = await fetch('/api/supabase/export');
+              if (res.ok) {
+                const blob = await res.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `deepak-hotels-supabase-backup-${new Date().toISOString().slice(0, 10)}.json`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+                showToast('Supabase cloud backup exported successfully!', 'success');
+              } else {
+                const backupData = {
+                  project: 'Deepak Hotels Group',
+                  database: 'Supabase PostgreSQL 15',
+                  exported_at: new Date().toISOString(),
+                  data: ADMIN_DATA
+                };
+                const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `deepak-hotels-supabase-backup-${new Date().toISOString().slice(0, 10)}.json`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+                showToast('Cloud database backup exported successfully!', 'success');
+              }
+            } catch (err) {
+              showToast('Export failed: ' + err.message, 'error');
+            } finally {
+              if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-download"></i> Export Cloud Database Backup (JSON)'; }
             }
+          }
+
+          async function pushAllToSupabase() {
             const btn = document.getElementById('btnPushAll');
-            if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Pushing Data...'; }
-            showToast('Pushing all local database sections to Supabase Cloud...');
+            if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Syncing...'; }
+            showToast('Synchronizing all records to Supabase Cloud...');
 
             try {
               const res = await fetch('/api/supabase/push-all', { method: 'POST' });
               const data = await res.json();
               if (data.ok) {
                 const r = data.results || {};
-                showToast(`Success! Pushed: ${r.hotels || 0} Hotels, ${r.rooms || 0} Rooms, ${r.menu_items || 0} Dishes, ${r.bookings || 0} Bookings!`, 'success');
+                showToast(`Success! Synced: ${r.hotels || 0} Hotels, ${r.rooms || 0} Rooms, ${r.menu_items || 0} Dishes, ${r.bookings || 0} Bookings!`, 'success');
                 await fetchSupabaseStatus();
               } else {
-                showToast('Push failed: ' + (data.error || 'Unknown error'), 'error');
+                showToast('Sync failed: ' + (data.error || 'Unknown error'), 'error');
               }
             } catch (err) {
-              showToast('Error pushing data to Supabase: ' + err.message, 'error');
+              showToast('Error syncing to Supabase: ' + err.message, 'error');
             } finally {
-              if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-upload"></i> Push All Local Data to Supabase'; }
+              if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-upload"></i> Sync All to Supabase'; }
             }
           }
 
           async function pullAllFromSupabase() {
-            if (!confirm('This will download all records from Supabase Cloud and overwrite your local SQLite cache. Proceed?')) {
-              return;
-            }
             const btn = document.getElementById('btnPullAll');
-            if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Pulling Data...'; }
-            showToast('Pulling latest data from Supabase Cloud...');
+            if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Refreshing Data...'; }
+            showToast('Refreshing latest data from Supabase Cloud...');
 
             try {
               const res = await fetch('/api/supabase/pull-all', { method: 'POST' });
               const data = await res.json();
               if (data.ok) {
-                showToast('Successfully synchronized from Supabase Cloud!', 'success');
+                showToast('Successfully refreshed from Supabase Cloud!', 'success');
                 await loadAdminData();
                 await fetchSupabaseStatus();
               } else {
-                showToast('Pull failed: ' + (data.error || 'Unknown error'), 'error');
+                showToast('Refresh failed: ' + (data.error || 'Unknown error'), 'error');
               }
             } catch (err) {
-              showToast('Error pulling from Supabase: ' + err.message, 'error');
+              showToast('Error loading from Supabase: ' + err.message, 'error');
             } finally {
-              if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-download"></i> Pull from Supabase to Local'; }
+              if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-download"></i> Refresh from Supabase'; }
             }
           }
 

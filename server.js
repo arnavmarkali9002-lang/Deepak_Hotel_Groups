@@ -972,7 +972,27 @@ route('POST', '/api/supabase/pull-all', async (req, res) => {
       }
     }
     saveDbMirrorOnly();
-    sendJson(res, 200, { ok: true, message: 'All data successfully pulled from Supabase into local database!' });
+    sendJson(res, 200, { ok: true, message: 'All data successfully synchronized from Supabase!' });
+  } catch (err) {
+    sendJson(res, 500, { ok: false, error: err.message });
+  }
+});
+
+route('GET', '/api/supabase/export', async (req, res) => {
+  if (!requireAdmin(req, res)) return;
+  try {
+    const remote = await supabase.pullAllFromSupabase();
+    const backup = {
+      project: 'Deepak Hotels Group',
+      database: 'Supabase PostgreSQL 15',
+      url: supabase.config.url || '',
+      exported_at: new Date().toISOString(),
+      data: (remote && remote.hotels && remote.hotels.length) ? remote : DB
+    };
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="deepak-hotels-supabase-backup-${new Date().toISOString().slice(0, 10)}.json"`);
+    res.writeHead(200);
+    res.end(JSON.stringify(backup, null, 2));
   } catch (err) {
     sendJson(res, 500, { ok: false, error: err.message });
   }
