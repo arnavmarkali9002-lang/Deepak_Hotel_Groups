@@ -1168,12 +1168,16 @@ route('POST', '/api/hotels', async (req, res) => {
 
   DB.hotels.push(hotel);
   if (sqliteDb) {
-    sqliteDb.prepare(`INSERT INTO hotels (id, name, tag, locality, phone, accent, image, desc, exact_location, map_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(
-      hotel.id, hotel.name, hotel.tag, hotel.locality, hotel.phone, hotel.accent, hotel.image, hotel.desc, hotel.exact_location, hotel.map_url
-    );
+    try {
+      sqliteDb.prepare(`INSERT INTO hotels (id, name, tag, locality, phone, accent, image, desc, exact_location, map_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(
+        hotel.id, hotel.name, hotel.tag, hotel.locality, hotel.phone, hotel.accent, hotel.image, hotel.desc, hotel.exact_location, hotel.map_url
+      );
+    } catch (e) {
+      console.error('[SQLite] Insert hotel error:', e.message);
+    }
   }
   saveDbMirrorOnly();
-  supabase.syncHotel(hotel, 'upsert');
+  try { await supabase.syncHotel(hotel, 'upsert'); } catch (e) { console.error('[Supabase] Hotel add sync error:', e.message); }
   sendJson(res, 201, { ok: true, hotel });
 });
 
@@ -1200,12 +1204,16 @@ route('PATCH', '/api/hotels/:id', async (req, res, params) => {
   if (typeof body.map_url === 'string') h.map_url = body.map_url.trim();
 
   if (sqliteDb) {
-    sqliteDb.prepare(`UPDATE hotels SET name=?, tag=?, locality=?, phone=?, accent=?, image=?, desc=?, exact_location=?, map_url=? WHERE id=?`).run(
-      h.name, h.tag, h.locality, h.phone, h.accent, h.image, h.desc, h.exact_location || '', h.map_url || '', h.id
-    );
+    try {
+      sqliteDb.prepare(`UPDATE hotels SET name=?, tag=?, locality=?, phone=?, accent=?, image=?, desc=?, exact_location=?, map_url=? WHERE id=?`).run(
+        h.name, h.tag, h.locality, h.phone, h.accent, h.image, h.desc, h.exact_location || '', h.map_url || '', h.id
+      );
+    } catch (e) {
+      console.error('[SQLite] Update hotel error:', e.message);
+    }
   }
   saveDbMirrorOnly();
-  supabase.syncHotel(h, 'upsert');
+  try { await supabase.syncHotel(h, 'upsert'); } catch (e) { console.error('[Supabase] Hotel update sync error:', e.message); }
   sendJson(res, 200, { ok: true, hotel: h });
 });
 
@@ -1222,7 +1230,7 @@ route('DELETE', '/api/hotels/:id', async (req, res, params) => {
     } catch (e) { }
   }
   saveDbMirrorOnly();
-  supabase.syncHotel({ id: params.id }, 'delete');
+  try { await supabase.syncHotel({ id: params.id }, 'delete'); } catch (e) { console.error('[Supabase] Hotel delete sync error:', e.message); }
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 
