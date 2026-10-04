@@ -48,15 +48,39 @@ Follow these steps to push your project to a new GitHub repository:
 
 ## 🚀 Recommended Free Hosting Options
 
-### Option 1: Render.com (Recommended — Includes Free Tier & Persistent Storage)
+### Option 1: Render.com (Recommended — 100% Free Tier Compatible)
 
-1. Sign up / Log in to [Render.com](https://render.com/).
-2. Click **New +** -> **Blueprint**.
-3. Connect your GitHub repository (`deepak-hotels-group`). Render will automatically detect [`render.yaml`](file:///c:/Users/arnav/Downloads/files..2/render.yaml) and configure:
-   - Build command: `npm install`
-   - Start command: `node server.js`
-   - Persistent Disk: `/var/data` (so bookings & menu items are saved permanently when server restarts)
-4. Click **Apply**. Your app will be live with a free SSL Certificate (`https://deepak-hotels-group.onrender.com`).
+The app is fully configured for Render. Because all database tables are hosted in **Supabase Cloud (PostgreSQL)** and media files are stored in **Supabase Cloud Storage**, your bookings, room updates, menu items, and photos/videos are permanently preserved even across Render server restarts and redeploys!
+
+#### Method A: New Web Service (Standard & Fastest)
+1. Sign up or log in to [Render.com](https://render.com/).
+2. Click **New +** (top right) → **Web Service**.
+3. Choose **Build and deploy from a Git repository** and connect your repository (`deepak-hotels-group`).
+4. Set the following settings:
+   - **Name**: `deepak-hotels-group` (or your choice)
+   - **Region**: Choose the closest region (e.g., *Singapore* or *Frankfurt*)
+   - **Branch**: `main`
+   - **Runtime**: `Node`
+   - **Build Command**: `npm install`
+   - **Start Command**: `npm start`
+   - **Instance Type**: `Free`
+5. Expand **Advanced** (at the bottom):
+   - **Health Check Path**: `/api/health`
+   - **Auto-Deploy**: `Yes`
+6. Click **Add Environment Variable** to add:
+   - `SUPABASE_URL`: `https://wfxoyzrocifvtlopevjq.supabase.co`
+   - `SUPABASE_SERVICE_ROLE_KEY`: `your-supabase-service-role-key` (From Supabase Dashboard -> Project Settings -> API -> service_role secret)
+   - `SUPABASE_ANON_KEY`: `sb_publishable_f_MCpE0P8l_4a51dBFsAXQ_sOM0DDSO`
+   - `NODE_ENV`: `production`
+   *(Note: Built-in fallbacks are also bundled, but setting them in the Render dashboard ensures high reliability).*
+7. Click **Create Web Service**. Render will build and deploy your site in ~1 minute.
+8. Your site is live at: `https://deepak-hotels-group.onrender.com` (free SSL included)!
+
+#### Method B: Blueprint (1-Click Deploy via `render.yaml`)
+1. In Render, click **New +** → **Blueprint**.
+2. Connect your Git repository.
+3. Render reads `render.yaml` automatically and configures the web service, Node 22 runtime, and healthcheck.
+4. Click **Apply**.
 
 ---
 

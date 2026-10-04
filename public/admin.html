@@ -498,6 +498,49 @@
       box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
     }
 
+    /* MODERN FILE UPLOAD ZONE */
+    .file-upload-zone {
+      border: 2px dashed #CBD5E1;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      background: #F8FAFC;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+    .file-upload-zone:hover {
+      border-color: #D4AF37;
+      background: #FFFDF7;
+    }
+    .upload-drop-prompt {
+      padding: 12px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .upload-preview-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .upload-preview-img {
+      max-height: 140px;
+      max-width: 100%;
+      border-radius: 8px;
+      object-fit: cover;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border: 1px solid #E2E8F0;
+    }
+    .upload-preview-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 4px;
+    }
+
     /* MOBILE NAVIGATION & RESPONSIVE ADMIN STYLES */
     .admin-mobile-toggle {
       display: none;
@@ -659,7 +702,7 @@
       <form id="adminLoginForm">
         <div class="form-group" style="text-align:left;">
           <label class="form-label">Username</label>
-          <input type="text" class="form-control" id="loginUsername" placeholder="Enter admin username" value="deepakhotelgroup" required autocomplete="username">
+          <input type="text" class="form-control" id="loginUsername" placeholder="Enter admin username" required autocomplete="username">
         </div>
         <div class="form-group" style="text-align:left;">
           <label class="form-label" style="display:flex; justify-content:space-between; align-items:center;">
@@ -668,22 +711,11 @@
               <i class="fa-solid fa-eye" id="togglePasswordIcon"></i> Show
             </a>
           </label>
-          <input type="password" class="form-control" id="loginPassword" placeholder="Enter admin password" value="deepakhotelgroup@123" required autocomplete="current-password">
+          <input type="password" class="form-control" id="loginPassword" placeholder="Enter admin password" required autocomplete="current-password">
         </div>
         <button type="submit" class="btn btn-gold" style="width:100%; margin-top:10px;" id="loginBtn">
           <i class="fa-solid fa-right-to-bracket"></i> Login to Dashboard
         </button>
-
-        <div style="margin-top:16px; padding:12px; background:rgba(212,175,55,0.08); border:1px dashed rgba(212,175,55,0.4); border-radius:8px; font-size:12px; color:#ccc; text-align:left;">
-          <div style="color:#d4af37; font-weight:600; margin-bottom:4px; display:flex; align-items:center; gap:6px;">
-            <i class="fa-solid fa-shield-halved"></i> Master Credentials
-          </div>
-          <div style="margin-bottom:2px;">User: <strong style="color:#fff;">deepakhotelgroup</strong> (or <strong style="color:#fff;">admin</strong>)</div>
-          <div style="margin-bottom:8px;">Pass: <strong style="color:#fff;">deepakhotelgroup@123</strong></div>
-          <button type="button" onclick="fillAdminCredentials()" class="btn btn-outline" style="width:100%; font-size:11px; padding:5px 8px; border-color:rgba(212,175,55,0.5); color:#d4af37;">
-            <i class="fa-solid fa-magic"></i> Auto-Fill Credentials
-          </button>
-        </div>
       </form>
     </div>
   </div>
@@ -982,8 +1014,7 @@
         <div class="card-box">
           <div class="card-title">Featured About Section Hotel Video</div>
           <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">
-            Upload a video file or paste a video URL. This video will automatically play in the About Section on the
-            customer website.
+            Upload your hotel video file directly from your computer or paste a URL. This video will immediately show and play in the About Section on the customer website.
           </p>
           <form id="featuredVideoForm">
             <div class="form-grid">
@@ -993,15 +1024,29 @@
                   placeholder="Deepak Hotels Luxury Walkthrough" required>
               </div>
               <div class="form-group">
-                <label class="form-label">Video URL or File Upload</label>
-                <input type="text" class="form-control" id="feat_video_url"
-                  placeholder="/uploads/video.mp4 or https://..." required>
-                <input type="file" accept="video/*" style="margin-top:8px;"
-                  onchange="uploadVideoFile(this, 'feat_video_url')">
+                <label class="form-label">Video File or URL</label>
+                <div style="display:flex; gap:8px;">
+                  <input type="text" class="form-control" id="feat_video_url"
+                    placeholder="/uploads/video.mp4 or https://..." required oninput="updateFeatVideoPreview(this.value)">
+                  <input type="file" id="feat_video_file_input" accept="video/*" style="display:none;"
+                    onchange="uploadVideoFile(this, 'feat_video_url')">
+                  <button type="button" class="btn" style="background:#CBD5E1; color:#0B111D; white-space:nowrap; padding:8px 14px; font-size:0.85rem; font-weight:600;" onclick="document.getElementById('feat_video_file_input').click()">
+                    <i class="fa-solid fa-file-video"></i> Upload File
+                  </button>
+                </div>
+                <div id="feat_video_upload_status" style="margin-top:6px; font-size:0.85rem; color:var(--gold);"></div>
               </div>
             </div>
-            <button type="submit" class="btn btn-gold"><i class="fa-solid fa-play"></i> Save & Set as Featured
-              Video</button>
+
+            <!-- Video Live Preview -->
+            <div style="margin-top:16px; margin-bottom:20px;">
+              <label class="form-label" style="margin-bottom:6px;">Live Video Preview</label>
+              <div id="feat_video_preview_container" style="max-width:480px; min-height:160px; background:#0B111D; border:1px dashed rgba(212,175,55,0.3); border-radius:10px; display:flex; align-items:center; justify-content:center; overflow:hidden; padding:8px;">
+                <span style="color:#64748B; font-size:0.85rem;">No video selected yet</span>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-gold" id="saveFeatVideoBtn"><i class="fa-solid fa-play"></i> Save & Set as Featured Video</button>
           </form>
         </div>
 
@@ -1279,7 +1324,7 @@
 
   <!-- TOAST NOTIFICATION CONTAINER -->
   <div id="toastContainer"
-    style="position:fixed; top:20px; right:20px; z-index:10000; display:flex; flex-direction:column; gap:10px; pointer-events:none;">
+    style="position:fixed; top:20px; right:20px; z-index:1000000; display:flex; flex-direction:column; gap:10px; pointer-events:none;">
   </div>
 
   <!-- ADMIN GENERIC FORM MODAL -->
@@ -1570,12 +1615,6 @@
             }
           }
 
-          function fillAdminCredentials() {
-            document.getElementById('loginUsername').value = 'deepakhotelgroup';
-            document.getElementById('loginPassword').value = 'deepakhotelgroup@123';
-            showToast('Credentials filled! Click Login.');
-          }
-
           // Authentication Logic
           document.getElementById('adminLoginForm').addEventListener('submit', async function (e) {
             e.preventDefault();
@@ -1651,56 +1690,200 @@
             });
           });
 
-          // File Upload Handler
-          async function uploadFile(fileInput, targetId) {
+          // Client-side image compressor: ensures mobile gallery photos never exceed limits and upload swiftly
+          async function compressImageForUpload(file, maxDimension = 1920, quality = 0.85) {
+            return new Promise((resolve) => {
+              if (!file.type || !file.type.startsWith('image/')) {
+                const r = new FileReader();
+                r.onload = () => resolve({ base64: r.result, filename: file.name });
+                r.onerror = () => resolve({ base64: null, filename: file.name });
+                r.readAsDataURL(file);
+                return;
+              }
+
+              const img = new Image();
+              const objectUrl = URL.createObjectURL(file);
+              img.onload = () => {
+                URL.revokeObjectURL(objectUrl);
+                let width = img.naturalWidth || img.width;
+                let height = img.naturalHeight || img.height;
+
+                if (width > maxDimension || height > maxDimension) {
+                  if (width > height) {
+                    height = Math.round((height * maxDimension) / width);
+                    width = maxDimension;
+                  } else {
+                    width = Math.round((width * maxDimension) / height);
+                    height = maxDimension;
+                  }
+                }
+
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                const outputType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+                const base64 = canvas.toDataURL(outputType, quality);
+                resolve({ base64, filename: file.name });
+              };
+              img.onerror = () => {
+                URL.revokeObjectURL(objectUrl);
+                const r = new FileReader();
+                r.onload = () => resolve({ base64: r.result, filename: file.name });
+                r.onerror = () => resolve({ base64: null, filename: file.name });
+                r.readAsDataURL(file);
+              };
+              img.src = objectUrl;
+            });
+          }
+
+          // Dedicated File-Only Upload Handler for Modals
+          async function handleModalImageUpload(fileInput, hiddenTargetId, previewContainerId, statusContainerId, allowRemove = false) {
             const file = fileInput.files[0];
             if (!file) return;
 
-            const reader = new FileReader();
-            reader.onload = async function () {
-              try {
-                const res = await fetch('/api/upload', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ filename: file.name, base64: reader.result })
-                });
-                const data = await res.json();
-                if (data.ok) {
-                  document.getElementById(targetId).value = data.url;
-                  showToast('File uploaded successfully!');
-                } else {
-                  showToast('Upload error: ' + data.error, 'error');
+            const previewEl = document.getElementById(previewContainerId);
+            const statusEl = document.getElementById(statusContainerId);
+
+            // 1. Immediate visual preview from file
+            const localPreviewUrl = URL.createObjectURL(file);
+            if (previewEl) {
+              previewEl.innerHTML = `
+                <div class="upload-preview-container">
+                  <img src="${localPreviewUrl}" alt="Preview" class="upload-preview-img">
+                  <div class="upload-preview-actions">
+                    <button type="button" class="btn btn-sm btn-gold" onclick="event.stopPropagation(); document.getElementById('${fileInput.id}').click();">
+                      <i class="fa-solid fa-camera"></i> Change Photo
+                    </button>
+                    ${allowRemove ? `
+                      <button type="button" class="btn btn-sm btn-danger" onclick="event.stopPropagation(); removeUploadedPhoto('${hiddenTargetId}', '${previewContainerId}', '${statusContainerId}', true);">
+                        <i class="fa-solid fa-trash"></i> Remove
+                      </button>
+                    ` : ''}
+                  </div>
+                </div>
+              `;
+            }
+
+            // 2. Upload status feedback
+            if (statusEl) {
+              statusEl.innerHTML = `<span style="color:#D4AF37;"><i class="fa-solid fa-spinner fa-spin"></i> Uploading photo from gallery...</span>`;
+            }
+
+            const submitBtn = document.getElementById('adminModalSubmitBtn');
+            if (submitBtn) submitBtn.disabled = true;
+
+            try {
+              const { base64, filename } = await compressImageForUpload(file);
+              if (!base64) throw new Error('Could not process photo file');
+
+              const res = await fetch('/api/upload', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filename, base64 })
+              });
+              const data = await res.json();
+              if (data.ok && data.url) {
+                document.getElementById(hiddenTargetId).value = data.url;
+                if (statusEl) {
+                  statusEl.innerHTML = `<span style="color:#10B981;"><i class="fa-solid fa-circle-check"></i> Photo uploaded successfully!</span>`;
                 }
-              } catch (e) {
-                showToast('Upload failed: ' + e.message, 'error');
+                showToast('Photo uploaded successfully from files!');
+              } else {
+                if (statusEl) {
+                  statusEl.innerHTML = `<span style="color:#EF4444;"><i class="fa-solid fa-circle-xmark"></i> Upload failed: ${data.error || 'Server error'}</span>`;
+                }
+                showToast('Upload error: ' + (data.error || 'Failed to upload photo'), 'error');
               }
-            };
-            reader.readAsDataURL(file);
+            } catch (err) {
+              if (statusEl) {
+                statusEl.innerHTML = `<span style="color:#EF4444;"><i class="fa-solid fa-circle-xmark"></i> Upload failed: ${err.message}</span>`;
+              }
+              showToast('Upload failed: ' + err.message, 'error');
+            } finally {
+              if (submitBtn) submitBtn.disabled = false;
+            }
+          }
+
+          function removeUploadedPhoto(hiddenTargetId, previewContainerId, statusContainerId, isOptional = true) {
+            const hiddenInput = document.getElementById(hiddenTargetId);
+            if (hiddenInput) hiddenInput.value = '';
+
+            const statusEl = document.getElementById(statusContainerId);
+            if (statusEl) statusEl.innerHTML = '';
+
+            const previewEl = document.getElementById(previewContainerId);
+            if (previewEl) {
+              previewEl.innerHTML = `
+                <div class="upload-drop-prompt">
+                  <i class="fa-solid fa-cloud-arrow-up" style="font-size:2rem; color:var(--gold); margin-bottom:8px;"></i>
+                  <div style="font-weight:700; font-size:0.95rem; color:#0B111D;">Choose Photo from Gallery or Files</div>
+                  <div style="font-size:0.8rem; color:#64748B; margin-top:4px;">JPG, PNG, WEBP ${isOptional ? '(Optional — Tap or Click to browse)' : '(Required — Tap or Click to browse)'}</div>
+                </div>
+              `;
+            }
+            showToast('Photo removed');
+          }
+
+          // Legacy File Upload Handler
+          async function uploadFile(fileInput, targetId) {
+            const file = fileInput.files[0];
+            if (!file) return;
+            try {
+              const { base64, filename } = await compressImageForUpload(file);
+              const res = await fetch('/api/upload', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filename, base64 })
+              });
+              const data = await res.json();
+              if (data.ok) {
+                document.getElementById(targetId).value = data.url;
+                showToast('File uploaded successfully!');
+              } else {
+                showToast('Upload error: ' + data.error, 'error');
+              }
+            } catch (e) {
+              showToast('Upload failed: ' + e.message, 'error');
+            }
           }
 
           async function uploadModalFile(fileInput, targetId) {
             const file = fileInput.files[0];
             if (!file) return;
-            const reader = new FileReader();
-            reader.onload = async function () {
-              try {
-                const res = await fetch('/api/upload', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ filename: file.name, base64: reader.result })
+            try {
+              showToast('Uploading file... Please wait');
+              let base64, filename;
+              if (file.type && file.type.startsWith('video/')) {
+                filename = file.name;
+                base64 = await new Promise((resolve, reject) => {
+                  const r = new FileReader();
+                  r.onload = () => resolve(r.result);
+                  r.onerror = reject;
+                  r.readAsDataURL(file);
                 });
-                const data = await res.json();
-                if (data.ok) {
-                  document.getElementById(targetId).value = data.url;
-                  showToast('File uploaded successfully!');
-                } else {
-                  showToast('Upload error: ' + data.error, 'error');
-                }
-              } catch (e) {
-                showToast('Upload failed: ' + e.message, 'error');
+              } else {
+                const res = await compressImageForUpload(file);
+                base64 = res.base64;
+                filename = res.filename;
               }
-            };
-            reader.readAsDataURL(file);
+              const res = await fetch('/api/upload', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filename, base64 })
+              });
+              const data = await res.json();
+              if (data.ok) {
+                document.getElementById(targetId).value = data.url;
+                showToast('File uploaded successfully!');
+              } else {
+                showToast('Upload error: ' + (data.error || 'Upload failed'), 'error');
+              }
+            } catch (e) {
+              showToast('Upload failed: ' + e.message, 'error');
+            }
           }
 
           // Load Admin Data from Server APIs
@@ -2241,7 +2424,7 @@
 
               const tr = document.createElement('tr');
               tr.innerHTML = `
-          <td><strong style="color:var(--gold);">${r.id}</strong></td>
+          <td><strong style="color:var(--gold);">${r.id}</strong><div style="font-size:0.8rem; color:#94A3B8; margin-top:2px; font-weight:600;">Room ${r.num || r.id}</div></td>
           <td><strong>${hotelName}</strong></td>
           <td><span class="badge" style="background:#1E293B; color:#F8FAFC; border:1px solid #475569;">${r.cat}</span></td>
           <td>${r.ac ? '<span style="color:#10B981; font-weight:700;">AC</span>' : '<span style="color:#94A3B8;">Non-AC</span>'}</td>
@@ -2276,28 +2459,54 @@
             });
           }
 
+          function updateFeatVideoPreview(url) {
+            const container = document.getElementById('feat_video_preview_container');
+            if (!container) return;
+            if (!url || !url.trim()) {
+              container.innerHTML = '<span style="color:#64748B; font-size:0.85rem;">No video selected yet</span>';
+              return;
+            }
+            const cleanUrl = url.trim();
+            const ytMatch = cleanUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+            if (ytMatch) {
+              container.innerHTML = `
+                <div style="position:relative; width:100%; padding-bottom:56.25%; height:0; border-radius:8px; overflow:hidden;">
+                  <iframe src="https://www.youtube.com/embed/${ytMatch[1]}" style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;" allowfullscreen></iframe>
+                </div>
+              `;
+            } else {
+              container.innerHTML = `
+                <video src="${cleanUrl}" controls playsinline style="width:100%; max-height:240px; border-radius:6px; display:block; background:#000;"></video>
+              `;
+            }
+          }
+
           function renderVideosTable() {
             const tbody = document.getElementById('videosTableBody');
             tbody.innerHTML = '';
-            ADMIN_DATA.videos.forEach(v => {
+            (ADMIN_DATA.videos || []).forEach(v => {
               const tr = document.createElement('tr');
               tr.innerHTML = `
-          <td><strong>${v.title}</strong></td>
-          <td style="max-width:220px; overflow:hidden; text-overflow:ellipsis; font-size:0.85rem;">${v.video_url}</td>
-          <td><span class="badge ${v.is_homepage ? 'badge-confirmed' : 'badge-pending'}">${v.is_homepage ? 'Featured About Video' : 'Standard'}</span></td>
-          <td>${v.is_active ? 'Active' : 'Inactive'}</td>
-          <td>
-            <button class="btn btn-gold btn-sm" onclick="openVideoModal('${v.id}')" style="margin-right:6px;"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
-            <button class="btn btn-danger btn-sm" onclick="confirmDeleteVideo('${v.id}')"><i class="fa-solid fa-trash"></i> Delete</button>
-          </td>
-        `;
+                <td><strong>${v.title}</strong></td>
+                <td style="max-width:220px; overflow:hidden; text-overflow:ellipsis; font-size:0.85rem;" title="${v.video_url}">${v.video_url}</td>
+                <td><span class="badge ${v.is_homepage ? 'badge-confirmed' : 'badge-pending'}">${v.is_homepage ? 'Featured About Video' : 'Standard'}</span></td>
+                <td>${v.is_active ? 'Active' : 'Inactive'}</td>
+                <td>
+                  ${!v.is_homepage ? `<button class="btn btn-outline btn-sm" onclick="setFeaturedVideo('${v.id}')" style="margin-right:6px;"><i class="fa-solid fa-star"></i> Feature</button>` : ''}
+                  <button class="btn btn-gold btn-sm" onclick="openVideoModal('${v.id}')" style="margin-right:6px;"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+                  <button class="btn btn-danger btn-sm" onclick="confirmDeleteVideo('${v.id}')"><i class="fa-solid fa-trash"></i> Delete</button>
+                </td>
+              `;
               tbody.appendChild(tr);
             });
 
-            const featVid = ADMIN_DATA.videos.find(v => v.is_homepage && v.is_active) || ADMIN_DATA.videos[0];
+            const featVid = (ADMIN_DATA.videos || []).find(v => v.is_homepage && v.is_active) || (ADMIN_DATA.videos || [])[0];
             if (featVid) {
               document.getElementById('feat_video_title').value = featVid.title || '';
               document.getElementById('feat_video_url').value = featVid.video_url || '';
+              updateFeatVideoPreview(featVid.video_url);
+            } else {
+              updateFeatVideoPreview('');
             }
           }
 
@@ -2308,40 +2517,93 @@
               body: JSON.stringify({ is_homepage: true, is_active: true })
             });
             showToast('Set as Featured About Section Hotel Video!');
-            loadAdminData();
+            await loadAdminData();
           }
 
           async function uploadVideoFile(fileInput, targetId) {
             const file = fileInput.files[0];
             if (!file) return;
-            const reader = new FileReader();
-            reader.onload = async function () {
+
+            const statusEl = document.getElementById('feat_video_upload_status');
+            const saveBtn = document.getElementById('saveFeatVideoBtn');
+            const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
+
+            if (statusEl) {
+              statusEl.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Uploading ${file.name} (${sizeMb} MB)... Please wait...`;
+            }
+            if (saveBtn) saveBtn.disabled = true;
+
+            try {
+              const base64 = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+              });
+
               const upRes = await fetch('/api/upload', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ filename: file.name, base64: reader.result })
+                body: JSON.stringify({ filename: file.name, base64 })
               }).then(r => r.json());
+
               if (upRes.ok) {
                 document.getElementById(targetId).value = upRes.url;
-                showToast('Video file uploaded successfully to server disk!');
+                if (statusEl) {
+                  statusEl.innerHTML = `<span style="color:#10B981;"><i class="fa-solid fa-circle-check"></i> Video file uploaded successfully! Click "Save & Set as Featured Video" below to publish.</span>`;
+                }
+                showToast('Video file uploaded successfully!');
+                updateFeatVideoPreview(upRes.url);
               } else {
-                showToast('Upload failed: ' + upRes.error, 'error');
+                if (statusEl) {
+                  statusEl.innerHTML = `<span style="color:#EF4444;"><i class="fa-solid fa-triangle-exclamation"></i> Upload failed: ${upRes.error || 'Server error'}</span>`;
+                }
+                showToast('Upload failed: ' + (upRes.error || 'Unknown error'), 'error');
               }
-            };
-            reader.readAsDataURL(file);
+            } catch (err) {
+              if (statusEl) {
+                statusEl.innerHTML = `<span style="color:#EF4444;"><i class="fa-solid fa-triangle-exclamation"></i> Upload error: ${err.message}</span>`;
+              }
+              showToast('Upload failed: ' + err.message, 'error');
+            } finally {
+              if (saveBtn) saveBtn.disabled = false;
+              fileInput.value = '';
+            }
           }
 
           document.getElementById('featuredVideoForm').addEventListener('submit', async function (e) {
             e.preventDefault();
-            const title = document.getElementById('feat_video_title').value;
-            const url = document.getElementById('feat_video_url').value;
-            await fetch('/api/videos', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ title, video_url: url, is_homepage: true, is_active: true })
-            });
-            showToast('Featured Hotel Video saved to SQL Database and set for About Section!');
-            loadAdminData();
+            const title = (document.getElementById('feat_video_title').value || '').trim();
+            const url = (document.getElementById('feat_video_url').value || '').trim();
+            if (!url) {
+              showToast('Please provide a video URL or upload a video file', 'error');
+              return;
+            }
+
+            const existingFeat = (ADMIN_DATA.videos || []).find(v => v.is_homepage) || ((ADMIN_DATA.videos || []).length > 0 ? ADMIN_DATA.videos[0] : null);
+
+            let res;
+            if (existingFeat && existingFeat.id) {
+              res = await fetch('/api/videos/' + existingFeat.id, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, video_url: url, is_homepage: true, is_active: true })
+              });
+            } else {
+              res = await fetch('/api/videos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, video_url: url, is_homepage: true, is_active: true })
+              });
+            }
+
+            const data = await res.json();
+            if (data.ok) {
+              showToast('Featured Hotel Video saved and published to About Section!');
+              await loadAdminData();
+            } else {
+              showToast('Error saving video: ' + (data.error || 'Failed to save'), 'error');
+            }
           });
 
           function renderAmenitiesTable() {
@@ -2503,14 +2765,33 @@
           <textarea class="modal-form-control" id="mh_desc" placeholder="Luxury property featuring executive rooms, 24/7 dining, and panoramic temple views.">${hotel ? (hotel.desc || '') : ''}</textarea>
         </div>
         <div class="modal-form-group">
-          <label class="modal-form-label">Property Image URL</label>
-          <div style="display:flex; gap:10px;">
-            <input type="text" class="modal-form-control" id="mh_image" value="${hotel ? (hotel.image || '') : ''}" placeholder="/images/hero-bg.jpg">
-            <input type="file" id="mh_image_file" accept="image/*" style="display:none;" onchange="uploadModalFile(this, 'mh_image')">
-            <button type="button" class="btn" style="background:#CBD5E1; color:#0B111D; white-space:nowrap; padding:8px 14px; font-size:0.85rem;" onclick="document.getElementById('mh_image_file').click()">
-              <i class="fa-solid fa-upload"></i> Upload
-            </button>
+          <label class="modal-form-label">Property Image (Upload from Files / Gallery)</label>
+          <input type="hidden" id="mh_image" value="${hotel && hotel.image ? hotel.image : '/images/hero-bg.jpg'}">
+          <input type="file" id="mh_image_file" accept="image/*" style="display:none;" onchange="handleModalImageUpload(this, 'mh_image', 'mh_image_preview', 'mh_image_status', true)">
+          <div id="mh_image_upload_zone" class="file-upload-zone" onclick="document.getElementById('mh_image_file').click()">
+            <div id="mh_image_preview" class="file-upload-preview">
+              ${hotel && hotel.image ? `
+                <div class="upload-preview-container">
+                  <img src="${hotel.image}" alt="Property Photo" class="upload-preview-img">
+                  <div class="upload-preview-actions">
+                    <button type="button" class="btn btn-sm btn-gold" onclick="event.stopPropagation(); document.getElementById('mh_image_file').click();">
+                      <i class="fa-solid fa-camera"></i> Change Photo
+                    </button>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="event.stopPropagation(); removeUploadedPhoto('mh_image', 'mh_image_preview', 'mh_image_status', true);">
+                      <i class="fa-solid fa-trash"></i> Remove
+                    </button>
+                  </div>
+                </div>
+              ` : `
+                <div class="upload-drop-prompt">
+                  <i class="fa-solid fa-cloud-arrow-up" style="font-size:2rem; color:var(--gold); margin-bottom:8px;"></i>
+                  <div style="font-weight:700; font-size:0.95rem; color:#0B111D;">Choose Photo from Gallery or Files</div>
+                  <div style="font-size:0.8rem; color:#64748B; margin-top:4px;">JPG, PNG, WEBP (Tap or Click to browse)</div>
+                </div>
+              `}
+            </div>
           </div>
+          <div id="mh_image_status" style="margin-top:6px; font-size:0.85rem; font-weight:600;"></div>
         </div>
       `;
 
@@ -2644,14 +2925,33 @@
         </div>
 
         <div class="modal-form-group">
-          <label class="modal-form-label">Optional Room Image URL</label>
-          <div style="display:flex; gap:10px;">
-            <input type="text" class="modal-form-control" id="m_photo" value="${room ? (room.photo || '') : ''}" placeholder="/images/room-suite.jpg or https://...">
-            <input type="file" id="m_photo_file" accept="image/*" style="display:none;" onchange="uploadModalFile(this, 'm_photo')">
-            <button type="button" class="btn" style="background:#CBD5E1; color:#0B111D; white-space:nowrap; padding:8px 14px; font-size:0.85rem;" onclick="document.getElementById('m_photo_file').click()">
-              <i class="fa-solid fa-upload"></i> Upload
-            </button>
+          <label class="modal-form-label">Room Photo (Upload from Files / Gallery)</label>
+          <input type="hidden" id="m_photo" value="${room && room.photo ? room.photo : ''}">
+          <input type="file" id="m_photo_file" accept="image/*" style="display:none;" onchange="handleModalImageUpload(this, 'm_photo', 'm_photo_preview', 'm_photo_status', true)">
+          <div id="m_photo_upload_zone" class="file-upload-zone" onclick="document.getElementById('m_photo_file').click()">
+            <div id="m_photo_preview" class="file-upload-preview">
+              ${room && room.photo ? `
+                <div class="upload-preview-container">
+                  <img src="${room.photo}" alt="Room Photo" class="upload-preview-img">
+                  <div class="upload-preview-actions">
+                    <button type="button" class="btn btn-sm btn-gold" onclick="event.stopPropagation(); document.getElementById('m_photo_file').click();">
+                      <i class="fa-solid fa-camera"></i> Change Photo
+                    </button>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="event.stopPropagation(); removeUploadedPhoto('m_photo', 'm_photo_preview', 'm_photo_status', true);">
+                      <i class="fa-solid fa-trash"></i> Remove
+                    </button>
+                  </div>
+                </div>
+              ` : `
+                <div class="upload-drop-prompt">
+                  <i class="fa-solid fa-cloud-arrow-up" style="font-size:2rem; color:var(--gold); margin-bottom:8px;"></i>
+                  <div style="font-weight:700; font-size:0.95rem; color:#0B111D;">Choose Photo from Gallery or Files</div>
+                  <div style="font-size:0.8rem; color:#64748B; margin-top:4px;">JPG, PNG, WEBP (Optional — Tap or Click to browse)</div>
+                </div>
+              `}
+            </div>
           </div>
+          <div id="m_photo_status" style="margin-top:6px; font-size:0.85rem; font-weight:600;"></div>
         </div>
       `;
 
@@ -2697,7 +2997,7 @@
                   photo: photoVal || null
                 };
 
-                const url = isEdit ? '/api/rooms/' + room.id : '/api/rooms';
+                const url = isEdit ? '/api/rooms/' + encodeURIComponent(room.id) : '/api/rooms';
                 const method = isEdit ? 'PATCH' : 'POST';
 
                 const res = await fetch(url, {
@@ -2711,8 +3011,8 @@
                   return false;
                 }
 
-                showToast(isEdit ? 'Room updated in SQL database successfully!' : 'New room added to SQL database successfully!');
-                loadAdminData();
+                showToast(isEdit ? 'Room updated successfully!' : 'New room added successfully!');
+                await loadAdminData();
                 return true;
               }
             });
@@ -2822,14 +3122,30 @@
           </div>
         </div>
         <div class="modal-form-group">
-          <label class="modal-form-label">Image URL <span style="color:#EF4444;">*</span></label>
-          <div style="display:flex; gap:10px;">
-            <input type="text" class="modal-form-control" id="mg_image" value="${gal ? gal.image : ''}" placeholder="/images/hero-bg.jpg" required>
-            <input type="file" id="mg_image_file" accept="image/*" style="display:none;" onchange="uploadModalFile(this, 'mg_image')">
-            <button type="button" class="btn" style="background:#CBD5E1; color:#0B111D; white-space:nowrap; padding:8px 14px; font-size:0.85rem;" onclick="document.getElementById('mg_image_file').click()">
-              <i class="fa-solid fa-upload"></i> Upload
-            </button>
+          <label class="modal-form-label">Upload Photo from Files / Gallery <span style="color:#EF4444;">*</span></label>
+          <input type="hidden" id="mg_image" value="${gal && gal.image ? gal.image : ''}">
+          <input type="file" id="mg_image_file" accept="image/*" style="display:none;" onchange="handleModalImageUpload(this, 'mg_image', 'mg_image_preview', 'mg_image_status', false)">
+          <div id="mg_image_upload_zone" class="file-upload-zone" onclick="document.getElementById('mg_image_file').click()">
+            <div id="mg_image_preview" class="file-upload-preview">
+              ${gal && gal.image ? `
+                <div class="upload-preview-container">
+                  <img src="${gal.image}" alt="Gallery Photo" class="upload-preview-img">
+                  <div class="upload-preview-actions">
+                    <button type="button" class="btn btn-sm btn-gold" onclick="event.stopPropagation(); document.getElementById('mg_image_file').click();">
+                      <i class="fa-solid fa-camera"></i> Change Photo
+                    </button>
+                  </div>
+                </div>
+              ` : `
+                <div class="upload-drop-prompt">
+                  <i class="fa-solid fa-cloud-arrow-up" style="font-size:2rem; color:var(--gold); margin-bottom:8px;"></i>
+                  <div style="font-weight:700; font-size:0.95rem; color:#0B111D;">Choose Photo from Gallery or Files</div>
+                  <div style="font-size:0.8rem; color:#64748B; margin-top:4px;">JPG, PNG, WEBP (Required — Tap or Click to browse)</div>
+                </div>
+              `}
+            </div>
           </div>
+          <div id="mg_image_status" style="margin-top:6px; font-size:0.85rem; font-weight:600;"></div>
         </div>
       `;
 
@@ -2840,7 +3156,7 @@
               submitText: isEdit ? 'Save Changes' : 'Upload & Add to Gallery',
               onSubmit: async () => {
                 const image = document.getElementById('mg_image').value.trim();
-                if (!image) { showModalError('Image URL or Upload is required'); return false; }
+                if (!image) { showModalError('Please upload a photo from files first'); return false; }
 
                 const payload = {
                   title: document.getElementById('mg_title').value.trim() || 'Hotel Photo',
@@ -2904,14 +3220,33 @@
           </select>
         </div>
         <div class="modal-form-group">
-          <label class="modal-form-label">Photo URL</label>
-          <div style="display:flex; gap:10px;">
-            <input type="text" class="modal-form-control" id="mf_photo" value="${dish ? (dish.photo || '') : ''}" placeholder="/images/dining-bg.jpg">
-            <input type="file" id="mf_photo_file" accept="image/*" style="display:none;" onchange="uploadModalFile(this, 'mf_photo')">
-            <button type="button" class="btn" style="background:#CBD5E1; color:#0B111D; white-space:nowrap; padding:8px 14px; font-size:0.85rem;" onclick="document.getElementById('mf_photo_file').click()">
-              <i class="fa-solid fa-upload"></i> Upload
-            </button>
+          <label class="modal-form-label">Dish Photo (Upload from Files / Gallery)</label>
+          <input type="hidden" id="mf_photo" value="${dish && dish.photo ? dish.photo : ''}">
+          <input type="file" id="mf_photo_file" accept="image/*" style="display:none;" onchange="handleModalImageUpload(this, 'mf_photo', 'mf_photo_preview', 'mf_photo_status', true)">
+          <div id="mf_photo_upload_zone" class="file-upload-zone" onclick="document.getElementById('mf_photo_file').click()">
+            <div id="mf_photo_preview" class="file-upload-preview">
+              ${dish && dish.photo ? `
+                <div class="upload-preview-container">
+                  <img src="${dish.photo}" alt="Dish Photo" class="upload-preview-img">
+                  <div class="upload-preview-actions">
+                    <button type="button" class="btn btn-sm btn-gold" onclick="event.stopPropagation(); document.getElementById('mf_photo_file').click();">
+                      <i class="fa-solid fa-camera"></i> Change Photo
+                    </button>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="event.stopPropagation(); removeUploadedPhoto('mf_photo', 'mf_photo_preview', 'mf_photo_status', true);">
+                      <i class="fa-solid fa-trash"></i> Remove
+                    </button>
+                  </div>
+                </div>
+              ` : `
+                <div class="upload-drop-prompt">
+                  <i class="fa-solid fa-cloud-arrow-up" style="font-size:2rem; color:var(--gold); margin-bottom:8px;"></i>
+                  <div style="font-weight:700; font-size:0.95rem; color:#0B111D;">Choose Photo from Gallery or Files</div>
+                  <div style="font-size:0.8rem; color:#64748B; margin-top:4px;">JPG, PNG, WEBP (Tap or Click to browse)</div>
+                </div>
+              `}
+            </div>
           </div>
+          <div id="mf_photo_status" style="margin-top:6px; font-size:0.85rem; font-weight:600;"></div>
         </div>
       `;
 
@@ -3200,7 +3535,7 @@
                   const data = await res.json();
                   if (data.ok) {
                     showToast('Room permanently deleted from database!');
-                    loadAdminData();
+                    await loadAdminData();
                   } else {
                     showToast('Failed to delete room: ' + (data.error || 'Error'), 'error');
                   }

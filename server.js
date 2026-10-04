@@ -13,10 +13,42 @@ const crypto = require('crypto');
 const { URL } = require('url');
 const supabase = require('./supabase-client');
 
+const ROOT = __dirname;
+
+// Self-contained .env loader for zero-dependency local & hosting environments
+function loadEnvFile() {
+  const envPath = path.join(ROOT, '.env');
+  if (fs.existsSync(envPath)) {
+    try {
+      const lines = fs.readFileSync(envPath, 'utf8').split('\n');
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith('#')) continue;
+        const eqIdx = trimmed.indexOf('=');
+        if (eqIdx > 0) {
+          const k = trimmed.slice(0, eqIdx).trim();
+          const v = trimmed.slice(eqIdx + 1).trim();
+          if (!process.env[k]) {
+            process.env[k] = v.replace(/^["']|["']$/g, '');
+          }
+        }
+      }
+    } catch (e) { }
+  }
+}
+loadEnvFile();
+
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || '0.0.0.0';
-const ROOT = __dirname;
-const DATA_DIR = process.env.DATA_DIR || path.join(ROOT, 'data');
+let DATA_DIR = process.env.DATA_DIR || path.join(ROOT, 'data');
+try { fs.mkdirSync(DATA_DIR, { recursive: true }); } catch (e) {
+  DATA_DIR = path.join(ROOT, 'data');
+  try { fs.mkdirSync(DATA_DIR, { recursive: true }); } catch (e2) {
+    const os = require('os');
+    DATA_DIR = path.join(os.tmpdir(), 'deepak_hotels_data');
+    try { fs.mkdirSync(DATA_DIR, { recursive: true }); } catch (e3) { }
+  }
+}
 const DB_PATH = path.join(DATA_DIR, 'db.json');
 const PUBLIC_DIR = path.join(ROOT, 'public');
 const UPLOADS_DIR = path.join(PUBLIC_DIR, 'uploads');
@@ -146,7 +178,7 @@ const SEED_GALLERY = [
 ];
 
 const SEED_VIDEOS = [
-  { id: 'vid1', title: 'Deepak Hotels Group Luxury Walkthrough', video_url: 'https://www.w3schools.com/html/mov_bbb.mp4', is_homepage: 1, is_active: 1 }
+  { id: 'vid1', title: 'Deepak Hotels Group Luxury Walkthrough', video_url: '/uploads/4d240ca4-e2ca-4ba9-bfc3-7b5698643ce9_1791134169893.mp4', is_homepage: 1, is_active: 1 }
 ];
 
 const ROOM_CATEGORIES = ['Single', 'Couple', 'Family', 'Suite'];
@@ -585,8 +617,21 @@ async function ensureSupabaseDataFresh(force = false) {
       const remote = await supabase.pullAllFromSupabase();
       if (remote) {
         if (Array.isArray(remote.hotels) && remote.hotels.length) DB.hotels = remote.hotels;
-        if (Array.isArray(remote.rooms) && remote.rooms.length) DB.rooms = remote.rooms;
         if (Array.isArray(remote.menuItems)) DB.menuItems = remote.menuItems;
+        if (Array.isArray(remote.rooms)) {
+          DB.rooms = remote.rooms;
+          if (sqliteDb) {
+            try {
+              sqliteDb.exec('BEGIN TRANSACTION;');
+              sqliteDb.exec('DELETE FROM rooms;');
+              const insR = sqliteDb.prepare('INSERT INTO rooms (id, hotel, num, floor, ac, cat, price24, price6, photo, max_guests, bed_type, amenities, status, desc, video_url, discount_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+              DB.rooms.forEach(r => insR.run(r.id, r.hotel, r.num, r.floor || 1, r.ac ? 1 : 0, r.cat, r.price24 || 0, r.price6 || 0, r.photo || null, r.maxGuests || 2, r.bedType || 'King Bed', r.amenities || '', r.status || 'available', r.desc || '', r.video_url || '', r.discount_price || 0));
+              sqliteDb.exec('COMMIT;');
+            } catch (sqErr) {
+              try { sqliteDb.exec('ROLLBACK;'); } catch (rb) { }
+            }
+          }
+        }
         if (Array.isArray(remote.bookings)) DB.bookings = remote.bookings;
         if (remote.settings && Object.keys(remote.settings).length) DB.settings = { ...DB.settings, ...remote.settings };
         if (remote.hero && Object.keys(remote.hero).length) DB.hero = { ...DB.hero, ...remote.hero };
@@ -1128,37 +1173,77 @@ route('GET', '/api/admin/me', async (req, res) => {
 route('POST', '/api/upload', async (req, res) => {
   if (!requireAdmin(req, res)) return;
   let body;
-  try { body = await readBody(req, 15 * 1024 * 1024); } catch (e) { return sendJson(res, 400, { error: e.message }); }
+  try { body = await readBody(req, 100 * 1024 * 1024); } catch (e) { return sendJson(res, 400, { error: e.message }); }
   const { filename, base64 } = body;
   if (!base64 || typeof base64 !== 'string') return sendJson(res, 400, { error: 'Base64 data is required' });
 
   const match = base64.match(/^data:([^;]+);base64,(.+)$/);
   let ext = '.png';
+  let mime = 'image/png';
   let buffer;
 
   if (match) {
-    const mime = match[1];
+    mime = match[1];
     if (mime.includes('jpeg') || mime.includes('jpg')) ext = '.jpg';
     else if (mime.includes('png')) ext = '.png';
     else if (mime.includes('gif')) ext = '.gif';
     else if (mime.includes('webp')) ext = '.webp';
     else if (mime.includes('mp4')) ext = '.mp4';
     else if (mime.includes('webm')) ext = '.webm';
+    else if (mime.includes('quicktime') || mime.includes('mov')) ext = '.mov';
+    else if (mime.includes('x-matroska') || mime.includes('mkv')) ext = '.mkv';
+    else if (mime.includes('ogg')) ext = '.ogv';
     buffer = Buffer.from(match[2], 'base64');
   } else {
     buffer = Buffer.from(base64, 'base64');
   }
 
+  if (filename && path.extname(filename)) {
+    const origExt = path.extname(filename).toLowerCase();
+    if (['.jpg', '.jpeg', '.png', '.webp', '.gif', '.mp4', '.webm', '.mov', '.mkv', '.ogv'].includes(origExt)) {
+      ext = origExt;
+      if (ext === '.mp4') mime = 'video/mp4';
+      else if (ext === '.webm') mime = 'video/webm';
+    }
+  }
+
   const safeName = (filename ? path.parse(filename).name.replace(/[^a-z0-9_-]/gi, '_') : 'file') + '_' + Date.now() + ext;
   const savePath = path.join(UPLOADS_DIR, safeName);
 
+  // 1. Upload to Supabase Storage (hotel-uploads bucket) if configured
+  let publicUrl = null;
+  if (typeof supabase.uploadStorageFile === 'function' && supabase.isConfigured()) {
+    try {
+      publicUrl = await supabase.uploadStorageFile(safeName, buffer, mime);
+      if (publicUrl) {
+        console.log(`[Upload] File uploaded to Supabase Storage: ${publicUrl}`);
+      }
+    } catch (sbErr) {
+      console.error('[Upload] Supabase Storage upload error:', sbErr.message);
+    }
+  }
+
+  // 2. Cache to local uploads directory (safe for local / server environments, bypassed if serverless read-only)
+  let localSaved = false;
   try {
     fs.writeFileSync(savePath, buffer);
-    const url = '/uploads/' + safeName;
-    sendJson(res, 200, { ok: true, url, filename: safeName });
-  } catch (err) {
-    sendJson(res, 500, { error: 'Failed to write file to disk: ' + err.message });
+    localSaved = true;
+  } catch (fsErr) {
+    console.warn('[Upload] Local filesystem write bypassed (read-only environment):', fsErr.message);
   }
+
+  if (publicUrl) {
+    return sendJson(res, 200, { ok: true, url: publicUrl, filename: safeName });
+  }
+
+  if (localSaved) {
+    const url = '/uploads/' + safeName;
+    return sendJson(res, 200, { ok: true, url, filename: safeName });
+  }
+
+  // 3. Fallback to base64 data URL if storage is unavailable and disk is read-only
+  const fallbackUrl = `data:${mime};base64,${buffer.toString('base64')}`;
+  sendJson(res, 200, { ok: true, url: fallbackUrl, filename: safeName });
 });
 
 // Website Settings
@@ -1361,11 +1446,21 @@ route('PATCH', '/api/rooms/bulk-pricing', async (req, res) => {
 
 route('PATCH', '/api/rooms/:id', async (req, res, params) => {
   if (!requireAdmin(req, res)) return;
-  const r = roomOf(params.id);
-  if (!r) return sendJson(res, 404, { error: 'Room not found' });
+  let r = roomOf(params.id);
+  if (!r && supabase.isConfigured()) {
+    await ensureSupabaseDataFresh(true);
+    r = roomOf(params.id);
+  }
+  if (!r) return sendJson(res, 404, { ok: false, error: 'Room not found in database: ' + params.id });
+
   let body;
-  try { body = await readBody(req); } catch (e) { return sendJson(res, 413, { error: e.message }); }
+  try { body = await readBody(req); } catch (e) { return sendJson(res, 413, { ok: false, error: e.message }); }
   
+  const oldId = r.id;
+  const oldNum = r.num;
+  const oldHotel = r.hotel;
+
+  let newHotel = r.hotel;
   if (body.hotel !== undefined && body.hotel !== null) {
     let targetHotel = hotelOf(body.hotel);
     if (!targetHotel) {
@@ -1382,47 +1477,92 @@ route('PATCH', '/api/rooms/:id', async (req, res, params) => {
       };
       DB.hotels.push(targetHotel);
       if (sqliteDb) {
-        sqliteDb.prepare(`INSERT INTO hotels (id, name, tag, locality, phone, accent, image, desc) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`).run(
-          targetHotel.id, targetHotel.name, targetHotel.tag, targetHotel.locality, targetHotel.phone, targetHotel.accent, targetHotel.image, targetHotel.desc
-        );
+        try {
+          sqliteDb.prepare(`INSERT INTO hotels (id, name, tag, locality, phone, accent, image, desc) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`).run(
+            targetHotel.id, targetHotel.name, targetHotel.tag, targetHotel.locality, targetHotel.phone, targetHotel.accent, targetHotel.image, targetHotel.desc
+          );
+        } catch (hErr) { }
       }
       try { await supabase.syncHotel(targetHotel, 'upsert'); } catch (e) { }
     }
-    r.hotel = targetHotel.id;
+    newHotel = targetHotel.id;
   }
 
-  if (body.price24 !== undefined && body.price24 !== null) {
-    const p24 = Number(body.price24);
-    if (Number.isFinite(p24)) r.price24 = Math.max(0, Math.round(p24));
+  let newNum = r.num;
+  if (body.num !== undefined && body.num !== null) {
+    const trimmedNum = String(body.num).trim();
+    if (trimmedNum) newNum = trimmedNum;
   }
-  if (body.price6 !== undefined && body.price6 !== null) {
-    const p6 = Number(body.price6);
-    if (Number.isFinite(p6)) r.price6 = Math.max(0, Math.round(p6));
+
+  // If room number or hotel changed, recalculate room ID
+  let newRoomId = oldId;
+  if (newNum !== oldNum || newHotel !== oldHotel) {
+    newRoomId = newHotel + '-' + newNum;
+    if (newRoomId !== oldId && DB.rooms.some(other => other.id === newRoomId && other !== r)) {
+      return sendJson(res, 400, { ok: false, error: `Room ${newNum} already exists for this hotel property` });
+    }
   }
-  if (typeof body.ac === 'boolean') r.ac = body.ac;
-  if (typeof body.cat === 'string' && body.cat.trim()) {
-    r.cat = String(body.cat).trim();
+
+  const updatedRoom = {
+    ...r,
+    id: newRoomId,
+    hotel: newHotel,
+    num: newNum,
+    floor: body.floor !== undefined ? (Number(body.floor) || 1) : r.floor,
+    ac: typeof body.ac === 'boolean' ? body.ac : r.ac,
+    cat: typeof body.cat === 'string' && body.cat.trim() ? String(body.cat).trim() : r.cat,
+    price24: (body.price24 !== undefined && Number.isFinite(Number(body.price24))) ? Math.max(0, Math.round(Number(body.price24))) : r.price24,
+    price6: (body.price6 !== undefined && Number.isFinite(Number(body.price6))) ? Math.max(0, Math.round(Number(body.price6))) : r.price6,
+    photo: body.photo !== undefined ? (body.photo || null) : r.photo,
+    maxGuests: body.maxGuests !== undefined ? (Number(body.maxGuests) || 2) : r.maxGuests,
+    bedType: body.bedType !== undefined ? String(body.bedType) : r.bedType,
+    amenities: body.amenities !== undefined ? String(body.amenities) : r.amenities,
+    status: body.status !== undefined ? String(body.status) : r.status,
+    desc: body.desc !== undefined ? String(body.desc) : r.desc,
+    video_url: body.video_url !== undefined ? String(body.video_url) : r.video_url,
+    discount_price: (body.discount_price !== undefined || body.discountPrice !== undefined) ? (Number(body.discount_price || body.discountPrice) || 0) : r.discount_price
+  };
+
+  // 1. FIRST: Commit update to Supabase Cloud
+  if (supabase.isConfigured()) {
+    try {
+      await supabase.syncRoom(updatedRoom, 'upsert', oldId);
+    } catch (sbErr) {
+      console.error('[Supabase] Room update failed:', sbErr.message);
+      return sendJson(res, 400, { ok: false, error: 'Database update failed: ' + sbErr.message });
+    }
   }
-  if (typeof body.photo === 'string') {
-    r.photo = body.photo;
-  } else if (body.photo === null) {
-    r.photo = null;
+
+  // 2. SECOND: Update local state & SQLite
+  if (newRoomId !== oldId) {
+    DB.bookings.forEach(b => {
+      if (b.hotelRoom === oldId) b.hotelRoom = newRoomId;
+    });
+    if (sqliteDb) {
+      try { sqliteDb.prepare(`UPDATE bookings SET hotelRoom = ? WHERE hotelRoom = ?`).run(newRoomId, oldId); } catch (e) { }
+    }
   }
-  if (body.maxGuests !== undefined) r.maxGuests = Number(body.maxGuests) || 2;
-  if (body.bedType !== undefined) r.bedType = String(body.bedType);
-  if (body.amenities !== undefined) r.amenities = String(body.amenities);
-  if (body.status !== undefined) r.status = String(body.status);
-  if (body.desc !== undefined) r.desc = String(body.desc);
-  if (body.video_url !== undefined) r.video_url = String(body.video_url);
-  if (body.discount_price !== undefined || body.discountPrice !== undefined) r.discount_price = Number(body.discount_price || body.discountPrice) || 0;
+
+  Object.assign(r, updatedRoom);
 
   if (sqliteDb) {
-    sqliteDb.prepare(`UPDATE rooms SET hotel=?, num=?, floor=?, ac=?, cat=?, price24=?, price6=?, photo=?, max_guests=?, bed_type=?, amenities=?, status=?, desc=?, video_url=?, discount_price=? WHERE id=?`).run(
-      r.hotel, r.num, r.floor, r.ac ? 1 : 0, r.cat, r.price24, r.price6, r.photo, r.maxGuests, r.bedType, r.amenities, r.status, r.desc, r.video_url, r.discount_price, r.id
-    );
+    try {
+      if (newRoomId !== oldId) {
+        sqliteDb.prepare(`DELETE FROM rooms WHERE id = ?`).run(oldId);
+        sqliteDb.prepare(`INSERT INTO rooms (id, hotel, num, floor, ac, cat, price24, price6, photo, max_guests, bed_type, amenities, status, desc, video_url, discount_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(
+          r.id, r.hotel, r.num, r.floor, r.ac ? 1 : 0, r.cat, r.price24, r.price6, r.photo, r.maxGuests, r.bedType, r.amenities, r.status, r.desc, r.video_url, r.discount_price
+        );
+      } else {
+        sqliteDb.prepare(`UPDATE rooms SET hotel=?, num=?, floor=?, ac=?, cat=?, price24=?, price6=?, photo=?, max_guests=?, bed_type=?, amenities=?, status=?, desc=?, video_url=?, discount_price=? WHERE id=?`).run(
+          r.hotel, r.num, r.floor, r.ac ? 1 : 0, r.cat, r.price24, r.price6, r.photo, r.maxGuests, r.bedType, r.amenities, r.status, r.desc, r.video_url, r.discount_price, r.id
+        );
+      }
+    } catch (sqErr) {
+      console.error('[SQLite] Room update error:', sqErr.message);
+    }
   }
+
   saveDbMirrorOnly();
-  try { await supabase.syncRoom(r, 'upsert'); } catch (e) { console.error('[Supabase] Room update sync error:', e.message); }
   lastSupabaseSync = Date.now();
   sendJson(res, 200, { ok: true, room: r });
 });
@@ -1430,10 +1570,10 @@ route('PATCH', '/api/rooms/:id', async (req, res, params) => {
 route('POST', '/api/rooms', async (req, res) => {
   if (!requireAdmin(req, res)) return;
   let body;
-  try { body = await readBody(req); } catch (e) { return sendJson(res, 400, { error: e.message }); }
+  try { body = await readBody(req); } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
   const { hotel, num, floor, ac, cat, price24, price6, photo, maxGuests, bedType, amenities, status } = body;
-  if (!hotel || !String(hotel).trim()) return sendJson(res, 400, { error: 'Hotel name or ID is required' });
-  if (!num || (typeof num !== 'string' && typeof num !== 'number')) return sendJson(res, 400, { error: 'Room number is required' });
+  if (!hotel || !String(hotel).trim()) return sendJson(res, 400, { ok: false, error: 'Hotel name or ID is required' });
+  if (!num || (typeof num !== 'string' && typeof num !== 'number')) return sendJson(res, 400, { ok: false, error: 'Room number is required' });
 
   let targetHotel = hotelOf(hotel);
   if (!targetHotel) {
@@ -1450,16 +1590,18 @@ route('POST', '/api/rooms', async (req, res) => {
     };
     DB.hotels.push(targetHotel);
     if (sqliteDb) {
-      sqliteDb.prepare(`INSERT INTO hotels (id, name, tag, locality, phone, accent, image, desc) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`).run(
-        targetHotel.id, targetHotel.name, targetHotel.tag, targetHotel.locality, targetHotel.phone, targetHotel.accent, targetHotel.image, targetHotel.desc
-      );
+      try {
+        sqliteDb.prepare(`INSERT INTO hotels (id, name, tag, locality, phone, accent, image, desc) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`).run(
+          targetHotel.id, targetHotel.name, targetHotel.tag, targetHotel.locality, targetHotel.phone, targetHotel.accent, targetHotel.image, targetHotel.desc
+        );
+      } catch (hErr) { }
     }
     try { await supabase.syncHotel(targetHotel, 'upsert'); } catch (e) { }
   }
 
   const strNum = String(num).trim();
   const roomId = targetHotel.id + '-' + strNum;
-  if (DB.rooms.some(r => r.id === roomId)) return sendJson(res, 400, { error: `Room ${strNum} already exists for ${targetHotel.name}` });
+  if (DB.rooms.some(r => r.id === roomId)) return sendJson(res, 400, { ok: false, error: `Room ${strNum} already exists for ${targetHotel.name}` });
 
   const categoryName = String(cat || 'Executive').trim();
 
@@ -1481,28 +1623,62 @@ route('POST', '/api/rooms', async (req, res) => {
     video_url: String(body.video_url || ''),
     discount_price: Number(body.discount_price || body.discountPrice) || 0
   };
+
+  // 1. FIRST: Commit to Supabase Cloud
+  if (supabase.isConfigured()) {
+    try {
+      await supabase.syncRoom(newRoom, 'upsert');
+    } catch (sbErr) {
+      console.error('[Supabase] Room add failed:', sbErr.message);
+      return sendJson(res, 400, { ok: false, error: 'Database creation failed: ' + sbErr.message });
+    }
+  }
+
+  // 2. SECOND: Add to local state & SQLite
   DB.rooms.push(newRoom);
   if (sqliteDb) {
-    sqliteDb.prepare(`INSERT INTO rooms (id, hotel, num, floor, ac, cat, price24, price6, photo, max_guests, bed_type, amenities, status, desc, video_url, discount_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(
-      newRoom.id, newRoom.hotel, newRoom.num, newRoom.floor, newRoom.ac ? 1 : 0, newRoom.cat, newRoom.price24, newRoom.price6, newRoom.photo, newRoom.maxGuests, newRoom.bedType, newRoom.amenities, newRoom.status, newRoom.desc, newRoom.video_url, newRoom.discount_price
-    );
+    try {
+      sqliteDb.prepare(`INSERT INTO rooms (id, hotel, num, floor, ac, cat, price24, price6, photo, max_guests, bed_type, amenities, status, desc, video_url, discount_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(
+        newRoom.id, newRoom.hotel, newRoom.num, newRoom.floor, newRoom.ac ? 1 : 0, newRoom.cat, newRoom.price24, newRoom.price6, newRoom.photo, newRoom.maxGuests, newRoom.bedType, newRoom.amenities, newRoom.status, newRoom.desc, newRoom.video_url, newRoom.discount_price
+      );
+    } catch (sqErr) {
+      console.error('[SQLite] Room add error:', sqErr.message);
+    }
   }
+
   saveDbMirrorOnly();
-  try { await supabase.syncRoom(newRoom, 'upsert'); } catch (e) { console.error('[Supabase] Room add sync error:', e.message); }
   lastSupabaseSync = Date.now();
   sendJson(res, 201, { ok: true, room: newRoom });
 });
 
 route('DELETE', '/api/rooms/:id', async (req, res, params) => {
   if (!requireAdmin(req, res)) return;
-  const idx = DB.rooms.findIndex(r => r.id === params.id);
-  if (idx === -1) return sendJson(res, 404, { error: 'Room not found' });
+  let idx = DB.rooms.findIndex(r => r.id === params.id);
+  if (idx === -1 && supabase.isConfigured()) {
+    await ensureSupabaseDataFresh(true);
+    idx = DB.rooms.findIndex(r => r.id === params.id);
+  }
+  if (idx === -1) return sendJson(res, 404, { ok: false, error: 'Room not found in database: ' + params.id });
+
+  const roomToDelete = DB.rooms[idx];
+
+  // 1. FIRST: Commit deletion to Supabase Cloud
+  if (supabase.isConfigured()) {
+    try {
+      await supabase.syncRoom({ id: params.id, hotel: roomToDelete.hotel }, 'delete');
+    } catch (sbErr) {
+      console.error('[Supabase] Room delete failed:', sbErr.message);
+      return sendJson(res, 400, { ok: false, error: 'Database delete failed: ' + sbErr.message });
+    }
+  }
+
+  // 2. SECOND: Remove from local state & SQLite
   DB.rooms.splice(idx, 1);
   if (sqliteDb) {
     try { sqliteDb.prepare('DELETE FROM rooms WHERE id = ?').run(params.id); } catch (e) { }
   }
+
   saveDbMirrorOnly();
-  try { await supabase.syncRoom({ id: params.id }, 'delete'); } catch (e) { console.error('[Supabase] Room delete sync error:', e.message); }
   lastSupabaseSync = Date.now();
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
@@ -2157,20 +2333,57 @@ const MIME = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8', '.json': 'application/json; charset=utf-8',
   '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',
-  '.webp': 'image/webp', '.ico': 'image/x-icon', '.mp4': 'video/mp4', '.webm': 'video/webm'
+  '.webp': 'image/webp', '.ico': 'image/x-icon', '.mp4': 'video/mp4', '.webm': 'video/webm',
+  '.mov': 'video/quicktime', '.mkv': 'video/x-matroska', '.ogv': 'video/ogg'
 };
 
 function serveStatic(req, res, pathname) {
-  let rel = pathname === '/' ? '/index.html'
-    : pathname === '/admin' ? '/admin.html'
+  let rel = (pathname === '/' || pathname === '') ? '/index.html'
+    : (pathname === '/admin' || pathname === '/admin/') ? '/admin.html'
       : pathname;
   const filePath = path.normalize(path.join(PUBLIC_DIR, rel));
   if (!filePath.startsWith(PUBLIC_DIR)) { res.writeHead(403); return res.end('Forbidden'); }
-  fs.readFile(filePath, (err, data) => {
-    if (err) { res.writeHead(404, { 'Content-Type': 'text/plain' }); return res.end('Not found'); }
+
+  fs.stat(filePath, (err, stats) => {
+    if (err || !stats.isFile()) {
+      res.writeHead(404, { 'Content-Type': 'text/plain' });
+      return res.end('Not found');
+    }
+
     const ext = path.extname(filePath).toLowerCase();
-    res.writeHead(200, { 'Content-Type': MIME[ext] || 'application/octet-stream' });
-    res.end(data);
+    const mimeType = MIME[ext] || 'application/octet-stream';
+    const totalSize = stats.size;
+    const range = req.headers.range;
+
+    // HTTP Range streaming for video playback (Safari iOS/macOS, seekable players)
+    if (range && (ext === '.mp4' || ext === '.webm' || ext === '.mov' || ext === '.mkv' || ext === '.ogv')) {
+      const parts = range.replace(/bytes=/, '').split('-');
+      const start = parseInt(parts[0], 10);
+      const end = parts[1] ? parseInt(parts[1], 10) : totalSize - 1;
+
+      if (start >= totalSize || end >= totalSize || start > end) {
+        res.writeHead(416, { 'Content-Range': `bytes */${totalSize}` });
+        return res.end();
+      }
+
+      const chunkSize = (end - start) + 1;
+      const fileStream = fs.createReadStream(filePath, { start, end });
+      res.writeHead(206, {
+        'Content-Range': `bytes ${start}-${end}/${totalSize}`,
+        'Accept-Ranges': 'bytes',
+        'Content-Length': chunkSize,
+        'Content-Type': mimeType
+      });
+      fileStream.pipe(res);
+    } else {
+      res.writeHead(200, {
+        'Content-Length': totalSize,
+        'Content-Type': mimeType,
+        'Accept-Ranges': 'bytes',
+        'Cache-Control': (ext === '.html') ? 'no-cache' : 'public, max-age=86400'
+      });
+      fs.createReadStream(filePath).pipe(res);
+    }
   });
 }
 
@@ -2209,11 +2422,20 @@ const server = http.createServer(async (req, res) => {
 });
 
 if (require.main === module) {
-  server.listen(PORT, HOST, () => {
+  server.listen(PORT, HOST, async () => {
     console.log(`Deepak Hotels Group server running on http://${HOST}:${PORT}`);
-    console.log(`  Customer site: http://localhost:${PORT}/`);
-    console.log(`  Admin dashboard: http://localhost:${PORT}/admin`);
+    console.log(`  Customer site: http://${HOST}:${PORT}/`);
+    console.log(`  Admin dashboard: http://${HOST}:${PORT}/admin`);
     console.log(`  Admin notification mobile: ${ADMIN_MOBILE}`);
+    if (supabase.isConfigured()) {
+      try {
+        console.log('[Startup] Pre-warming fresh dataset from Supabase Cloud...');
+        await ensureSupabaseDataFresh(true);
+        console.log('[Startup] Supabase Cloud dataset synchronized successfully.');
+      } catch (sbBootErr) {
+        console.warn('[Startup] Supabase startup sync note:', sbBootErr.message);
+      }
+    }
   });
 }
 

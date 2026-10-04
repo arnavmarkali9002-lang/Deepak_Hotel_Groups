@@ -1,16 +1,19 @@
 services:
   - type: web
     name: deepak-hotels-group
-    env: node
+    runtime: node
     plan: free
     buildCommand: npm install
-    startCommand: node server.js
+    startCommand: npm start
+    healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
-      - key: DATA_DIR
-        value: /var/data
-    disk:
-      name: db-data
-      mountPath: /var/data
-      sizeGB: 1
+      - key: NODE_VERSION
+        value: 22.14.0
+      - key: SUPABASE_URL
+        value: https://wfxoyzrocifvtlopevjq.supabase.co
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        value: sb_publishable_f_MCpE0P8l_4a51dBFsAXQ_sOM0DDSO
