@@ -29,9 +29,9 @@ fs.mkdirSync(UPLOADS_DIR, { recursive: true });
    DEFAULT SEED DATA
 --------------------------------------------------------------------- */
 const SEED_HOTELS = [
-  { id: 'sv1', name: 'Hotel Sai View', tag: 'The Original Luxury Wing', locality: 'Vivekanand nagar, Manmad Rd, near S T Bus stand, Shirdi, Maharashtra 423109', phone: '+91 98514 15415', accent: '#E8A33D', image: '/images/hotel-sai-view.jpg', desc: 'Our flagship luxury property featuring 10 executive rooms, 24/7 dining, and panoramic temple views.' },
-  { id: 'sv2', name: 'Hotel Sai Santosh', tag: 'The Grand Family Wing', locality: 'City market road, Gaikwad chowk, near Adarsha school, Shirdi, Maharashtra 423109', phone: '+91 83293 21838', accent: '#2F6E62', image: '/images/hotel-sai-santosh.jpg', desc: 'A serene sanctuary popular with families, 20 spacious suites with private courtyard and ample parking.' },
-  { id: 'sv3', name: 'Hotel Om Sai', tag: 'The Highway Express Stop', locality: 'Vivekanand Nagar, Manmad Rd, Sai Nagar, Shirdi, Maharashtra 423109', phone: '+91 90227 51848', accent: '#7C2D2D', image: '/images/hotel-om-sai.jpg', desc: 'Modern high-comfort express hotel for travellers, 10 rooms with instant 6-hour & 24-hour check-in.' }
+  { id: 'sv1', name: 'Hotel Sai View', tag: 'The Original Luxury Wing', locality: 'Vivekanand nagar, Nagar, Manmad Rd, near S T Bus stand, near Holiday Park, Sai Nagar, Shirdi, Maharashtra 423109', phone: '+91 98514 15415', accent: '#E8A33D', image: '/images/hotel-sai-view.jpg', desc: 'Our flagship luxury property featuring 10 executive rooms, 24/7 dining, and panoramic temple views.', exact_location: 'hotel sai view ,Vivekanand nagar, Nagar, Manmad Rd, near S T Bus stand, near Holiday Park, Sai Nagar, Shirdi, Maharashtra 423109 QF6H+93 Shirdi, Maharashtra', map_url: 'https://www.google.com/maps/search/?api=1&query=hotel%20sai%20view%20%2CVivekanand%20nagar%2C%20Nagar%2C%20Manmad%20Rd%2C%20near%20S%20T%20Bus%20stand%2C%20near%20Holiday%20Park%2C%20Sai%20Nagar%2C%20Shirdi%2C%20Maharashtra%20423109%20QF6H%2B93%20Shirdi%2C%20Maharashtra' },
+  { id: 'sv2', name: 'Hotel Sai Santosh', tag: 'The Grand Family Wing', locality: 'QF6H+WH7 city market, road gaikwad chowk, near addarsha school, Shirdi, Maharashtra 423109', phone: '+91 83293 21838', accent: '#2F6E62', image: '/images/hotel-sai-santosh.jpg', desc: 'A serene sanctuary popular with families, 20 spacious suites with private courtyard and ample parking.', exact_location: 'hotel sai santosh, QF6H+WH7 city market, road gaikwad chowk, near addarsha school, Shirdi, Maharashtra 423109', map_url: 'https://www.google.com/maps/search/?api=1&query=hotel%20sai%20santosh%2C%20QF6H%2BWH7%20city%20market%2C%20road%20gaikwad%20chowk%2C%20near%20addarsha%20school%2C%20Shirdi%2C%20Maharashtra%20423109' },
+  { id: 'sv3', name: 'Hotel Om Sai', tag: 'The Highway Express Stop', locality: 'Vivekanand Nagar, Nagar, Manmad Rd, Sai Nagar, Shirdi, Maharashtra 423109 QF6G+9W Shirdi, Maharashtra', phone: '+91 90227 51848', accent: '#7C2D2D', image: '/images/hotel-om-sai.jpg', desc: 'Modern high-comfort express hotel for travellers, 10 rooms with instant 6-hour & 24-hour check-in.', exact_location: 'hotel om sai, Vivekanand Nagar, Nagar, Manmad Rd, Sai Nagar, Shirdi, Maharashtra 423109 QF6G+9W Shirdi, Maharashtra', map_url: 'https://www.google.com/maps/search/?api=1&query=hotel%20om%20sai%2C%20Vivekanand%20Nagar%2C%20Nagar%2C%20Manmad%20Rd%2C%20Sai%20Nagar%2C%20Shirdi%2C%20Maharashtra%20423109%20QF6G%2B9W%20Shirdi%2C%20Maharashtra' }
 ];
 
 const SEED_ROOMS_RAW = [
@@ -224,7 +224,9 @@ function initSqliteDatabase() {
         phone TEXT,
         accent TEXT,
         image TEXT,
-        desc TEXT
+        desc TEXT,
+        exact_location TEXT,
+        map_url TEXT
       );
       CREATE TABLE IF NOT EXISTS rooms (
         id TEXT PRIMARY KEY,
@@ -348,6 +350,8 @@ function initSqliteDatabase() {
     addColumnIfMissing('rooms', 'desc', 'TEXT');
     addColumnIfMissing('rooms', 'video_url', 'TEXT');
     addColumnIfMissing('rooms', 'discount_price', 'INTEGER DEFAULT 0');
+    addColumnIfMissing('hotels', 'exact_location', 'TEXT');
+    addColumnIfMissing('hotels', 'map_url', 'TEXT');
     addColumnIfMissing('notifications', 'recipient_number', 'TEXT');
     addColumnIfMissing('notifications', 'recipient', 'TEXT');
 
@@ -375,8 +379,8 @@ function seedSqliteIfEmpty() {
 
     // 1. Hotels
     if (countRows('hotels') === 0) {
-      const ins = sqliteDb.prepare(`INSERT INTO hotels (id, name, tag, locality, phone, accent, image, desc) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`);
-      SEED_HOTELS.forEach(h => ins.run(h.id, h.name, h.tag, h.locality, h.phone, h.accent, h.image, h.desc));
+      const ins = sqliteDb.prepare(`INSERT INTO hotels (id, name, tag, locality, phone, accent, image, desc, exact_location, map_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+      SEED_HOTELS.forEach(h => ins.run(h.id, h.name, h.tag, h.locality, h.phone, h.accent, h.image, h.desc, h.exact_location || '', h.map_url || ''));
     }
 
     // 2. Rooms
@@ -476,7 +480,7 @@ function loadDbFromSqlite() {
     DB = {
       is_seeded: true,
       hotels: hotelRows.map(h => ({
-        id: h.id, name: h.name, tag: h.tag, locality: h.locality, phone: h.phone, accent: h.accent, image: h.image, desc: h.desc
+        id: h.id, name: h.name, tag: h.tag, locality: h.locality, phone: h.phone, accent: h.accent, image: h.image, desc: h.desc, exact_location: h.exact_location || '', map_url: h.map_url || ''
       })),
       rooms: roomRows.map(r => ({
         id: r.id, hotel: r.hotel, num: r.num, floor: Number(r.floor), ac: Boolean(r.ac), cat: r.cat, price24: Number(r.price24), price6: Number(r.price6), photo: r.photo || null,
@@ -1022,11 +1026,14 @@ route('GET', '/api/hotels', async (req, res) => {
 route('POST', '/api/hotels', async (req, res) => {
   if (!requireAdmin(req, res)) return;
   const body = await readBody(req);
-  const { name, tag, locality, phone, accent, image, desc } = body;
+  const { name, tag, locality, phone, accent, image, desc, exact_location, map_url } = body;
   if (!name) return sendJson(res, 400, { error: 'Hotel name is required' });
   
   const id = body.id || genUniqueId('hotel');
   if (DB.hotels.some(h => h.id === id)) return sendJson(res, 400, { error: 'Hotel ID already exists' });
+
+  const exactLocationVal = String(exact_location || '').trim();
+  const mapUrlVal = String(map_url || (exactLocationVal ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(exactLocationVal)}` : '')).trim();
 
   const hotel = {
     id,
@@ -1036,13 +1043,15 @@ route('POST', '/api/hotels', async (req, res) => {
     phone: String(phone || '').trim(),
     accent: String(accent || '#E8A33D').trim(),
     image: String(image || '/images/hero-bg.jpg'),
-    desc: String(desc || '').trim()
+    desc: String(desc || '').trim(),
+    exact_location: exactLocationVal,
+    map_url: mapUrlVal
   };
 
   DB.hotels.push(hotel);
   if (sqliteDb) {
-    sqliteDb.prepare(`INSERT INTO hotels (id, name, tag, locality, phone, accent, image, desc) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`).run(
-      hotel.id, hotel.name, hotel.tag, hotel.locality, hotel.phone, hotel.accent, hotel.image, hotel.desc
+    sqliteDb.prepare(`INSERT INTO hotels (id, name, tag, locality, phone, accent, image, desc, exact_location, map_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(
+      hotel.id, hotel.name, hotel.tag, hotel.locality, hotel.phone, hotel.accent, hotel.image, hotel.desc, hotel.exact_location, hotel.map_url
     );
   }
   saveDbMirrorOnly();
@@ -1063,10 +1072,17 @@ route('PATCH', '/api/hotels/:id', async (req, res, params) => {
   if (typeof body.image === 'string') h.image = body.image;
   if (typeof body.photo === 'string') h.image = body.photo;
   if (typeof body.accent === 'string') h.accent = body.accent;
+  if (typeof body.exact_location === 'string') {
+    h.exact_location = body.exact_location.trim();
+    if (!body.map_url && h.exact_location) {
+      h.map_url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(h.exact_location)}`;
+    }
+  }
+  if (typeof body.map_url === 'string') h.map_url = body.map_url.trim();
 
   if (sqliteDb) {
-    sqliteDb.prepare(`UPDATE hotels SET name=?, tag=?, locality=?, phone=?, accent=?, image=?, desc=? WHERE id=?`).run(
-      h.name, h.tag, h.locality, h.phone, h.accent, h.image, h.desc, h.id
+    sqliteDb.prepare(`UPDATE hotels SET name=?, tag=?, locality=?, phone=?, accent=?, image=?, desc=?, exact_location=?, map_url=? WHERE id=?`).run(
+      h.name, h.tag, h.locality, h.phone, h.accent, h.image, h.desc, h.exact_location || '', h.map_url || '', h.id
     );
   }
   saveDbMirrorOnly();

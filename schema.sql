@@ -14,6 +14,8 @@ CREATE TABLE IF NOT EXISTS hotels (
   accent VARCHAR(20),
   image TEXT,
   desc TEXT,
+  exact_location TEXT,
+  map_url TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

@@ -5,21 +5,25 @@
       "id": "sv1",
       "name": "Hotel Sai View",
       "tag": "The Original",
-      "locality": "Main Gate, Station Road, Shirdi",
+      "locality": "Vivekanand nagar, Nagar, Manmad Rd, near S T Bus stand, near Holiday Park, Sai Nagar, Shirdi, Maharashtra 423109",
       "phone": "+91 98514 15415",
       "accent": "#E8A33D",
       "image": "/images/hotel-sai-view.jpg",
-      "desc": "Our flagship property with 10 rooms across single, couple, family and suite categories."
+      "desc": "Our flagship property with 10 rooms across single, couple, family and suite categories.",
+      "exact_location": "hotel sai view ,Vivekanand nagar, Nagar, Manmad Rd, near S T Bus stand, near Holiday Park, Sai Nagar, Shirdi, Maharashtra 423109 QF6H+93 Shirdi, Maharashtra",
+      "map_url": "https://www.google.com/maps/search/?api=1&query=hotel%20sai%20view%20%2CVivekanand%20nagar%2C%20Nagar%2C%20Manmad%20Rd%2C%20near%20S%20T%20Bus%20stand%2C%20near%20Holiday%20Park%2C%20Sai%20Nagar%2C%20Shirdi%2C%20Maharashtra%20423109%20QF6H%2B93%20Shirdi%2C%20Maharashtra"
     },
     {
       "id": "sv2",
       "name": "Hotel Sai Santosh",
       "tag": "The Family Wing",
-      "locality": "QF6H+WH7 city market, road gaikwad chowk, near addarsha school, Shirdi, Maharashtra 423109 QF6H+WH7 Shirdi, Maharashtra",
+      "locality": "QF6H+WH7 city market, road gaikwad chowk, near addarsha school, Shirdi, Maharashtra 423109",
       "phone": "+91 83293 21838",
       "accent": "#2F6E62",
       "image": "/images/hotel-sai-santosh.jpg",
-      "desc": "A quieter property popular with families, 20 rooms with a bigger courtyard and parking."
+      "desc": "A quieter property popular with families, 20 rooms with a bigger courtyard and parking.",
+      "exact_location": "hotel sai santosh, QF6H+WH7 city market, road gaikwad chowk, near addarsha school, Shirdi, Maharashtra 423109",
+      "map_url": "https://www.google.com/maps/search/?api=1&query=hotel%20sai%20santosh%2C%20QF6H%2BWH7%20city%20market%2C%20road%20gaikwad%20chowk%2C%20near%20addarsha%20school%2C%20Shirdi%2C%20Maharashtra%20423109"
     },
     {
       "id": "sv3",
@@ -29,7 +33,9 @@
       "phone": "+91 90227 51848",
       "accent": "#7C2D2D",
       "image": "/images/hotel-om-sai.jpg",
-      "desc": "Convenient for travellers passing through, 10 rooms with easy parking and quick check-in."
+      "desc": "Convenient for travellers passing through, 10 rooms with easy parking and quick check-in.",
+      "exact_location": "hotel om sai, Vivekanand Nagar, Nagar, Manmad Rd, Sai Nagar, Shirdi, Maharashtra 423109 QF6G+9W Shirdi, Maharashtra",
+      "map_url": "https://www.google.com/maps/search/?api=1&query=hotel%20om%20sai%2C%20Vivekanand%20Nagar%2C%20Nagar%2C%20Manmad%20Rd%2C%20Sai%20Nagar%2C%20Shirdi%2C%20Maharashtra%20423109%20QF6G%2B9W%20Shirdi%2C%20Maharashtra"
     }
   ],
   "rooms": [
@@ -1321,20 +1327,6 @@
       "attempts": 1,
       "created_at": "2026-10-02T18:43:06.826Z",
       "sent_at": "2026-10-02T18:43:06.846Z"
-    },
-    {
-      "id": "notif_musqko3x_7e68b3",
-      "booking_id": "SV10480015",
-      "recipient": "919851415415",
-      "recipient_number": "919851415415",
-      "notification_type": "whatsapp",
-      "message": "🔔 NEW ROOM BOOKING - DEEPAK HOTELS GROUP\n\nBooking ID: #SV10480015\n\nCustomer: Test Guest\nPhone: 9876543210\n\nHotel: Hotel Sai View\nRoom: Room 104 (Couple)\n\nCheck-in: 2026-10-28 at 12:00\nCheck-out: 2026-10-29\n\nGuests: 2\nRooms: 1\n\nTotal Amount: ₹1500\n\nPlease check the admin panel for complete booking details.",
-      "status": "sent",
-      "provider_message_id": "wamid.HBgL_1791052767507_2k83j0",
-      "error_message": null,
-      "attempts": 1,
-      "created_at": "2026-10-03T18:39:27.503Z",
-      "sent_at": "2026-10-03T18:39:27.507Z"
     }
   ],
   "nextBookingSeq": 16

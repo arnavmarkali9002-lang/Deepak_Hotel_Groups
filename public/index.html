@@ -597,6 +597,11 @@
       display: flex;
       align-items: flex-start;
       gap: 8px;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    a.hotel-card-locality:hover {
+      color: var(--gold-600);
     }
     .hotel-card-desc {
       color: var(--slate-700);
@@ -607,10 +612,15 @@
     .hotel-card-footer {
       margin-top: auto;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+      gap: 14px;
       padding-top: 18px;
       border-top: 1px solid var(--slate-100);
+    }
+    .hotel-card-footer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     .hotel-phone {
       font-weight: 700;
@@ -619,6 +629,47 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .hotel-phone:hover {
+      color: var(--gold-600);
+    }
+    .hotel-card-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .hotel-card-actions .btn {
+      flex: 1;
+      text-align: center;
+      justify-content: center;
+      font-size: 0.86rem;
+      padding: 9px 12px;
+      white-space: nowrap;
+    }
+    .btn-view-location {
+      background: transparent;
+      color: var(--gold-600);
+      border: 1.5px solid var(--gold-400);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.3s ease;
+    }
+    .btn-view-location:hover {
+      background: var(--gold-400);
+      color: #0B111D;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(212, 163, 89, 0.25);
+    }
+    @media (max-width: 360px) {
+      .hotel-card-actions {
+        flex-direction: column;
+      }
+      .hotel-card-actions .btn {
+        width: 100%;
+      }
     }
 
     /* ROOMS & SUITES SECTION */
@@ -1398,20 +1449,29 @@
 
         <div class="contact-card">
           <h4 style="color:var(--gold-600); margin-bottom:6px;"><i class="fa-solid fa-hotel"></i> Hotel Sai View</h4>
-          <p style="font-size:0.9rem; color:var(--slate-700);">Vivekanand nagar, Manmad Rd, near S T Bus stand, Shirdi 423109</p>
-          <p style="font-weight:700; color:var(--navy-900); margin-top:4px;"><i class="fa-solid fa-phone" style="color:var(--gold-500);"></i> +91 98514 15415</p>
+          <p style="font-size:0.9rem; color:var(--slate-700);">Vivekanand nagar, Nagar, Manmad Rd, near S T Bus stand, near Holiday Park, Sai Nagar, Shirdi 423109</p>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; flex-wrap:wrap; gap:8px;">
+            <p style="font-weight:700; color:var(--navy-900); margin:0;"><i class="fa-solid fa-phone" style="color:var(--gold-500);"></i> +91 98514 15415</p>
+            <a href="https://www.google.com/maps/search/?api=1&query=hotel%20sai%20view%20%2CVivekanand%20nagar%2C%20Nagar%2C%20Manmad%20Rd%2C%20near%20S%20T%20Bus%20stand%2C%20near%20Holiday%20Park%2C%20Sai%20Nagar%2C%20Shirdi%2C%20Maharashtra%20423109%20QF6H%2B93%20Shirdi%2C%20Maharashtra" target="_blank" rel="noopener noreferrer" style="color:var(--gold-600); font-size:0.85rem; font-weight:600; text-decoration:none; display:inline-flex; align-items:center; gap:5px;"><i class="fa-solid fa-location-dot"></i> View Location</a>
+          </div>
         </div>
 
         <div class="contact-card">
           <h4 style="color:var(--gold-600); margin-bottom:6px;"><i class="fa-solid fa-hotel"></i> Hotel Sai Santosh</h4>
           <p style="font-size:0.9rem; color:var(--slate-700);">City market road, Gaikwad chowk, near Adarsha school, Shirdi 423109</p>
-          <p style="font-weight:700; color:var(--navy-900); margin-top:4px;"><i class="fa-solid fa-phone" style="color:var(--gold-500);"></i> +91 83293 21838</p>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; flex-wrap:wrap; gap:8px;">
+            <p style="font-weight:700; color:var(--navy-900); margin:0;"><i class="fa-solid fa-phone" style="color:var(--gold-500);"></i> +91 83293 21838</p>
+            <a href="https://www.google.com/maps/search/?api=1&query=hotel%20sai%20santosh%2C%20QF6H%2BWH7%20city%20market%2C%20road%20gaikwad%20chowk%2C%20near%20addarsha%20school%2C%20Shirdi%2C%20Maharashtra%20423109" target="_blank" rel="noopener noreferrer" style="color:var(--gold-600); font-size:0.85rem; font-weight:600; text-decoration:none; display:inline-flex; align-items:center; gap:5px;"><i class="fa-solid fa-location-dot"></i> View Location</a>
+          </div>
         </div>
 
         <div class="contact-card">
           <h4 style="color:var(--gold-600); margin-bottom:6px;"><i class="fa-solid fa-hotel"></i> Hotel Om Sai</h4>
-          <p style="font-size:0.9rem; color:var(--slate-700);">Vivekanand Nagar, Manmad Rd, Sai Nagar, Shirdi 423109</p>
-          <p style="font-weight:700; color:var(--navy-900); margin-top:4px;"><i class="fa-solid fa-phone" style="color:var(--gold-500);"></i> +91 90227 51848</p>
+          <p style="font-size:0.9rem; color:var(--slate-700);">Vivekanand Nagar, Nagar, Manmad Rd, Sai Nagar, Shirdi 423109</p>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; flex-wrap:wrap; gap:8px;">
+            <p style="font-weight:700; color:var(--navy-900); margin:0;"><i class="fa-solid fa-phone" style="color:var(--gold-500);"></i> +91 90227 51848</p>
+            <a href="https://www.google.com/maps/search/?api=1&query=hotel%20om%20sai%2C%20Vivekanand%20Nagar%2C%20Nagar%2C%20Manmad%20Rd%2C%20Sai%20Nagar%2C%20Shirdi%2C%20Maharashtra%20423109%20QF6G%2B9W%20Shirdi%2C%20Maharashtra" target="_blank" rel="noopener noreferrer" style="color:var(--gold-600); font-size:0.85rem; font-weight:600; text-decoration:none; display:inline-flex; align-items:center; gap:5px;"><i class="fa-solid fa-location-dot"></i> View Location</a>
+          </div>
         </div>
       </div>
 
@@ -1665,11 +1725,30 @@
       document.getElementById('modalDate').value = today;
     }
 
+    // Exact location Google Maps URLs
+    const HOTEL_EXACT_MAP_URLS = {
+      'sv1': 'https://www.google.com/maps/search/?api=1&query=hotel%20sai%20view%20%2CVivekanand%20nagar%2C%20Nagar%2C%20Manmad%20Rd%2C%20near%20S%20T%20Bus%20stand%2C%20near%20Holiday%20Park%2C%20Sai%20Nagar%2C%20Shirdi%2C%20Maharashtra%20423109%20QF6H%2B93%20Shirdi%2C%20Maharashtra',
+      'sv2': 'https://www.google.com/maps/search/?api=1&query=hotel%20sai%20santosh%2C%20QF6H%2BWH7%20city%20market%2C%20road%20gaikwad%20chowk%2C%20near%20addarsha%20school%2C%20Shirdi%2C%20Maharashtra%20423109',
+      'sv3': 'https://www.google.com/maps/search/?api=1&query=hotel%20om%20sai%2C%20Vivekanand%20Nagar%2C%20Nagar%2C%20Manmad%20Rd%2C%20Sai%20Nagar%2C%20Shirdi%2C%20Maharashtra%20423109%20QF6G%2B9W%20Shirdi%2C%20Maharashtra'
+    };
+
+    function getHotelLocationMapUrl(h) {
+      if (h.map_url && h.map_url.trim()) return h.map_url.trim();
+      if (h.exact_location && h.exact_location.trim()) {
+        return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(h.exact_location.trim())}`;
+      }
+      if (HOTEL_EXACT_MAP_URLS[h.id]) return HOTEL_EXACT_MAP_URLS[h.id];
+      const fallbackQuery = (h.name ? h.name + ' ' : '') + 'Shirdi Maharashtra';
+      return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fallbackQuery)}`;
+    }
+
     // Render Hotels Cards
     function renderHotels() {
       const container = document.getElementById('hotelsGridContainer');
       container.innerHTML = '';
       APP_STATE.hotels.forEach(h => {
+        const mapUrl = getHotelLocationMapUrl(h);
+        const cleanPhone = (h.phone || '').replace(/[^0-9+]/g, '');
         const card = document.createElement('div');
         card.className = 'hotel-card reveal active';
         card.innerHTML = `
@@ -1679,11 +1758,24 @@
           </div>
           <div class="hotel-card-body">
             <h3 class="hotel-card-title">${h.name}</h3>
-            <div class="hotel-card-locality"><i class="fa-solid fa-location-dot" style="color:var(--gold-400);"></i> ${h.locality || ''}</div>
+            <a href="${mapUrl}" target="_blank" rel="noopener noreferrer" class="hotel-card-locality" title="View exact location on Google Maps">
+              <i class="fa-solid fa-location-dot" style="color:var(--gold-400); margin-top:2px; flex-shrink:0;"></i>
+              <span>${h.locality || ''}</span>
+            </a>
             <p class="hotel-card-desc">${h.desc || ''}</p>
             <div class="hotel-card-footer">
-              <div class="hotel-phone"><i class="fa-solid fa-phone" style="color:var(--gold-500);"></i> ${h.phone || ''}</div>
-              <button class="btn btn-outline-gold btn-sm" onclick="filterRoomsByHotel('${h.id}')">View Rooms</button>
+              <div class="hotel-card-footer-top">
+                <a href="tel:${cleanPhone}" class="hotel-phone" title="Call hotel front desk">
+                  <i class="fa-solid fa-phone" style="color:var(--gold-500);"></i>
+                  <span>${h.phone || ''}</span>
+                </a>
+              </div>
+              <div class="hotel-card-actions">
+                <a href="${mapUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-gold btn-sm btn-view-location" title="View exact location on Google Maps">
+                  <i class="fa-solid fa-location-dot"></i> View Location
+                </a>
+                <button class="btn btn-outline-gold btn-sm" onclick="filterRoomsByHotel('${h.id}')">View Rooms</button>
+              </div>
             </div>
           </div>
         `;
