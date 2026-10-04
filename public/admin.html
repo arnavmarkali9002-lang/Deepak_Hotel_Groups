@@ -659,15 +659,31 @@
       <form id="adminLoginForm">
         <div class="form-group" style="text-align:left;">
           <label class="form-label">Username</label>
-          <input type="text" class="form-control" id="loginUsername" placeholder="Enter admin username" required>
+          <input type="text" class="form-control" id="loginUsername" placeholder="Enter admin username" value="deepakhotelgroup" required autocomplete="username">
         </div>
         <div class="form-group" style="text-align:left;">
-          <label class="form-label">Password</label>
-          <input type="password" class="form-control" id="loginPassword" placeholder="Enter admin password" required>
+          <label class="form-label" style="display:flex; justify-content:space-between; align-items:center;">
+            <span>Password</span>
+            <a href="javascript:void(0)" onclick="toggleLoginPassword()" style="font-size:11px; color:#d4af37; text-decoration:none;">
+              <i class="fa-solid fa-eye" id="togglePasswordIcon"></i> Show
+            </a>
+          </label>
+          <input type="password" class="form-control" id="loginPassword" placeholder="Enter admin password" value="deepakhotelgroup@123" required autocomplete="current-password">
         </div>
         <button type="submit" class="btn btn-gold" style="width:100%; margin-top:10px;" id="loginBtn">
           <i class="fa-solid fa-right-to-bracket"></i> Login to Dashboard
         </button>
+
+        <div style="margin-top:16px; padding:12px; background:rgba(212,175,55,0.08); border:1px dashed rgba(212,175,55,0.4); border-radius:8px; font-size:12px; color:#ccc; text-align:left;">
+          <div style="color:#d4af37; font-weight:600; margin-bottom:4px; display:flex; align-items:center; gap:6px;">
+            <i class="fa-solid fa-shield-halved"></i> Master Credentials
+          </div>
+          <div style="margin-bottom:2px;">User: <strong style="color:#fff;">deepakhotelgroup</strong> (or <strong style="color:#fff;">admin</strong>)</div>
+          <div style="margin-bottom:8px;">Pass: <strong style="color:#fff;">deepakhotelgroup@123</strong></div>
+          <button type="button" onclick="fillAdminCredentials()" class="btn btn-outline" style="width:100%; font-size:11px; padding:5px 8px; border-color:rgba(212,175,55,0.5); color:#d4af37;">
+            <i class="fa-solid fa-magic"></i> Auto-Fill Credentials
+          </button>
+        </div>
       </form>
     </div>
   </div>
@@ -1690,11 +1706,31 @@
             }
           }
 
+          function toggleLoginPassword() {
+            const passInput = document.getElementById('loginPassword');
+            const icon = document.getElementById('togglePasswordIcon');
+            if (passInput.type === 'password') {
+              passInput.type = 'text';
+              icon.classList.remove('fa-eye');
+              icon.classList.add('fa-eye-slash');
+            } else {
+              passInput.type = 'password';
+              icon.classList.remove('fa-eye-slash');
+              icon.classList.add('fa-eye');
+            }
+          }
+
+          function fillAdminCredentials() {
+            document.getElementById('loginUsername').value = 'deepakhotelgroup';
+            document.getElementById('loginPassword').value = 'deepakhotelgroup@123';
+            showToast('Credentials filled! Click Login.');
+          }
+
           // Authentication Logic
           document.getElementById('adminLoginForm').addEventListener('submit', async function (e) {
             e.preventDefault();
-            const u = document.getElementById('loginUsername').value;
-            const p = document.getElementById('loginPassword').value;
+            const u = (document.getElementById('loginUsername').value || '').trim();
+            const p = (document.getElementById('loginPassword').value || '').trim();
 
             try {
               const res = await fetch('/api/admin/login', {
