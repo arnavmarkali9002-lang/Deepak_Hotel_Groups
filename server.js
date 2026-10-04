@@ -590,11 +590,11 @@ async function ensureSupabaseDataFresh(force = false) {
         if (Array.isArray(remote.bookings)) DB.bookings = remote.bookings;
         if (remote.settings && Object.keys(remote.settings).length) DB.settings = { ...DB.settings, ...remote.settings };
         if (remote.hero && Object.keys(remote.hero).length) DB.hero = { ...DB.hero, ...remote.hero };
-        if (Array.isArray(remote.amenities) && remote.amenities.length) DB.amenities = remote.amenities;
-        if (Array.isArray(remote.offers) && remote.offers.length) DB.offers = remote.offers;
-        if (Array.isArray(remote.reviews) && remote.reviews.length) DB.reviews = remote.reviews;
-        if (Array.isArray(remote.gallery) && remote.gallery.length) DB.gallery = remote.gallery;
-        if (Array.isArray(remote.videos) && remote.videos.length) DB.videos = remote.videos;
+        if (Array.isArray(remote.amenities)) DB.amenities = remote.amenities;
+        if (Array.isArray(remote.offers)) DB.offers = remote.offers;
+        if (Array.isArray(remote.reviews)) DB.reviews = remote.reviews;
+        if (Array.isArray(remote.gallery)) DB.gallery = remote.gallery;
+        if (Array.isArray(remote.videos)) DB.videos = remote.videos;
         if (Array.isArray(remote.notifications)) DB.notifications = remote.notifications;
         lastSupabaseSync = Date.now();
       }
@@ -797,7 +797,7 @@ async function triggerAdminBookingNotification(booking) {
 
   await dispatchWhatsAppNotification(notif);
   saveDb();
-  supabase.syncNotification(notif);
+  try { await supabase.syncNotification(notif); } catch (e) { }
   return notif;
 }
 
@@ -1149,29 +1149,6 @@ route('POST', '/api/upload', async (req, res) => {
   }
 });
 
-// Notifications API
-route('GET', '/api/notifications', async (req, res) => {
-  if (!requireAdmin(req, res)) return;
-  sendJson(res, 200, { notifications: DB.notifications || [] });
-});
-
-route('GET', '/api/notifications/:id', async (req, res, params) => {
-  if (!requireAdmin(req, res)) return;
-  const n = DB.notifications.find(x => x.id === params.id);
-  if (!n) return sendJson(res, 404, { error: 'Notification record not found' });
-  sendJson(res, 200, { notification: n });
-});
-
-route('POST', '/api/notifications/:id/retry', async (req, res, params) => {
-  if (!requireAdmin(req, res)) return;
-  const n = DB.notifications.find(x => x.id === params.id);
-  if (!n) return sendJson(res, 404, { error: 'Notification record not found' });
-
-  await dispatchNotification(n);
-  saveDb();
-  sendJson(res, 200, { ok: true, notification: n });
-});
-
 // Website Settings
 route('GET', '/api/settings', async (req, res) => {
   sendJson(res, 200, { settings: DB.settings });
@@ -1252,6 +1229,7 @@ route('POST', '/api/hotels', async (req, res) => {
   }
   saveDbMirrorOnly();
   try { await supabase.syncHotel(hotel, 'upsert'); } catch (e) { console.error('[Supabase] Hotel add sync error:', e.message); }
+  lastSupabaseSync = Date.now();
   sendJson(res, 201, { ok: true, hotel });
 });
 
@@ -1288,6 +1266,7 @@ route('PATCH', '/api/hotels/:id', async (req, res, params) => {
   }
   saveDbMirrorOnly();
   try { await supabase.syncHotel(h, 'upsert'); } catch (e) { console.error('[Supabase] Hotel update sync error:', e.message); }
+  lastSupabaseSync = Date.now();
   sendJson(res, 200, { ok: true, hotel: h });
 });
 
@@ -1305,6 +1284,7 @@ route('DELETE', '/api/hotels/:id', async (req, res, params) => {
   }
   saveDbMirrorOnly();
   try { await supabase.syncHotel({ id: params.id }, 'delete'); } catch (e) { console.error('[Supabase] Hotel delete sync error:', e.message); }
+  lastSupabaseSync = Date.now();
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 
@@ -1394,7 +1374,7 @@ route('PATCH', '/api/rooms/:id', async (req, res, params) => {
           targetHotel.id, targetHotel.name, targetHotel.tag, targetHotel.locality, targetHotel.phone, targetHotel.accent, targetHotel.image, targetHotel.desc
         );
       }
-      supabase.syncHotel(targetHotel, 'upsert');
+      try { await supabase.syncHotel(targetHotel, 'upsert'); } catch (e) { }
     }
     r.hotel = targetHotel.id;
   }
@@ -1430,7 +1410,8 @@ route('PATCH', '/api/rooms/:id', async (req, res, params) => {
     );
   }
   saveDbMirrorOnly();
-  supabase.syncRoom(r, 'upsert');
+  try { await supabase.syncRoom(r, 'upsert'); } catch (e) { console.error('[Supabase] Room update sync error:', e.message); }
+  lastSupabaseSync = Date.now();
   sendJson(res, 200, { ok: true, room: r });
 });
 
@@ -1461,7 +1442,7 @@ route('POST', '/api/rooms', async (req, res) => {
         targetHotel.id, targetHotel.name, targetHotel.tag, targetHotel.locality, targetHotel.phone, targetHotel.accent, targetHotel.image, targetHotel.desc
       );
     }
-    supabase.syncHotel(targetHotel, 'upsert');
+    try { await supabase.syncHotel(targetHotel, 'upsert'); } catch (e) { }
   }
 
   const strNum = String(num).trim();
@@ -1495,7 +1476,8 @@ route('POST', '/api/rooms', async (req, res) => {
     );
   }
   saveDbMirrorOnly();
-  supabase.syncRoom(newRoom, 'upsert');
+  try { await supabase.syncRoom(newRoom, 'upsert'); } catch (e) { console.error('[Supabase] Room add sync error:', e.message); }
+  lastSupabaseSync = Date.now();
   sendJson(res, 201, { ok: true, room: newRoom });
 });
 
@@ -1508,7 +1490,8 @@ route('DELETE', '/api/rooms/:id', async (req, res, params) => {
     try { sqliteDb.prepare('DELETE FROM rooms WHERE id = ?').run(params.id); } catch (e) { }
   }
   saveDbMirrorOnly();
-  supabase.syncRoom({ id: params.id }, 'delete');
+  try { await supabase.syncRoom({ id: params.id }, 'delete'); } catch (e) { console.error('[Supabase] Room delete sync error:', e.message); }
+  lastSupabaseSync = Date.now();
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 
@@ -1574,7 +1557,8 @@ route('POST', '/api/menu', async (req, res) => {
     );
   }
   saveDbMirrorOnly();
-  supabase.syncMenuItem(item, 'upsert');
+  try { await supabase.syncMenuItem(item, 'upsert'); } catch (e) { console.error('[Supabase] Menu add sync error:', e.message); }
+  lastSupabaseSync = Date.now();
   sendJson(res, 201, { ok: true, item });
 });
 
@@ -1593,7 +1577,8 @@ route('PATCH', '/api/menu/:id', async (req, res, params) => {
     );
   }
   saveDbMirrorOnly();
-  supabase.syncMenuItem(item, 'upsert');
+  try { await supabase.syncMenuItem(item, 'upsert'); } catch (e) { console.error('[Supabase] Menu update sync error:', e.message); }
+  lastSupabaseSync = Date.now();
   sendJson(res, 200, { ok: true, item });
 });
 
@@ -1606,7 +1591,8 @@ route('DELETE', '/api/menu/:id', async (req, res, params) => {
     try { sqliteDb.prepare('DELETE FROM menu_items WHERE id = ?').run(params.id); } catch (e) { }
   }
   saveDbMirrorOnly();
-  supabase.syncMenuItem({ id: params.id }, 'delete');
+  try { await supabase.syncMenuItem({ id: params.id }, 'delete'); } catch (e) { console.error('[Supabase] Menu delete sync error:', e.message); }
+  lastSupabaseSync = Date.now();
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 
@@ -1634,7 +1620,8 @@ route('POST', '/api/gallery', async (req, res) => {
     );
   }
   saveDbMirrorOnly();
-  supabase.syncGallery(item, 'upsert');
+  try { await supabase.syncGallery(item, 'upsert'); } catch (e) { console.error('[Supabase] Gallery add sync error:', e.message); }
+  lastSupabaseSync = Date.now();
   sendJson(res, 201, { ok: true, item });
 });
 
@@ -1654,7 +1641,8 @@ route('PATCH', '/api/gallery/:id', async (req, res, params) => {
     );
   }
   saveDbMirrorOnly();
-  supabase.syncGallery(item, 'upsert');
+  try { await supabase.syncGallery(item, 'upsert'); } catch (e) { console.error('[Supabase] Gallery update sync error:', e.message); }
+  lastSupabaseSync = Date.now();
   sendJson(res, 200, { ok: true, item });
 });
 
@@ -1667,7 +1655,8 @@ route('DELETE', '/api/gallery/:id', async (req, res, params) => {
     try { sqliteDb.prepare('DELETE FROM gallery WHERE id = ?').run(params.id); } catch (e) { }
   }
   saveDbMirrorOnly();
-  supabase.syncGallery({ id: params.id }, 'delete');
+  try { await supabase.syncGallery({ id: params.id }, 'delete'); } catch (e) { console.error('[Supabase] Gallery delete sync error:', e.message); }
+  lastSupabaseSync = Date.now();
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 
@@ -1699,7 +1688,8 @@ route('POST', '/api/videos', async (req, res) => {
     );
   }
   saveDbMirrorOnly();
-  supabase.syncVideo(video, 'upsert');
+  try { await supabase.syncVideo(video, 'upsert'); } catch (e) { console.error('[Supabase] Video add sync error:', e.message); }
+  lastSupabaseSync = Date.now();
   sendJson(res, 201, { ok: true, video });
 });
 
@@ -1725,7 +1715,8 @@ route('PATCH', '/api/videos/:id', async (req, res, params) => {
     );
   }
   saveDbMirrorOnly();
-  supabase.syncVideo(v, 'upsert');
+  try { await supabase.syncVideo(v, 'upsert'); } catch (e) { console.error('[Supabase] Video update sync error:', e.message); }
+  lastSupabaseSync = Date.now();
   sendJson(res, 200, { ok: true, video: v });
 });
 
@@ -1738,7 +1729,8 @@ route('DELETE', '/api/videos/:id', async (req, res, params) => {
     try { sqliteDb.prepare('DELETE FROM videos WHERE id = ?').run(params.id); } catch (e) { }
   }
   saveDbMirrorOnly();
-  supabase.syncVideo({ id: params.id }, 'delete');
+  try { await supabase.syncVideo({ id: params.id }, 'delete'); } catch (e) { console.error('[Supabase] Video delete sync error:', e.message); }
+  lastSupabaseSync = Date.now();
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 
@@ -1766,7 +1758,8 @@ route('POST', '/api/amenities', async (req, res) => {
     );
   }
   saveDbMirrorOnly();
-  supabase.syncAmenity(amenity, 'upsert');
+  try { await supabase.syncAmenity(amenity, 'upsert'); } catch (e) { console.error('[Supabase] Amenity add sync error:', e.message); }
+  lastSupabaseSync = Date.now();
   sendJson(res, 201, { ok: true, amenity });
 });
 
@@ -1786,7 +1779,8 @@ route('PATCH', '/api/amenities/:id', async (req, res, params) => {
     );
   }
   saveDbMirrorOnly();
-  supabase.syncAmenity(a, 'upsert');
+  try { await supabase.syncAmenity(a, 'upsert'); } catch (e) { console.error('[Supabase] Amenity update sync error:', e.message); }
+  lastSupabaseSync = Date.now();
   sendJson(res, 200, { ok: true, amenity: a });
 });
 
@@ -1799,7 +1793,8 @@ route('DELETE', '/api/amenities/:id', async (req, res, params) => {
     try { sqliteDb.prepare('DELETE FROM amenities WHERE id = ?').run(params.id); } catch (e) { }
   }
   saveDbMirrorOnly();
-  supabase.syncAmenity({ id: params.id }, 'delete');
+  try { await supabase.syncAmenity({ id: params.id }, 'delete'); } catch (e) { console.error('[Supabase] Amenity delete sync error:', e.message); }
+  lastSupabaseSync = Date.now();
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 
@@ -1831,7 +1826,8 @@ route('POST', '/api/offers', async (req, res) => {
     );
   }
   saveDbMirrorOnly();
-  supabase.syncOffer(offer, 'upsert');
+  try { await supabase.syncOffer(offer, 'upsert'); } catch (e) { console.error('[Supabase] Offer add sync error:', e.message); }
+  lastSupabaseSync = Date.now();
   sendJson(res, 201, { ok: true, offer });
 });
 
@@ -1855,7 +1851,8 @@ route('PATCH', '/api/offers/:id', async (req, res, params) => {
     );
   }
   saveDbMirrorOnly();
-  supabase.syncOffer(o, 'upsert');
+  try { await supabase.syncOffer(o, 'upsert'); } catch (e) { console.error('[Supabase] Offer update sync error:', e.message); }
+  lastSupabaseSync = Date.now();
   sendJson(res, 200, { ok: true, offer: o });
 });
 
@@ -1868,7 +1865,8 @@ route('DELETE', '/api/offers/:id', async (req, res, params) => {
     try { sqliteDb.prepare('DELETE FROM offers WHERE id = ?').run(params.id); } catch (e) { }
   }
   saveDbMirrorOnly();
-  supabase.syncOffer({ id: params.id }, 'delete');
+  try { await supabase.syncOffer({ id: params.id }, 'delete'); } catch (e) { console.error('[Supabase] Offer delete sync error:', e.message); }
+  lastSupabaseSync = Date.now();
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 
@@ -1897,7 +1895,8 @@ route('POST', '/api/reviews', async (req, res) => {
     );
   }
   saveDbMirrorOnly();
-  supabase.syncReview(review, 'upsert');
+  try { await supabase.syncReview(review, 'upsert'); } catch (e) { console.error('[Supabase] Review add sync error:', e.message); }
+  lastSupabaseSync = Date.now();
   sendJson(res, 201, { ok: true, review });
 });
 
@@ -1918,7 +1917,8 @@ route('PATCH', '/api/reviews/:id', async (req, res, params) => {
     );
   }
   saveDbMirrorOnly();
-  supabase.syncReview(r, 'upsert');
+  try { await supabase.syncReview(r, 'upsert'); } catch (e) { console.error('[Supabase] Review update sync error:', e.message); }
+  lastSupabaseSync = Date.now();
   sendJson(res, 200, { ok: true, review: r });
 });
 
@@ -1931,7 +1931,8 @@ route('DELETE', '/api/reviews/:id', async (req, res, params) => {
     try { sqliteDb.prepare('DELETE FROM reviews WHERE id = ?').run(params.id); } catch (e) { }
   }
   saveDbMirrorOnly();
-  supabase.syncReview({ id: params.id }, 'delete');
+  try { await supabase.syncReview({ id: params.id }, 'delete'); } catch (e) { console.error('[Supabase] Review delete sync error:', e.message); }
+  lastSupabaseSync = Date.now();
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 
@@ -2010,7 +2011,8 @@ route('POST', '/api/bookings', async (req, res) => {
     sqliteDb.prepare("INSERT OR REPLACE INTO metadata (key, value) VALUES ('nextBookingSeq', ?)").run(String(DB.nextBookingSeq));
   }
   saveDbMirrorOnly();
-  supabase.syncBooking(booking, 'upsert');
+  try { await supabase.syncBooking(booking, 'upsert'); } catch (e) { console.error('[Supabase] Booking add sync error:', e.message); }
+  lastSupabaseSync = Date.now();
 
   // DISPATCH REAL WHATSAPP NOTIFICATION
   try {
@@ -2039,7 +2041,8 @@ route('PATCH', '/api/bookings/:id/status', async (req, res, params) => {
     sqliteDb.prepare(`UPDATE bookings SET status=? WHERE id=?`).run(b.status, b.id);
   }
   saveDbMirrorOnly();
-  supabase.syncBooking(b, 'upsert');
+  try { await supabase.syncBooking(b, 'upsert'); } catch (e) { console.error('[Supabase] Booking update sync error:', e.message); }
+  lastSupabaseSync = Date.now();
   sendJson(res, 200, { ok: true, booking: b });
 });
 
@@ -2052,7 +2055,8 @@ route('DELETE', '/api/bookings/:id', async (req, res, params) => {
     try { sqliteDb.prepare('DELETE FROM bookings WHERE id = ?').run(params.id); } catch (e) { }
   }
   saveDbMirrorOnly();
-  supabase.syncBooking({ id: params.id }, 'delete');
+  try { await supabase.syncBooking({ id: params.id }, 'delete'); } catch (e) { console.error('[Supabase] Booking delete sync error:', e.message); }
+  lastSupabaseSync = Date.now();
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 

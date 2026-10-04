@@ -2182,8 +2182,14 @@
               address: document.getElementById('sett_address').value,
               footer_text: document.getElementById('sett_footer_text').value
             };
-            await fetch('/api/settings', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-            showToast('Website Settings updated in SQL Database successfully!');
+            const res = await fetch('/api/settings', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+            const data = await res.json();
+            if (data.ok) {
+              showToast('Website Settings updated successfully!');
+              loadAdminData();
+            } else {
+              showToast('Failed to update settings: ' + (data.error || 'Error'), 'error');
+            }
           });
 
           // Save Hero Settings
@@ -2195,8 +2201,14 @@
               bg_image: document.getElementById('hero_bg_image').value,
               cta_text: document.getElementById('hero_cta_text').value
             };
-            await fetch('/api/hero', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-            showToast('Hero settings updated in SQL Database successfully!');
+            const res = await fetch('/api/hero', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+            const data = await res.json();
+            if (data.ok) {
+              showToast('Hero settings updated successfully!');
+              loadAdminData();
+            } else {
+              showToast('Failed to update hero: ' + (data.error || 'Error'), 'error');
+            }
           });
 
           // Render Tables
