@@ -16,6 +16,9 @@
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+  <!-- Supabase Client SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     /* ==========================================================================
        ADMIN CONTROL PANEL — OBSIDIAN DARK LUXURY THEME
@@ -718,6 +721,9 @@
         <li class="sidebar-item">
           <div class="sidebar-link" data-tab="bookings"><i class="fa-solid fa-calendar-check"></i> Bookings & Logs</div>
         </li>
+        <li class="sidebar-item">
+          <div class="sidebar-link" data-tab="supabase" style="color:var(--gold); font-weight:700;"><i class="fa-solid fa-cloud"></i> Supabase Cloud DB</div>
+        </li>
       </ul>
     </aside>
 
@@ -730,10 +736,16 @@
           </button>
           <h1 class="admin-page-title" id="adminPageTitle">Dashboard Overview</h1>
         </div>
-        <div class="user-pill">
-          <span style="font-weight:700;" id="adminUsernameDisplay">deepakhotelgroup</span>
-          <button class="btn btn-secondary btn-sm" onclick="logoutAdmin()"><i class="fa-solid fa-power-off"></i>
-            Logout</button>
+        <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+          <div id="dbStatusBadge" onclick="switchTab('supabase')" title="Click to view and configure Supabase Cloud Database" style="cursor:pointer; display:inline-flex; align-items:center; gap:8px; padding:6px 14px; border-radius:20px; font-size:0.8rem; font-weight:700; background:rgba(212, 175, 55, 0.12); color:var(--gold); border:1px solid rgba(212, 175, 55, 0.3); transition:all 0.2s ease;">
+            <span id="dbStatusDot" style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#F59E0B;"></span>
+            <span id="dbStatusBadgeText">Checking Database...</span>
+          </div>
+          <div class="user-pill">
+            <span style="font-weight:700;" id="adminUsernameDisplay">deepakhotelgroup</span>
+            <button class="btn btn-secondary btn-sm" onclick="logoutAdmin()"><i class="fa-solid fa-power-off"></i>
+              Logout</button>
+          </div>
         </div>
       </div>
 
@@ -1127,6 +1139,153 @@
               <tbody id="foodTableBody"></tbody>
             </table>
           </div>
+        </div>
+      </section>
+
+      <!-- TAB 13: SUPABASE CLOUD DATABASE -->
+      <section class="tab-content" id="tab-supabase">
+        <!-- Status & Overview Banner -->
+        <div class="card-box" style="margin-bottom:24px; background:linear-gradient(135deg, rgba(22, 32, 48, 0.95), rgba(15, 23, 36, 0.98)); border:1px solid rgba(212, 175, 55, 0.35); box-shadow:0 12px 40px rgba(0,0,0,0.4);">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+            <div>
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                <span style="font-size:1.8rem; color:#3ECF8E;"><i class="fa-solid fa-cloud"></i></span>
+                <h2 style="font-family:'Cinzel', serif; font-size:1.6rem; color:#FFF; margin:0;">Supabase Cloud Database & Full Backend Integration</h2>
+              </div>
+              <p style="color:var(--text-muted); font-size:0.95rem; margin:0; max-width:820px;">
+                Connect and synchronize all sections of Deepak Hotels Group with Supabase PostgreSQL in real-time. Manage database credentials, run 1-click cloud backups, and monitor each backend section.
+              </p>
+            </div>
+            <div id="sbHeroStatusCard" style="display:flex; align-items:center; gap:12px; background:rgba(0,0,0,0.3); padding:12px 20px; border-radius:12px; border:1px solid var(--border-light);">
+              <div id="sbHeroStatusDot" style="width:14px; height:14px; border-radius:50%; background:#F59E0B; box-shadow:0 0 12px #F59E0B;"></div>
+              <div>
+                <div id="sbHeroStatusTitle" style="font-weight:700; font-size:0.95rem; color:#FFF;">Checking Status...</div>
+                <div id="sbHeroStatusSub" style="font-size:0.8rem; color:var(--text-muted);">Please wait</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1.1fr 0.9fr; gap:24px; margin-bottom:24px;" class="admin-grid-two-col">
+          <!-- Card 1: Supabase Project Credentials Form -->
+          <div class="card-box">
+            <div class="card-title">
+              <span><i class="fa-solid fa-key" style="color:var(--gold); margin-right:8px;"></i> Supabase Project Credentials</span>
+              <button class="btn btn-secondary btn-sm" onclick="testSupabase(true)"><i class="fa-solid fa-bolt"></i> Test Connection</button>
+            </div>
+
+            <form id="supabaseConfigForm" onsubmit="saveSupabaseSettings(event)">
+              <div class="modal-form-group" style="margin-bottom:16px;">
+                <label class="modal-form-label" style="display:flex; justify-content:space-between;">
+                  <span>Supabase Project URL</span>
+                  <span style="font-size:0.75rem; color:var(--text-muted);">https://[project-id].supabase.co</span>
+                </label>
+                <input type="url" class="modal-form-control" id="sb_project_url" placeholder="https://xyzabcdefg.supabase.co" required>
+              </div>
+
+              <div class="modal-form-group" style="margin-bottom:16px;">
+                <label class="modal-form-label" style="display:flex; justify-content:space-between;">
+                  <span>Supabase API Key (Service Role or Secret Key)</span>
+                  <span style="font-size:0.75rem; color:#10B981;">Recommended for full backend sync</span>
+                </label>
+                <input type="password" class="modal-form-control" id="sb_service_key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." required>
+                <div style="font-size:0.78rem; color:var(--text-muted); margin-top:4px;">
+                  Found in Supabase: <strong>Project Settings &rarr; API &rarr; Project API keys (service_role secret or anon public)</strong>.
+                </div>
+              </div>
+
+              <div class="modal-form-group" style="margin-bottom:20px;">
+                <label class="modal-form-label" style="display:flex; justify-content:space-between;">
+                  <span>Supabase Anon Public Key (Optional)</span>
+                  <span style="font-size:0.75rem; color:var(--text-muted);">Enables client-side Realtime listeners</span>
+                </label>
+                <input type="text" class="modal-form-control" id="sb_anon_key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+              </div>
+
+              <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+                <button type="submit" class="btn btn-gold" id="btnSaveSupabase"><i class="fa-solid fa-floppy-disk"></i> Save & Connect Database</button>
+                <button type="button" class="btn btn-secondary" onclick="testSupabase(true)"><i class="fa-solid fa-rotate"></i> Ping Supabase</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Card 2: Migration & Synchronization Controls -->
+          <div class="card-box">
+            <div class="card-title">
+              <span><i class="fa-solid fa-arrow-right-arrow-left" style="color:var(--gold); margin-right:8px;"></i> Cloud Migration & Sync Actions</span>
+            </div>
+
+            <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:16px;">
+              Easily migrate your entire database between your local SQLite database and your Supabase PostgreSQL cloud database with zero data loss.
+            </p>
+
+            <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:20px;">
+              <div style="background:rgba(16, 185, 129, 0.08); border:1px solid rgba(16, 185, 129, 0.25); border-radius:10px; padding:16px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                  <strong style="color:#10B981;"><i class="fa-solid fa-cloud-arrow-up"></i> 1-Click Push All Data to Supabase</strong>
+                  <span class="badge" style="background:rgba(16, 185, 129, 0.2); color:#10B981; font-size:0.75rem;">Full Migration</span>
+                </div>
+                <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:12px;">
+                  Uploads all 3 hotel wings, room inventory, pure veg dining dishes, active offers, guest reviews, gallery photos, video links, website settings, and bookings into Supabase in bulk.
+                </p>
+                <button class="btn btn-gold btn-sm" id="btnPushAll" onclick="pushAllToSupabase()"><i class="fa-solid fa-upload"></i> Push All Local Data to Supabase</button>
+              </div>
+
+              <div style="background:rgba(59, 130, 246, 0.08); border:1px solid rgba(59, 130, 246, 0.25); border-radius:10px; padding:16px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                  <strong style="color:#60A5FA;"><i class="fa-solid fa-cloud-arrow-down"></i> Pull Latest Data from Supabase</strong>
+                  <span class="badge" style="background:rgba(59, 130, 246, 0.2); color:#60A5FA; font-size:0.75rem;">Cloud Sync</span>
+                </div>
+                <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:12px;">
+                  Refreshes your local server storage with the latest records stored in your Supabase PostgreSQL database.
+                </p>
+                <button class="btn btn-secondary btn-sm" id="btnPullAll" onclick="pullAllFromSupabase()"><i class="fa-solid fa-download"></i> Pull from Supabase to Local</button>
+              </div>
+            </div>
+
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn btn-secondary btn-sm" onclick="copySupabaseSqlScript()"><i class="fa-solid fa-copy"></i> Copy Supabase SQL Setup Script</button>
+              <button class="btn btn-secondary btn-sm" onclick="openSupabaseSchemaModal()"><i class="fa-solid fa-code"></i> View Schema SQL</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section-by-Section Realtime Sync Matrix -->
+        <div class="card-box" style="margin-bottom:24px;">
+          <div class="card-title">
+            <span><i class="fa-solid fa-layer-group" style="color:var(--gold); margin-right:8px;"></i> Section-by-Section Backend Connectivity Status</span>
+            <button class="btn btn-secondary btn-sm" onclick="fetchSupabaseStatus()"><i class="fa-solid fa-arrows-rotate"></i> Refresh Matrix</button>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Section</th>
+                  <th>Supabase Table</th>
+                  <th>Local Count</th>
+                  <th>Supabase Count</th>
+                  <th>Sync Engine Mode</th>
+                  <th>Backend Connectivity</th>
+                </tr>
+              </thead>
+              <tbody id="supabaseSyncMatrixBody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Quick Setup Instructions Card -->
+        <div class="card-box" style="background:rgba(15, 23, 36, 0.7); border:1px solid var(--border);">
+          <h3 style="font-size:1.1rem; color:var(--gold); margin-bottom:12px;"><i class="fa-solid fa-circle-question"></i> How to Connect Supabase in 2 Minutes:</h3>
+          <ol style="color:var(--text-muted); font-size:0.88rem; line-height:1.7; padding-left:20px; margin:0;">
+            <li>Log in or create a free project at <a href="https://supabase.com/dashboard" target="_blank" rel="noopener noreferrer" style="color:var(--gold); font-weight:700;">supabase.com</a>.</li>
+            <li>In Supabase, navigate to the <strong>SQL Editor</strong> &rarr; Click <strong>New Query</strong>.</li>
+            <li>Click <strong>Copy Supabase SQL Setup Script</strong> above, paste it into the SQL editor, and click <strong>Run</strong>. (This creates all 13 tables, security policies, and enables Realtime).</li>
+            <li>In Supabase, go to <strong>Project Settings &rarr; API</strong>. Copy your <strong>Project URL</strong> and <strong>service_role</strong> (or <strong>anon</strong>) key.</li>
+            <li>Paste them in the credentials form above and click <strong>Save & Connect Database</strong>.</li>
+            <li>Click <strong>Push All Local Data to Supabase</strong> to instantly transfer all current properties, rooms, dishes, and bookings into the cloud!</li>
+          </ol>
         </div>
       </section>
     </main>
@@ -1580,6 +1739,11 @@
               sidebar.classList.remove('active');
               overlay.classList.remove('active');
             }
+          function switchTab(tabId) {
+            const link = document.querySelector(`.sidebar-link[data-tab="${tabId}"]`);
+            if (link) {
+              link.click();
+            }
           }
 
           // Tab Navigation
@@ -1594,6 +1758,9 @@
               if (targetTab) targetTab.classList.add('active');
               document.getElementById('adminPageTitle').textContent = this.innerText.trim();
               closeAdminSidebar();
+              if (tab === 'supabase') {
+                fetchSupabaseStatus();
+              }
             });
           });
 
@@ -1689,8 +1856,320 @@
               renderReviewsTable();
               renderBookingsTable();
               renderFoodTable();
+              await fetchSupabaseStatus();
             } catch (err) {
               console.error('Failed to load admin data:', err);
+            }
+          }
+
+          let SUPABASE_STATE = {
+            isConfigured: false,
+            isConnected: false,
+            url: '',
+            anonKey: '',
+            tableStats: {},
+            clientInstance: null
+          };
+
+          async function fetchSupabaseStatus() {
+            try {
+              const res = await fetch('/api/supabase/status');
+              const data = await res.json();
+              if (data.ok && data.status) {
+                const s = data.status;
+                SUPABASE_STATE.isConfigured = s.isConfigured;
+                SUPABASE_STATE.isConnected = s.isConnected;
+                SUPABASE_STATE.url = s.url || '';
+                SUPABASE_STATE.anonKey = s.anonKey || '';
+                SUPABASE_STATE.tableStats = s.tableStats || {};
+
+                // Update input values if not focused
+                const urlInput = document.getElementById('sb_project_url');
+                if (urlInput && !urlInput.matches(':focus') && s.url) {
+                  urlInput.value = s.url;
+                }
+                const anonInput = document.getElementById('sb_anon_key');
+                if (anonInput && !anonInput.matches(':focus') && s.anonKey) {
+                  anonInput.value = s.anonKey;
+                }
+
+                // Header badge
+                const badge = document.getElementById('dbStatusBadge');
+                const dot = document.getElementById('dbStatusDot');
+                const txt = document.getElementById('dbStatusBadgeText');
+                if (badge && dot && txt) {
+                  if (s.isConnected) {
+                    badge.style.background = 'rgba(16, 185, 129, 0.15)';
+                    badge.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+                    badge.style.color = '#34D399';
+                    dot.style.background = '#10B981';
+                    txt.textContent = 'Supabase Cloud (PostgreSQL)';
+                  } else if (s.isConfigured) {
+                    badge.style.background = 'rgba(239, 68, 68, 0.15)';
+                    badge.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+                    badge.style.color = '#F87171';
+                    dot.style.background = '#EF4444';
+                    txt.textContent = 'Supabase Disconnected (Offline)';
+                  } else {
+                    badge.style.background = 'rgba(212, 175, 55, 0.15)';
+                    badge.style.borderColor = 'rgba(212, 175, 55, 0.3)';
+                    badge.style.color = 'var(--gold)';
+                    dot.style.background = '#F59E0B';
+                    txt.textContent = 'Local SQLite Dual-Sync';
+                  }
+                }
+
+                // Hero status card in Tab
+                const heroDot = document.getElementById('sbHeroStatusDot');
+                const heroTitle = document.getElementById('sbHeroStatusTitle');
+                const heroSub = document.getElementById('sbHeroStatusSub');
+                if (heroDot && heroTitle && heroSub) {
+                  if (s.isConnected) {
+                    heroDot.style.background = '#10B981';
+                    heroDot.style.boxShadow = '0 0 14px #10B981';
+                    heroTitle.textContent = 'Connected to Supabase PostgreSQL';
+                    heroTitle.style.color = '#34D399';
+                    heroSub.textContent = `${s.url} • ${s.latencyMs || 25}ms latency`;
+                  } else if (s.isConfigured) {
+                    heroDot.style.background = '#EF4444';
+                    heroDot.style.boxShadow = '0 0 14px #EF4444';
+                    heroTitle.textContent = 'Connection Error / Not Reachable';
+                    heroTitle.style.color = '#F87171';
+                    heroSub.textContent = s.error || 'Please verify your Project URL and API Key';
+                  } else {
+                    heroDot.style.background = '#F59E0B';
+                    heroDot.style.boxShadow = '0 0 14px #F59E0B';
+                    heroTitle.textContent = 'Running in Local SQLite / JSON Engine Mode';
+                    heroTitle.style.color = '#FBBF24';
+                    heroSub.textContent = 'Enter your Supabase URL & Key below to activate cloud sync';
+                  }
+                }
+
+                renderSupabaseMatrix(s.tableStats, s.isConnected);
+                initClientSupabaseRealtime(s.url, s.anonKey);
+              }
+            } catch (err) {
+              console.error('Error fetching Supabase status:', err);
+            }
+          }
+
+          function renderSupabaseMatrix(tableStats = {}, isConnected = false) {
+            const body = document.getElementById('supabaseSyncMatrixBody');
+            if (!body) return;
+            body.innerHTML = '';
+
+            const sections = [
+              { name: 'Hotel Properties', table: 'hotels', icon: 'fa-hotel', localCount: (ADMIN_DATA.hotels || []).length },
+              { name: 'Rooms & Suites', table: 'rooms', icon: 'fa-bed', localCount: (ADMIN_DATA.rooms || []).length },
+              { name: 'Guest Bookings', table: 'bookings', icon: 'fa-calendar-check', localCount: (ADMIN_DATA.bookings || []).length },
+              { name: 'Pure Veg Food Menu', table: 'menu_items', icon: 'fa-utensils', localCount: (ADMIN_DATA.menuItems || []).length },
+              { name: 'Active Offers & Deals', table: 'offers', icon: 'fa-tags', localCount: (ADMIN_DATA.offers || []).length },
+              { name: 'Guest Reviews', table: 'reviews', icon: 'fa-star', localCount: (ADMIN_DATA.reviews || []).length },
+              { name: 'Photo Gallery', table: 'gallery', icon: 'fa-images', localCount: (ADMIN_DATA.gallery || []).length },
+              { name: 'Video Tours', table: 'videos', icon: 'fa-video', localCount: (ADMIN_DATA.videos || []).length },
+              { name: 'Amenities Catalog', table: 'amenities', icon: 'fa-sparkles', localCount: (ADMIN_DATA.amenities || []).length },
+              { name: 'Global Website Settings', table: 'website_settings', icon: 'fa-sliders', localCount: Object.keys(ADMIN_DATA.settings || {}).length },
+              { name: 'Hero Section Settings', table: 'hero_settings', icon: 'fa-image', localCount: Object.keys(ADMIN_DATA.hero || {}).length },
+              { name: 'WhatsApp & SMS Logs', table: 'notifications', icon: 'fa-bell', localCount: 'Live' }
+            ];
+
+            sections.forEach(sec => {
+              const cloudCount = isConnected ? (tableStats[sec.table] !== undefined ? tableStats[sec.table] : '—') : '—';
+              const tr = document.createElement('tr');
+              tr.innerHTML = `
+                <td>
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <i class="fa-solid ${sec.icon}" style="color:var(--gold);"></i>
+                    <strong>${sec.name}</strong>
+                  </div>
+                </td>
+                <td><code style="background:var(--bg-input); padding:2px 6px; border-radius:4px; color:var(--text-muted); font-size:0.8rem;">public.${sec.table}</code></td>
+                <td><span style="font-weight:700;">${sec.localCount}</span></td>
+                <td><span style="font-weight:700; color:${isConnected ? '#10B981' : 'var(--text-muted)'};">${cloudCount}</span></td>
+                <td>
+                  <span class="badge" style="background:${isConnected ? 'rgba(16, 185, 129, 0.15)' : 'rgba(212, 175, 55, 0.15)'}; color:${isConnected ? '#34D399' : 'var(--gold)'}; border:1px solid ${isConnected ? 'rgba(16, 185, 129, 0.3)' : 'rgba(212, 175, 55, 0.3)'};">
+                    ${isConnected ? 'Cloud Realtime Sync' : 'Local SQLite Storage'}
+                  </span>
+                </td>
+                <td>
+                  <span style="display:inline-flex; align-items:center; gap:6px; font-size:0.82rem; color:${isConnected ? '#10B981' : '#F59E0B'};">
+                    <span style="width:7px; height:7px; border-radius:50%; background:${isConnected ? '#10B981' : '#F59E0B'};"></span>
+                    ${isConnected ? 'Online & Synced' : 'Ready to Connect'}
+                  </span>
+                </td>
+              `;
+              body.appendChild(tr);
+            });
+          }
+
+          async function testSupabase(interactive = true) {
+            const url = document.getElementById('sb_project_url').value.trim();
+            const key = document.getElementById('sb_service_key').value.trim();
+            if (!url || !key) {
+              if (interactive) showToast('Please enter both Supabase URL and Key', 'error');
+              return;
+            }
+
+            if (interactive) showToast('Pinging Supabase project...');
+            try {
+              const res = await fetch('/api/supabase/test', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url, key })
+              });
+              const data = await res.json();
+              if (data.ok) {
+                if (data.tablesMissing) {
+                  showToast('Connected to Supabase, but schema tables are missing! Run schema script in SQL Editor.', 'warning');
+                } else {
+                  showToast(`Connected to Supabase! Latency: ${data.latencyMs || 0}ms`, 'success');
+                }
+              } else {
+                showToast(`Supabase Error: ${data.error || 'Connection failed'}`, 'error');
+              }
+            } catch (err) {
+              showToast('Error connecting to Supabase: ' + err.message, 'error');
+            }
+          }
+
+          async function saveSupabaseSettings(e) {
+            if (e) e.preventDefault();
+            const url = document.getElementById('sb_project_url').value.trim();
+            const key = document.getElementById('sb_service_key').value.trim();
+            const anonKey = document.getElementById('sb_anon_key').value.trim();
+
+            if (!url || !key) {
+              showToast('Supabase URL and API Key are required', 'error');
+              return;
+            }
+
+            const btn = document.getElementById('btnSaveSupabase');
+            if (btn) btn.disabled = true;
+            showToast('Connecting & saving Supabase credentials...');
+
+            try {
+              const res = await fetch('/api/supabase/config', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url, key, anonKey })
+              });
+              const data = await res.json();
+              if (data.ok) {
+                showToast('Supabase credentials saved successfully!', 'success');
+                await fetchSupabaseStatus();
+              } else {
+                showToast('Failed to save: ' + (data.error || 'Unknown error'), 'error');
+              }
+            } catch (err) {
+              showToast('Failed to save Supabase config: ' + err.message, 'error');
+            } finally {
+              if (btn) btn.disabled = false;
+            }
+          }
+
+          async function pushAllToSupabase() {
+            if (!confirm('This will upload all properties, rooms, menu dishes, offers, reviews, gallery photos, videos, and bookings from your local database to Supabase. Proceed?')) {
+              return;
+            }
+            const btn = document.getElementById('btnPushAll');
+            if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Pushing Data...'; }
+            showToast('Pushing all local database sections to Supabase Cloud...');
+
+            try {
+              const res = await fetch('/api/supabase/push-all', { method: 'POST' });
+              const data = await res.json();
+              if (data.ok) {
+                const r = data.results || {};
+                showToast(`Success! Pushed: ${r.hotels || 0} Hotels, ${r.rooms || 0} Rooms, ${r.menu_items || 0} Dishes, ${r.bookings || 0} Bookings!`, 'success');
+                await fetchSupabaseStatus();
+              } else {
+                showToast('Push failed: ' + (data.error || 'Unknown error'), 'error');
+              }
+            } catch (err) {
+              showToast('Error pushing data to Supabase: ' + err.message, 'error');
+            } finally {
+              if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-upload"></i> Push All Local Data to Supabase'; }
+            }
+          }
+
+          async function pullAllFromSupabase() {
+            if (!confirm('This will download all records from Supabase Cloud and overwrite your local SQLite cache. Proceed?')) {
+              return;
+            }
+            const btn = document.getElementById('btnPullAll');
+            if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Pulling Data...'; }
+            showToast('Pulling latest data from Supabase Cloud...');
+
+            try {
+              const res = await fetch('/api/supabase/pull-all', { method: 'POST' });
+              const data = await res.json();
+              if (data.ok) {
+                showToast('Successfully synchronized from Supabase Cloud!', 'success');
+                await loadAdminData();
+                await fetchSupabaseStatus();
+              } else {
+                showToast('Pull failed: ' + (data.error || 'Unknown error'), 'error');
+              }
+            } catch (err) {
+              showToast('Error pulling from Supabase: ' + err.message, 'error');
+            } finally {
+              if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-download"></i> Pull from Supabase to Local'; }
+            }
+          }
+
+          async function copySupabaseSqlScript() {
+            try {
+              const res = await fetch('/api/supabase/schema');
+              const data = await res.json();
+              if (data.ok && data.sql) {
+                await navigator.clipboard.writeText(data.sql);
+                showToast('Copied Supabase SQL setup script to clipboard! Paste it into Supabase SQL Editor.', 'success');
+              } else {
+                showToast('Could not load schema SQL: ' + (data.error || 'Not found'), 'error');
+              }
+            } catch (err) {
+              showToast('Failed to copy schema script: ' + err.message, 'error');
+            }
+          }
+
+          async function openSupabaseSchemaModal() {
+            try {
+              const res = await fetch('/api/supabase/schema');
+              const data = await res.json();
+              const sql = data.sql || '-- Schema not available';
+              openAdminFormModal({
+                category: 'DATABASE DDL SCHEMA',
+                title: 'SUPABASE POSTGRESQL SCHEMA SCRIPT',
+                bodyHtml: `
+                  <p style="font-size:0.85rem; color:#64748B; margin-bottom:12px;">Copy and execute this script in your Supabase project under <strong>SQL Editor &rarr; New Query</strong>:</p>
+                  <textarea class="modal-form-control" style="height:320px; font-family:var(--mono); font-size:0.75rem; white-space:pre;" readonly>${sql.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
+                `,
+                submitText: 'Copy to Clipboard',
+                onSubmit: async () => {
+                  await navigator.clipboard.writeText(sql);
+                  showToast('Schema copied to clipboard!', 'success');
+                  return true;
+                }
+              });
+            } catch (e) {
+              showToast('Error loading schema: ' + e.message, 'error');
+            }
+          }
+
+          function initClientSupabaseRealtime(url, anonKey) {
+            if (!window.supabase || !url || !anonKey || SUPABASE_STATE.clientInstance) return;
+            try {
+              SUPABASE_STATE.clientInstance = window.supabase.createClient(url, anonKey);
+              SUPABASE_STATE.clientInstance
+                .channel('realtime:bookings')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'bookings' }, payload => {
+                  showToast(`🔔 Realtime Database Update: Booking #${payload.new ? payload.new.id : ''} updated!`);
+                  loadAdminData();
+                })
+                .subscribe();
+              console.log('[Supabase Realtime] Listening to realtime booking events');
+            } catch (err) {
+              console.error('[Supabase Realtime] Init error:', err);
             }
           }
 

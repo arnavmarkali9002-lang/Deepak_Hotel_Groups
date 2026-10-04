@@ -11,6 +11,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const { URL } = require('url');
+const supabase = require('./supabase-client');
 
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || '0.0.0.0';
@@ -206,7 +207,7 @@ let DB = {
 };
 
 function initSqliteDatabase() {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
+  try { fs.mkdirSync(DATA_DIR, { recursive: true }); } catch (e) { }
   try {
     const { DatabaseSync } = require('node:sqlite');
     sqliteDb = new DatabaseSync(SQLITE_PATH);
@@ -550,7 +551,11 @@ function saveDbMirrorOnly() {
     fs.writeFileSync(tmpPath, JSON.stringify(DB, null, 2));
     fs.renameSync(tmpPath, DB_PATH);
   } catch (err) {
-    fs.writeFileSync(DB_PATH, JSON.stringify(DB, null, 2));
+    try {
+      fs.writeFileSync(DB_PATH, JSON.stringify(DB, null, 2));
+    } catch (e) {
+      // In serverless / read-only environment, ignore filesystem write error
+    }
   }
 }
 
@@ -743,6 +748,7 @@ async function triggerAdminBookingNotification(booking) {
 
   await dispatchWhatsAppNotification(notif);
   saveDb();
+  supabase.syncNotification(notif);
   return notif;
 }
 
@@ -751,17 +757,37 @@ async function triggerAdminBookingNotification(booking) {
 --------------------------------------------------------------------- */
 const SESSIONS = new Map();
 const SESSION_TTL_MS = 12 * 60 * 60 * 1000; // 12h
+const JWT_SECRET = process.env.SESSION_SECRET || 'deepak-hotel-secret-key-shirdi-2026';
+
 function createSession(username) {
-  const token = crypto.randomBytes(24).toString('hex');
-  SESSIONS.set(token, { username, expires: Date.now() + SESSION_TTL_MS });
+  const expires = Date.now() + SESSION_TTL_MS;
+  const payload = `${username}:${expires}`;
+  const sig = crypto.createHmac('sha256', JWT_SECRET).update(payload).digest('hex');
+  const token = `${payload}:${sig}`;
+  SESSIONS.set(token, { username, expires });
   return token;
 }
+
 function getSession(token) {
   if (!token) return null;
   const s = SESSIONS.get(token);
-  if (!s) return null;
-  if (Date.now() > s.expires) { SESSIONS.delete(token); return null; }
-  return s;
+  if (s && Date.now() <= s.expires) return s;
+  
+  // Stateless fallback verification for serverless/multi-container cold starts
+  try {
+    const parts = token.split(':');
+    if (parts.length === 3) {
+      const [username, expStr, sig] = parts;
+      const expires = Number(expStr);
+      if (Date.now() > expires) return null;
+      const payload = `${username}:${expires}`;
+      const expected = crypto.createHmac('sha256', JWT_SECRET).update(payload).digest('hex');
+      if (sig === expected) {
+        return { username, expires };
+      }
+    }
+  } catch (e) {}
+  return null;
 }
 function parseCookies(req) {
   const header = req.headers.cookie;
@@ -853,9 +879,16 @@ function route(method, pattern, handler) {
 
 // Healthcheck
 route('GET', '/api/health', async (req, res) => {
+  const sbStatus = await supabase.getStatus();
   sendJson(res, 200, {
     status: 'ok',
-    database: sqliteDb ? 'SQLite (data/deepak_hotels.db)' : 'JSON File Engine (data/db.json)',
+    database: sbStatus.isConnected ? 'Supabase Cloud (PostgreSQL)' : (sqliteDb ? 'SQLite (data/deepak_hotels.db)' : 'JSON File Engine (data/db.json)'),
+    supabase: {
+      isConfigured: sbStatus.isConfigured,
+      isConnected: sbStatus.isConnected,
+      activeEngine: sbStatus.activeEngine,
+      url: sbStatus.url
+    },
     stats: {
       hotels: DB.hotels.length,
       rooms: DB.rooms.length,
@@ -869,6 +902,91 @@ route('GET', '/api/health', async (req, res) => {
     uptime: Math.floor(process.uptime()),
     timestamp: new Date().toISOString()
   });
+});
+
+// Supabase Cloud Database Management Routes
+route('GET', '/api/supabase/status', async (req, res) => {
+  if (!requireAdmin(req, res)) return;
+  const status = await supabase.getStatus();
+  sendJson(res, 200, { ok: true, status });
+});
+
+route('POST', '/api/supabase/test', async (req, res) => {
+  if (!requireAdmin(req, res)) return;
+  let body = {};
+  try { body = await readBody(req); } catch (e) { }
+  const result = await supabase.testConnection(body.url, body.key);
+  sendJson(res, result.ok ? 200 : 400, result);
+});
+
+route('POST', '/api/supabase/config', async (req, res) => {
+  if (!requireAdmin(req, res)) return;
+  let body = {};
+  try { body = await readBody(req); } catch (e) { }
+  const saved = supabase.saveConfig(body);
+  const status = await supabase.getStatus();
+  sendJson(res, 200, { ok: true, saved, status });
+});
+
+route('POST', '/api/supabase/push-all', async (req, res) => {
+  if (!requireAdmin(req, res)) return;
+  try {
+    const pushResult = await supabase.pushAllToSupabase(DB);
+    sendJson(res, 200, { ok: true, message: 'All local data successfully pushed to Supabase!', results: pushResult.results });
+  } catch (err) {
+    sendJson(res, 500, { ok: false, error: err.message });
+  }
+});
+
+route('POST', '/api/supabase/pull-all', async (req, res) => {
+  if (!requireAdmin(req, res)) return;
+  try {
+    const remote = await supabase.pullAllFromSupabase();
+    if (remote.hotels && remote.hotels.length) DB.hotels = remote.hotels;
+    if (remote.rooms && remote.rooms.length) DB.rooms = remote.rooms;
+    if (remote.menuItems) DB.menuItems = remote.menuItems;
+    if (remote.bookings) DB.bookings = remote.bookings;
+    if (remote.settings && Object.keys(remote.settings).length) DB.settings = { ...DB.settings, ...remote.settings };
+    if (remote.hero && Object.keys(remote.hero).length) DB.hero = { ...DB.hero, ...remote.hero };
+    if (remote.amenities) DB.amenities = remote.amenities;
+    if (remote.offers) DB.offers = remote.offers;
+    if (remote.reviews) DB.reviews = remote.reviews;
+    if (remote.gallery) DB.gallery = remote.gallery;
+    if (remote.videos) DB.videos = remote.videos;
+    if (remote.notifications) DB.notifications = remote.notifications;
+
+    if (sqliteDb) {
+      try {
+        sqliteDb.exec('BEGIN TRANSACTION;');
+        sqliteDb.exec('DELETE FROM hotels;');
+        const insH = sqliteDb.prepare('INSERT INTO hotels (id, name, tag, locality, phone, accent, image, desc, exact_location, map_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        DB.hotels.forEach(h => insH.run(h.id, h.name, h.tag, h.locality, h.phone, h.accent, h.image, h.desc, h.exact_location || '', h.map_url || ''));
+
+        sqliteDb.exec('DELETE FROM rooms;');
+        const insR = sqliteDb.prepare('INSERT INTO rooms (id, hotel, num, floor, ac, cat, price24, price6, photo, max_guests, bed_type, amenities, status, desc, video_url, discount_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        DB.rooms.forEach(r => insR.run(r.id, r.hotel, r.num, r.floor, r.ac ? 1 : 0, r.cat, r.price24, r.price6, r.photo, r.maxGuests, r.bedType, r.amenities, r.status, r.desc || '', r.video_url || '', r.discount_price || 0));
+
+        sqliteDb.exec('COMMIT;');
+      } catch (e) {
+        try { sqliteDb.exec('ROLLBACK;'); } catch (er) { }
+      }
+    }
+    saveDbMirrorOnly();
+    sendJson(res, 200, { ok: true, message: 'All data successfully pulled from Supabase into local database!' });
+  } catch (err) {
+    sendJson(res, 500, { ok: false, error: err.message });
+  }
+});
+
+route('GET', '/api/supabase/schema', async (req, res) => {
+  if (!requireAdmin(req, res)) return;
+  const schemaPath = path.join(ROOT, 'supabase_schema.sql');
+  if (fs.existsSync(schemaPath)) {
+    const sql = fs.readFileSync(schemaPath, 'utf8');
+    sendJson(res, 200, { ok: true, sql });
+  } else {
+    sendJson(res, 404, { ok: false, error: 'supabase_schema.sql not found' });
+  }
 });
 
 // Authentication
@@ -980,24 +1098,12 @@ route('PATCH', '/api/settings', async (req, res) => {
   if (!requireAdmin(req, res)) return;
   const body = await readBody(req);
   Object.assign(DB.settings, body);
-  saveDb();
-  sendJson(res, 200, { ok: true, settings: DB.settings });
-});
-
-// Hero Settings
-route('GET', '/api/hero', async (req, res) => {
-  sendJson(res, 200, { hero: DB.hero });
-});
-
-route('PATCH', '/api/settings', async (req, res) => {
-  if (!requireAdmin(req, res)) return;
-  const body = await readBody(req);
-  Object.assign(DB.settings, body);
   if (sqliteDb) {
     const ins = sqliteDb.prepare('INSERT OR REPLACE INTO website_settings (key, value) VALUES (?, ?)');
     Object.entries(body).forEach(([k, v]) => ins.run(String(k), String(v || '')));
   }
   saveDbMirrorOnly();
+  supabase.syncSettings(DB.settings);
   sendJson(res, 200, { ok: true, settings: DB.settings });
 });
 
@@ -1015,6 +1121,7 @@ route('PATCH', '/api/hero', async (req, res) => {
     Object.entries(body).forEach(([k, v]) => ins.run(String(k), String(v || '')));
   }
   saveDbMirrorOnly();
+  supabase.syncHero(DB.hero);
   sendJson(res, 200, { ok: true, hero: DB.hero });
 });
 
@@ -1055,6 +1162,7 @@ route('POST', '/api/hotels', async (req, res) => {
     );
   }
   saveDbMirrorOnly();
+  supabase.syncHotel(hotel, 'upsert');
   sendJson(res, 201, { ok: true, hotel });
 });
 
@@ -1086,6 +1194,7 @@ route('PATCH', '/api/hotels/:id', async (req, res, params) => {
     );
   }
   saveDbMirrorOnly();
+  supabase.syncHotel(h, 'upsert');
   sendJson(res, 200, { ok: true, hotel: h });
 });
 
@@ -1102,6 +1211,7 @@ route('DELETE', '/api/hotels/:id', async (req, res, params) => {
     } catch (e) { }
   }
   saveDbMirrorOnly();
+  supabase.syncHotel({ id: params.id }, 'delete');
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 
@@ -1155,6 +1265,7 @@ route('PATCH', '/api/rooms/bulk-pricing', async (req, res) => {
     if (sqliteDb) {
       sqliteDb.prepare(`UPDATE rooms SET price24=?, price6=?, ac=?, cat=? WHERE id=?`).run(r.price24, r.price6, r.ac ? 1 : 0, r.cat, r.id);
     }
+    supabase.syncRoom(r, 'upsert');
   });
   saveDbMirrorOnly();
   sendJson(res, 200, { ok: true, updated: applied });
@@ -1187,6 +1298,7 @@ route('PATCH', '/api/rooms/:id', async (req, res, params) => {
           targetHotel.id, targetHotel.name, targetHotel.tag, targetHotel.locality, targetHotel.phone, targetHotel.accent, targetHotel.image, targetHotel.desc
         );
       }
+      supabase.syncHotel(targetHotel, 'upsert');
     }
     r.hotel = targetHotel.id;
   }
@@ -1222,6 +1334,7 @@ route('PATCH', '/api/rooms/:id', async (req, res, params) => {
     );
   }
   saveDbMirrorOnly();
+  supabase.syncRoom(r, 'upsert');
   sendJson(res, 200, { ok: true, room: r });
 });
 
@@ -1252,6 +1365,7 @@ route('POST', '/api/rooms', async (req, res) => {
         targetHotel.id, targetHotel.name, targetHotel.tag, targetHotel.locality, targetHotel.phone, targetHotel.accent, targetHotel.image, targetHotel.desc
       );
     }
+    supabase.syncHotel(targetHotel, 'upsert');
   }
 
   const strNum = String(num).trim();
@@ -1285,6 +1399,7 @@ route('POST', '/api/rooms', async (req, res) => {
     );
   }
   saveDbMirrorOnly();
+  supabase.syncRoom(newRoom, 'upsert');
   sendJson(res, 201, { ok: true, room: newRoom });
 });
 
@@ -1297,6 +1412,7 @@ route('DELETE', '/api/rooms/:id', async (req, res, params) => {
     try { sqliteDb.prepare('DELETE FROM rooms WHERE id = ?').run(params.id); } catch (e) { }
   }
   saveDbMirrorOnly();
+  supabase.syncRoom({ id: params.id }, 'delete');
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 
@@ -1362,6 +1478,7 @@ route('POST', '/api/menu', async (req, res) => {
     );
   }
   saveDbMirrorOnly();
+  supabase.syncMenuItem(item, 'upsert');
   sendJson(res, 201, { ok: true, item });
 });
 
@@ -1380,6 +1497,7 @@ route('PATCH', '/api/menu/:id', async (req, res, params) => {
     );
   }
   saveDbMirrorOnly();
+  supabase.syncMenuItem(item, 'upsert');
   sendJson(res, 200, { ok: true, item });
 });
 
@@ -1392,6 +1510,7 @@ route('DELETE', '/api/menu/:id', async (req, res, params) => {
     try { sqliteDb.prepare('DELETE FROM menu_items WHERE id = ?').run(params.id); } catch (e) { }
   }
   saveDbMirrorOnly();
+  supabase.syncMenuItem({ id: params.id }, 'delete');
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 
@@ -1419,6 +1538,7 @@ route('POST', '/api/gallery', async (req, res) => {
     );
   }
   saveDbMirrorOnly();
+  supabase.syncGallery(item, 'upsert');
   sendJson(res, 201, { ok: true, item });
 });
 
@@ -1438,6 +1558,7 @@ route('PATCH', '/api/gallery/:id', async (req, res, params) => {
     );
   }
   saveDbMirrorOnly();
+  supabase.syncGallery(item, 'upsert');
   sendJson(res, 200, { ok: true, item });
 });
 
@@ -1450,6 +1571,7 @@ route('DELETE', '/api/gallery/:id', async (req, res, params) => {
     try { sqliteDb.prepare('DELETE FROM gallery WHERE id = ?').run(params.id); } catch (e) { }
   }
   saveDbMirrorOnly();
+  supabase.syncGallery({ id: params.id }, 'delete');
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 
@@ -1481,6 +1603,7 @@ route('POST', '/api/videos', async (req, res) => {
     );
   }
   saveDbMirrorOnly();
+  supabase.syncVideo(video, 'upsert');
   sendJson(res, 201, { ok: true, video });
 });
 
@@ -1506,6 +1629,7 @@ route('PATCH', '/api/videos/:id', async (req, res, params) => {
     );
   }
   saveDbMirrorOnly();
+  supabase.syncVideo(v, 'upsert');
   sendJson(res, 200, { ok: true, video: v });
 });
 
@@ -1518,6 +1642,7 @@ route('DELETE', '/api/videos/:id', async (req, res, params) => {
     try { sqliteDb.prepare('DELETE FROM videos WHERE id = ?').run(params.id); } catch (e) { }
   }
   saveDbMirrorOnly();
+  supabase.syncVideo({ id: params.id }, 'delete');
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 
@@ -1545,6 +1670,7 @@ route('POST', '/api/amenities', async (req, res) => {
     );
   }
   saveDbMirrorOnly();
+  supabase.syncAmenity(amenity, 'upsert');
   sendJson(res, 201, { ok: true, amenity });
 });
 
@@ -1564,6 +1690,7 @@ route('PATCH', '/api/amenities/:id', async (req, res, params) => {
     );
   }
   saveDbMirrorOnly();
+  supabase.syncAmenity(a, 'upsert');
   sendJson(res, 200, { ok: true, amenity: a });
 });
 
@@ -1576,6 +1703,7 @@ route('DELETE', '/api/amenities/:id', async (req, res, params) => {
     try { sqliteDb.prepare('DELETE FROM amenities WHERE id = ?').run(params.id); } catch (e) { }
   }
   saveDbMirrorOnly();
+  supabase.syncAmenity({ id: params.id }, 'delete');
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 
@@ -1607,6 +1735,7 @@ route('POST', '/api/offers', async (req, res) => {
     );
   }
   saveDbMirrorOnly();
+  supabase.syncOffer(offer, 'upsert');
   sendJson(res, 201, { ok: true, offer });
 });
 
@@ -1630,6 +1759,7 @@ route('PATCH', '/api/offers/:id', async (req, res, params) => {
     );
   }
   saveDbMirrorOnly();
+  supabase.syncOffer(o, 'upsert');
   sendJson(res, 200, { ok: true, offer: o });
 });
 
@@ -1642,6 +1772,7 @@ route('DELETE', '/api/offers/:id', async (req, res, params) => {
     try { sqliteDb.prepare('DELETE FROM offers WHERE id = ?').run(params.id); } catch (e) { }
   }
   saveDbMirrorOnly();
+  supabase.syncOffer({ id: params.id }, 'delete');
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 
@@ -1670,6 +1801,7 @@ route('POST', '/api/reviews', async (req, res) => {
     );
   }
   saveDbMirrorOnly();
+  supabase.syncReview(review, 'upsert');
   sendJson(res, 201, { ok: true, review });
 });
 
@@ -1690,6 +1822,7 @@ route('PATCH', '/api/reviews/:id', async (req, res, params) => {
     );
   }
   saveDbMirrorOnly();
+  supabase.syncReview(r, 'upsert');
   sendJson(res, 200, { ok: true, review: r });
 });
 
@@ -1702,6 +1835,7 @@ route('DELETE', '/api/reviews/:id', async (req, res, params) => {
     try { sqliteDb.prepare('DELETE FROM reviews WHERE id = ?').run(params.id); } catch (e) { }
   }
   saveDbMirrorOnly();
+  supabase.syncReview({ id: params.id }, 'delete');
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 
@@ -1780,6 +1914,7 @@ route('POST', '/api/bookings', async (req, res) => {
     sqliteDb.prepare("INSERT OR REPLACE INTO metadata (key, value) VALUES ('nextBookingSeq', ?)").run(String(DB.nextBookingSeq));
   }
   saveDbMirrorOnly();
+  supabase.syncBooking(booking, 'upsert');
 
   // DISPATCH REAL WHATSAPP NOTIFICATION
   try {
@@ -1808,6 +1943,7 @@ route('PATCH', '/api/bookings/:id/status', async (req, res, params) => {
     sqliteDb.prepare(`UPDATE bookings SET status=? WHERE id=?`).run(b.status, b.id);
   }
   saveDbMirrorOnly();
+  supabase.syncBooking(b, 'upsert');
   sendJson(res, 200, { ok: true, booking: b });
 });
 
@@ -1820,6 +1956,7 @@ route('DELETE', '/api/bookings/:id', async (req, res, params) => {
     try { sqliteDb.prepare('DELETE FROM bookings WHERE id = ?').run(params.id); } catch (e) { }
   }
   saveDbMirrorOnly();
+  supabase.syncBooking({ id: params.id }, 'delete');
   sendJson(res, 200, { ok: true, removedId: params.id });
 });
 
@@ -1929,11 +2066,16 @@ function serveStatic(req, res, pathname) {
    Server Initialization
 --------------------------------------------------------------------- */
 const server = http.createServer(async (req, res) => {
-  const u = new URL(req.url, `http://${req.headers.host}`);
-  if (u.pathname.startsWith('/api/')) {
+  const host = req.headers.host || 'localhost';
+  const u = new URL(req.url, `http://${host}`);
+  let pathname = u.pathname;
+  if (pathname.startsWith('/.netlify/functions/api')) {
+    pathname = pathname.replace('/.netlify/functions/api', '/api') || '/api';
+  }
+  if (pathname.startsWith('/api/')) {
     for (const r of routes) {
       if (r.method !== req.method) continue;
-      const m = r.regex.exec(u.pathname);
+      const m = r.regex.exec(pathname);
       if (!m) continue;
       const params = {};
       r.paramNames.forEach((name, i) => { params[name] = decodeURIComponent(m[i + 1]); });
@@ -1947,16 +2089,18 @@ const server = http.createServer(async (req, res) => {
     }
     return sendJson(res, 404, { error: 'No such API route' });
   }
-  if (req.method === 'GET') return serveStatic(req, res, u.pathname);
+  if (req.method === 'GET') return serveStatic(req, res, pathname);
   res.writeHead(405); res.end('Method not allowed');
 });
 
-server.listen(PORT, HOST, () => {
-  console.log(`Deepak Hotels Group server running on http://${HOST}:${PORT}`);
-  console.log(`  Customer site: http://localhost:${PORT}/`);
-  console.log(`  Admin dashboard: http://localhost:${PORT}/admin`);
-  console.log(`  Admin notification mobile: ${ADMIN_MOBILE}`);
-});
+if (require.main === module) {
+  server.listen(PORT, HOST, () => {
+    console.log(`Deepak Hotels Group server running on http://${HOST}:${PORT}`);
+    console.log(`  Customer site: http://localhost:${PORT}/`);
+    console.log(`  Admin dashboard: http://localhost:${PORT}/admin`);
+    console.log(`  Admin notification mobile: ${ADMIN_MOBILE}`);
+  });
+}
 
 function gracefulShutdown(signal) {
   console.log(`\nReceived ${signal}, saving data and shutting down gracefully...`);
@@ -1967,3 +2111,5 @@ function gracefulShutdown(signal) {
 }
 process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+module.exports = { server, app: server, DB };
