@@ -3524,7 +3524,7 @@
             const room = ADMIN_DATA.rooms.find(r => r.id === b.hotelRoom);
             const roomPrice = room ? (b.stay === '24hr' ? room.price24 : room.price6) : 0;
             const foodTotal = (b.food || []).reduce((sum, item) => sum + (item.price * item.qty), 0);
-            return roomPrice || 485;
+            return (roomPrice + foodTotal) || 485;
           }
 
           // Run session check on page load

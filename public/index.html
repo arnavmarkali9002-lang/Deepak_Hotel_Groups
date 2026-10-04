@@ -1067,6 +1067,19 @@
       color: #0A192F;
     }
 
+    .dish-qty-btn {
+      width: 26px; height: 26px; background: #F1F5F9; border: none;
+      font-weight: 700; color: var(--navy-900); font-size: 1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s ease;
+    }
+    .dish-qty-btn:hover { background: #E2E8F0; }
+    .dish-qty-val {
+      width: 32px; height: 26px; text-align: center; border: none;
+      font-weight: 700; font-size: 0.85rem; background: #FFFFFF;
+      color: var(--navy-900); outline: none;
+    }
+
     @media (max-width: 576px) {
       .floating-whatsapp-btn {
         bottom: 20px;
@@ -1555,7 +1568,7 @@
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:18px; margin-bottom:18px;">
             <div class="booking-field">
               <label class="booking-label">Stay Type</label>
-              <select class="booking-select" id="modalStayType">
+              <select class="booking-select" id="modalStayType" onchange="updateModalTotal()">
                 <option value="24hr">24-Hour Stay</option>
                 <option value="6hr">6-Hour Express Refresh</option>
               </select>
@@ -1588,7 +1601,7 @@
             </div>
           </div>
 
-          <div class="booking-field" style="margin-bottom:24px;">
+          <div class="booking-field" style="margin-bottom:18px;">
             <label class="booking-label">ID Verification Method</label>
             <select class="booking-select" id="modalIdMethod">
               <option value="reception">Present Aadhar / ID Card at Hotel Reception</option>
@@ -1596,12 +1609,57 @@
             </select>
           </div>
 
-          <div style="background:var(--slate-100); border:1px solid var(--border-gold); padding:20px; border-radius:var(--radius-md); display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
-            <div>
-              <div style="font-size:0.85rem; color:var(--slate-500); font-weight:600;">Estimated Room Payable</div>
-              <div style="font-size:0.8rem; color:var(--gold-600); font-weight:700;">Zero Advance Payment Required</div>
+          <!-- PURE VEG DINING OPTION IN BOOKING -->
+          <div class="booking-food-addon-box" style="background:#FFFDF7; border:1px solid #FDE68A; border-radius:12px; padding:16px; margin-bottom:20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div style="width:38px; height:38px; border-radius:10px; background:linear-gradient(135deg, #F59E0B, #D97706); color:#FFF; display:flex; align-items:center; justify-content:center; font-size:1.1rem; box-shadow:0 2px 6px rgba(217,119,6,0.25);">
+                  <i class="fa-solid fa-utensils"></i>
+                </div>
+                <div>
+                  <div style="font-weight:700; color:var(--navy-900); font-size:0.98rem;">Add Pure Veg Dining to Stay?</div>
+                  <div style="font-size:0.8rem; color:var(--slate-500);">Optional: Enjoy fresh hot meals served directly to your room</div>
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <label style="position:relative; display:inline-block; width:50px; height:26px; margin:0; cursor:pointer;" title="Toggle to add dining dishes">
+                  <input type="checkbox" id="addFoodCheckbox" onchange="toggleFoodOption(this.checked)" style="opacity:0; width:0; height:0;">
+                  <span id="addFoodSwitchTrack" style="position:absolute; top:0; left:0; right:0; bottom:0; background-color:#CBD5E1; transition:0.3s; border-radius:26px;">
+                    <span id="addFoodSwitchKnob" style="position:absolute; height:20px; width:20px; left:3px; bottom:3px; background-color:#FFF; transition:0.3s; border-radius:50%; box-shadow:0 1px 3px rgba(0,0,0,0.2);"></span>
+                  </span>
+                </label>
+              </div>
             </div>
-            <div style="font-family:var(--font-display); font-size:1.8rem; font-weight:700; color:var(--navy-900);" id="modalTotalAmount">₹0</div>
+
+            <!-- Expandable Dish Selection Area -->
+            <div id="bookingFoodSection" style="display:none; margin-top:14px; padding-top:14px; border-top:1px dashed #FDE68A;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <span style="font-size:0.85rem; font-weight:700; color:var(--navy-900);">Select Dishes & Quantity:</span>
+                <span style="font-size:0.78rem; font-weight:700; color:var(--emerald); background:rgba(16,185,129,0.1); padding:2px 8px; border-radius:12px;">
+                  <i class="fa-solid fa-leaf"></i> 100% Pure Veg
+                </span>
+              </div>
+              <div id="bookingDishesContainer" style="display:flex; flex-direction:column; gap:10px; max-height:220px; overflow-y:auto; padding-right:4px;">
+                <!-- Dynamically populated dishes -->
+              </div>
+              <div id="foodSummaryBar" style="display:none; justify-content:space-between; align-items:center; background:#FEF3C7; border:1px solid #FCD34D; border-radius:8px; padding:8px 12px; margin-top:12px; font-size:0.85rem; font-weight:700; color:#92400E;">
+                <span id="foodSelectedCount">0 dishes selected</span>
+                <span id="foodSelectedAmount">+₹0</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:var(--slate-100); border:1px solid var(--border-gold); padding:18px 20px; border-radius:var(--radius-md); margin-bottom:24px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <div style="font-size:0.85rem; color:var(--slate-500); font-weight:600;">Estimated Total Payable</div>
+                <div style="font-size:0.8rem; color:var(--gold-600); font-weight:700;">Zero Advance Payment • Pay at Hotel Reception</div>
+              </div>
+              <div style="font-family:var(--font-display); font-size:1.8rem; font-weight:700; color:var(--navy-900);" id="modalTotalAmount">₹0</div>
+            </div>
+            <div id="modalPriceBreakdown" style="display:none; font-size:0.82rem; color:var(--slate-600); border-top:1px dashed #CBD5E1; margin-top:10px; padding-top:10px;">
+              <!-- Filled dynamically with room + food breakdown -->
+            </div>
           </div>
 
           <button type="submit" class="btn btn-gold btn-lg" style="width:100%; font-size:1.1rem;" id="modalSubmitBtn">
@@ -1677,7 +1735,19 @@
         APP_STATE.hero = heroRes.hero || heroRes || {};
         APP_STATE.hotels = Array.isArray(hotRes.hotels) ? hotRes.hotels : (Array.isArray(hotRes) ? hotRes : []);
         APP_STATE.rooms = Array.isArray(rmRes.rooms) ? rmRes.rooms : (Array.isArray(rmRes) ? rmRes : []);
-        APP_STATE.menuItems = Array.isArray(menuRes.menu) ? menuRes.menu : (Array.isArray(menuRes.items) ? menuRes.items : (Array.isArray(menuRes) ? menuRes : []));
+        if (Array.isArray(menuRes.items)) {
+          APP_STATE.menuItems = menuRes.items;
+        } else if (Array.isArray(menuRes.menu)) {
+          if (menuRes.menu.length > 0 && Array.isArray(menuRes.menu[0].items)) {
+            APP_STATE.menuItems = menuRes.menu.flatMap(g => (g.items || []).map(i => ({ ...i, category: g.cat || i.category })));
+          } else {
+            APP_STATE.menuItems = menuRes.menu;
+          }
+        } else if (Array.isArray(menuRes)) {
+          APP_STATE.menuItems = menuRes;
+        } else {
+          APP_STATE.menuItems = [];
+        }
         APP_STATE.amenities = Array.isArray(amenRes.amenities) ? amenRes.amenities : (Array.isArray(amenRes) ? amenRes : []);
         APP_STATE.offers = Array.isArray(offRes.offers) ? offRes.offers : (Array.isArray(offRes) ? offRes : []);
         APP_STATE.gallery = Array.isArray(galRes.gallery) ? galRes.gallery : (Array.isArray(galRes) ? galRes : []);
@@ -1936,26 +2006,34 @@
       const container = document.getElementById('foodMenuGridContainer');
       if (!container) return;
       container.innerHTML = '';
-      if (!APP_STATE.menuItems.length) {
+      if (!APP_STATE.menuItems || !APP_STATE.menuItems.length) {
         container.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:var(--slate-500); padding:20px;">Pure Veg dining menu available at hotel reception and room service.</div>';
         return;
       }
       APP_STATE.menuItems.forEach(item => {
         const card = document.createElement('div');
         card.style.cssText = 'background:#FFF; border-radius:16px; padding:20px; border:1px solid #E2E8F0; box-shadow:0 4px 14px rgba(0,0,0,0.04); display:flex; flex-direction:column; justify-content:space-between; transition:transform 0.25s ease;';
+        const dishImg = item.photo ? item.photo : '/images/dining-bg.jpg';
         card.innerHTML = `
           <div>
-            ${item.photo ? `<img src="${item.photo}" alt="${item.name}" style="height:130px; width:100%; object-fit:cover; border-radius:10px; margin-bottom:14px;">` : ''}
-            <div style="font-weight:700; font-size:1.1rem; color:var(--navy-900);">${item.name}</div>
-            <div style="font-size:0.8rem; color:var(--gold-600); font-weight:700; margin-top:3px;"><i class="fa-solid fa-leaf"></i> 100% Pure Veg</div>
+            <img src="${dishImg}" alt="${item.name}" onerror="this.src='/images/dining-bg.jpg'" style="height:140px; width:100%; object-fit:cover; border-radius:10px; margin-bottom:14px; background:#F8FAFC;">
+            <div style="font-weight:700; font-size:1.1rem; color:var(--navy-900); display:flex; align-items:center; justify-content:space-between; gap:8px;">
+              <span>${item.name}</span>
+              ${item.category ? `<span style="font-size:0.72rem; background:#FEF3C7; color:#92400E; padding:2px 8px; border-radius:6px; font-weight:700; white-space:nowrap;">${item.category}</span>` : ''}
+            </div>
+            <div style="font-size:0.8rem; color:var(--gold-600); font-weight:700; margin-top:4px;"><i class="fa-solid fa-leaf"></i> 100% Pure Veg Speciality</div>
           </div>
           <div style="display:flex; justify-content:space-between; align-items:center; margin-top:18px; padding-top:14px; border-top:1px dashed #E2E8F0;">
             <span style="font-weight:800; font-size:1.25rem; color:var(--navy-900);">₹${item.price}</span>
-            <a href="#rooms" class="btn btn-gold btn-sm"><i class="fa-solid fa-plus"></i> Order with Room</a>
+            <button type="button" class="btn btn-gold btn-sm" onclick="orderFoodWithRoom('${item.id}')"><i class="fa-solid fa-plus"></i> Order with Room</button>
           </div>
         `;
         container.appendChild(card);
       });
+    }
+
+    function orderFoodWithRoom(dishId) {
+      openBookingModal(null, dishId);
     }
 
     // Render Reviews
@@ -1981,8 +2059,122 @@
       });
     }
 
+    // Food Selection & Addon Logic for Room Booking
+    function populateBookingFoodList(preSelectedDishId) {
+      const container = document.getElementById('bookingDishesContainer');
+      if (!container) return;
+      container.innerHTML = '';
+      if (!APP_STATE.menuItems || !APP_STATE.menuItems.length) {
+        container.innerHTML = '<div style="color:var(--slate-500); font-size:0.85rem; padding:8px;">Pure veg dining menu is available directly at the hotel front desk.</div>';
+        return;
+      }
+
+      APP_STATE.menuItems.forEach(item => {
+        const isPre = preSelectedDishId && String(item.id) === String(preSelectedDishId);
+        const row = document.createElement('div');
+        row.id = `dish_row_${item.id}`;
+        row.style.cssText = `display:flex; justify-content:space-between; align-items:center; background:${isPre ? '#FFFDF7' : '#FFFFFF'}; border:1px solid ${isPre ? '#F59E0B' : '#E2E8F0'}; border-radius:10px; padding:10px 14px; transition:all 0.2s ease;`;
+        
+        row.innerHTML = `
+          <div style="display:flex; align-items:center; gap:12px; flex:1; cursor:pointer;" onclick="toggleDishCheck('${item.id}', event)">
+            <input type="checkbox" id="dish_check_${item.id}" class="dish-selector-cb" ${isPre ? 'checked' : ''} onchange="onDishCheckboxChange('${item.id}')" onclick="event.stopPropagation();" style="width:18px; height:18px; accent-color:#D97706; cursor:pointer;">
+            <div style="flex:1;">
+              <div style="font-weight:700; color:var(--navy-900); font-size:0.92rem; display:flex; align-items:center; gap:6px;">
+                <span>${item.name}</span>
+                ${item.category ? `<span style="font-size:0.7rem; background:#FEF3C7; color:#92400E; padding:1px 6px; border-radius:4px; font-weight:700;">${item.category}</span>` : ''}
+              </div>
+              <div style="font-size:0.78rem; color:var(--slate-500);">₹${item.price} each • Pure Veg</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="dish-qty-control" id="qty_control_${item.id}" style="display:${isPre ? 'flex' : 'none'}; align-items:center; border:1px solid #CBD5E1; border-radius:6px; overflow:hidden;">
+              <button type="button" class="dish-qty-btn" onclick="adjustDishQty('${item.id}', -1)">-</button>
+              <input type="text" class="dish-qty-val" id="qty_val_${item.id}" value="1" readonly>
+              <button type="button" class="dish-qty-btn" onclick="adjustDishQty('${item.id}', 1)">+</button>
+            </div>
+            <div style="font-weight:700; font-size:0.95rem; color:var(--navy-900); min-width:55px; text-align:right;" id="dish_subtotal_${item.id}">₹${item.price}</div>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function toggleFoodOption(enabled) {
+      const section = document.getElementById('bookingFoodSection');
+      const track = document.getElementById('addFoodSwitchTrack');
+      const knob = document.getElementById('addFoodSwitchKnob');
+      const checkbox = document.getElementById('addFoodCheckbox');
+      if (checkbox) checkbox.checked = !!enabled;
+
+      if (enabled) {
+        if (section) section.style.display = 'block';
+        if (track) track.style.backgroundColor = '#D97706';
+        if (knob) knob.style.transform = 'translateX(24px)';
+      } else {
+        if (section) section.style.display = 'none';
+        if (track) track.style.backgroundColor = '#CBD5E1';
+        if (knob) knob.style.transform = 'translateX(0px)';
+      }
+      updateModalTotal();
+    }
+
+    function toggleDishCheck(dishId, event) {
+      const cb = document.getElementById(`dish_check_${dishId}`);
+      if (!cb) return;
+      cb.checked = !cb.checked;
+      onDishCheckboxChange(dishId);
+    }
+
+    function onDishCheckboxChange(dishId) {
+      const cb = document.getElementById(`dish_check_${dishId}`);
+      const qtyCtrl = document.getElementById(`qty_control_${dishId}`);
+      const row = document.getElementById(`dish_row_${dishId}`);
+      if (!cb) return;
+
+      if (cb.checked) {
+        if (qtyCtrl) qtyCtrl.style.display = 'flex';
+        if (row) {
+          row.style.background = '#FFFDF7';
+          row.style.borderColor = '#F59E0B';
+        }
+      } else {
+        if (qtyCtrl) qtyCtrl.style.display = 'none';
+        if (row) {
+          row.style.background = '#FFFFFF';
+          row.style.borderColor = '#E2E8F0';
+        }
+        const qtyVal = document.getElementById(`qty_val_${dishId}`);
+        if (qtyVal) qtyVal.value = '1';
+      }
+      updateDishSubtotal(dishId);
+      updateModalTotal();
+    }
+
+    function adjustDishQty(dishId, delta) {
+      const qtyInput = document.getElementById(`qty_val_${dishId}`);
+      if (!qtyInput) return;
+      let curr = parseInt(qtyInput.value, 10) || 1;
+      curr += delta;
+      if (curr < 1) curr = 1;
+      if (curr > 20) curr = 20;
+      qtyInput.value = curr;
+      updateDishSubtotal(dishId);
+      updateModalTotal();
+    }
+
+    function updateDishSubtotal(dishId) {
+      const item = APP_STATE.menuItems.find(m => String(m.id) === String(dishId));
+      if (!item) return;
+      const qtyInput = document.getElementById(`qty_val_${dishId}`);
+      const subtotalElem = document.getElementById(`dish_subtotal_${dishId}`);
+      const qty = parseInt(qtyInput ? qtyInput.value : 1, 10) || 1;
+      if (subtotalElem) {
+        subtotalElem.textContent = `₹${item.price * qty}`;
+      }
+    }
+
     // Booking Modal Interactions
-    function openBookingModal(roomId) {
+    function openBookingModal(roomId, preSelectedDishId = null) {
       let room = null;
       if (roomId) {
         room = APP_STATE.rooms.find(r => r.id === roomId);
@@ -2003,6 +2195,16 @@
       document.getElementById('modalRoomId').value = room.id;
       document.getElementById('modalRoomSubtitle').textContent = `${hotel.name || 'Deepak Hotels'} — Room ${room.num || ''} (${room.cat || 'Standard'})`;
       
+      // Populate dishes in booking modal
+      populateBookingFoodList(preSelectedDishId);
+
+      // If preselected dish is passed (from "Order with Room" button), activate food toggle
+      if (preSelectedDishId) {
+        toggleFoodOption(true);
+      } else {
+        toggleFoodOption(false);
+      }
+
       updateModalTotal();
       document.getElementById('bookingModalBackdrop').classList.add('active');
     }
@@ -2010,8 +2212,68 @@
     function updateModalTotal() {
       if (!APP_STATE.selectedRoom) return;
       const stay = document.getElementById('modalStayType').value;
-      const price = stay === '24hr' ? APP_STATE.selectedRoom.price24 : APP_STATE.selectedRoom.price6;
-      document.getElementById('modalTotalAmount').textContent = `₹${price}`;
+      const roomPrice = stay === '24hr' ? (APP_STATE.selectedRoom.price24 || 0) : (APP_STATE.selectedRoom.price6 || 0);
+
+      const foodEnabled = document.getElementById('addFoodCheckbox') ? document.getElementById('addFoodCheckbox').checked : false;
+      let foodTotal = 0;
+      let selectedCount = 0;
+      let totalServings = 0;
+
+      if (foodEnabled) {
+        (APP_STATE.menuItems || []).forEach(item => {
+          const cb = document.getElementById(`dish_check_${item.id}`);
+          if (cb && cb.checked) {
+            const qtyInput = document.getElementById(`qty_val_${item.id}`);
+            const qty = parseInt(qtyInput ? qtyInput.value : 1, 10) || 1;
+            foodTotal += (Number(item.price) || 0) * qty;
+            selectedCount++;
+            totalServings += qty;
+          }
+        });
+      }
+
+      const totalPayable = roomPrice + foodTotal;
+
+      const totalElem = document.getElementById('modalTotalAmount');
+      if (totalElem) {
+        totalElem.textContent = `₹${totalPayable}`;
+      }
+
+      const breakdownElem = document.getElementById('modalPriceBreakdown');
+      if (breakdownElem) {
+        if (foodEnabled && foodTotal > 0) {
+          breakdownElem.style.display = 'block';
+          breakdownElem.innerHTML = `
+            <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
+              <span>🛏️ Room Charge (${stay === '24hr' ? '24 Hours' : '6 Hours'}):</span>
+              <strong>₹${roomPrice}</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; color:#D97706; margin-bottom:3px;">
+              <span>🍲 Pure Veg Dining (${totalServings} serving${totalServings > 1 ? 's' : ''}):</span>
+              <strong>+₹${foodTotal}</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-weight:700; color:var(--navy-900); padding-top:4px; border-top:1px dashed #CBD5E1;">
+              <span>Total Payable at Hotel:</span>
+              <span>₹${totalPayable}</span>
+            </div>
+          `;
+        } else {
+          breakdownElem.style.display = 'none';
+        }
+      }
+
+      const summaryBar = document.getElementById('foodSummaryBar');
+      const countElem = document.getElementById('foodSelectedCount');
+      const amtElem = document.getElementById('foodSelectedAmount');
+      if (summaryBar && countElem && amtElem) {
+        if (foodEnabled && selectedCount > 0) {
+          summaryBar.style.display = 'flex';
+          countElem.textContent = `${selectedCount} dish${selectedCount > 1 ? 'es' : ''} (${totalServings} servings)`;
+          amtElem.textContent = `+₹${foodTotal}`;
+        } else {
+          summaryBar.style.display = 'none';
+        }
+      }
     }
 
     // Search Form Handler
@@ -2053,6 +2315,26 @@
       submitBtn.disabled = true;
       submitBtn.textContent = 'Processing Booking...';
 
+      // Collect selected food items if dining option is checked
+      const selectedFood = [];
+      const foodEnabled = document.getElementById('addFoodCheckbox') ? document.getElementById('addFoodCheckbox').checked : false;
+      if (foodEnabled) {
+        (APP_STATE.menuItems || []).forEach(item => {
+          const cb = document.getElementById(`dish_check_${item.id}`);
+          if (cb && cb.checked) {
+            const qtyInput = document.getElementById(`qty_val_${item.id}`);
+            const qty = parseInt(qtyInput ? qtyInput.value : 1, 10) || 1;
+            selectedFood.push({
+              id: item.id,
+              name: item.name,
+              price: Number(item.price) || 0,
+              qty: qty,
+              category: item.category || 'Pure Veg'
+            });
+          }
+        });
+      }
+
       const payload = {
         hotelRoom: document.getElementById('modalRoomId').value,
         stay: document.getElementById('modalStayType').value,
@@ -2061,7 +2343,8 @@
         guests: Number(document.getElementById('modalGuests').value) || 1,
         name: document.getElementById('modalName').value.trim(),
         phone: document.getElementById('modalPhone').value.trim(),
-        idMethod: document.getElementById('modalIdMethod').value
+        idMethod: document.getElementById('modalIdMethod').value,
+        food: selectedFood
       };
 
       try {
@@ -2080,7 +2363,15 @@
           const room = APP_STATE.selectedRoom || {};
           const hotel = APP_STATE.hotels.find(h => h.id === room.hotel) || {};
           const stayText = payload.stay === '24hr' ? '24-Hour Stay' : '6-Hour Express Refresh';
-          const price = payload.stay === '24hr' ? (room.price24 || 0) : (room.price6 || 0);
+          const roomPrice = payload.stay === '24hr' ? (room.price24 || 0) : (room.price6 || 0);
+          const foodTotal = selectedFood.reduce((s, f) => s + (f.price * f.qty), 0);
+          const totalPrice = (data.total !== undefined) ? data.total : (roomPrice + foodTotal);
+
+          let foodSummaryHtml = '';
+          if (selectedFood.length > 0) {
+            const foodListStr = selectedFood.map(f => `${f.name} x${f.qty} (₹${f.price * f.qty})`).join(', ');
+            foodSummaryHtml = `<div style="margin-bottom:6px; color:#D97706;"><strong>🍲 Pure Veg Dining:</strong> ${foodListStr} (+₹${foodTotal})</div>`;
+          }
 
           // Populate Summary Details
           const summaryElem = document.getElementById('successBookingSummary');
@@ -2092,12 +2383,18 @@
               <div style="margin-bottom:6px;"><strong>🛏️ Room Details:</strong> Room ${room.num || ''} (${room.cat || 'Standard'})</div>
               <div style="margin-bottom:6px;"><strong>📅 Check-in Date:</strong> ${payload.date} (${payload.time})</div>
               <div style="margin-bottom:6px;"><strong>⏱️ Stay Package:</strong> ${stayText} (${payload.guests} Guest${payload.guests > 1 ? 's' : ''})</div>
-              <div style="color:var(--navy-900); font-weight:700; margin-top:8px; padding-top:8px; border-top:1px dashed #CBD5E1;">💰 Total Amount Payable: ₹${price} (Pay at Hotel Reception)</div>
+              ${foodSummaryHtml}
+              <div style="color:var(--navy-900); font-weight:700; margin-top:8px; padding-top:8px; border-top:1px dashed #CBD5E1;">💰 Total Amount Payable: ₹${totalPrice} (Pay at Hotel Reception)</div>
             `;
           }
 
           // Build Pre-filled WhatsApp Confirmation Message
-          const waMsg = `Hello Deepak Hotels Group! 🏨\n\nI have just submitted a room reservation on your website. Here are my booking confirmation details:\n\n📌 *Booking Reference ID:* #${data.bookingId}\n👤 *Guest Name:* ${payload.name}\n📞 *Phone Number:* ${payload.phone}\n🏨 *Hotel:* ${hotel.name || 'Deepak Hotels Group'}\n🛏️ *Room:* Room ${room.num || ''} (${room.cat || 'Standard'})\n📅 *Check-in Date:* ${payload.date}\n⏰ *Check-in Time:* ${payload.time}\n⏱️ *Stay Package:* ${stayText}\n👥 *Number of Guests:* ${payload.guests}\n💰 *Amount Payable:* ₹${price} (Pay at Reception)\n\nPlease confirm my room booking. Thank you!`;
+          let waFoodLines = '';
+          if (selectedFood.length > 0) {
+            waFoodLines = `\n🍲 *Pure Veg Dining Ordered:*\n` + selectedFood.map(f => `  • ${f.name} x${f.qty} (₹${f.price * f.qty})`).join('\n');
+          }
+
+          const waMsg = `Hello Deepak Hotels Group! 🏨\n\nI have just submitted a room reservation on your website. Here are my booking confirmation details:\n\n📌 *Booking Reference ID:* #${data.bookingId}\n👤 *Guest Name:* ${payload.name}\n📞 *Phone Number:* ${payload.phone}\n🏨 *Hotel:* ${hotel.name || 'Deepak Hotels Group'}\n🛏️ *Room:* Room ${room.num || ''} (${room.cat || 'Standard'})\n📅 *Check-in Date:* ${payload.date}\n⏰ *Check-in Time:* ${payload.time}\n⏱️ *Stay Package:* ${stayText}\n👥 *Number of Guests:* ${payload.guests}${waFoodLines}\n💰 *Total Amount Payable:* ₹${totalPrice} (Pay at Reception)\n\nPlease confirm my room booking. Thank you!`;
 
           const waUrl = `https://wa.me/919851415415?text=${encodeURIComponent(waMsg)}`;
           const waBtn = document.getElementById('whatsappConfirmBtn');

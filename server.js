@@ -639,7 +639,7 @@ function formatWhatsAppNotificationMessage(booking) {
     }
   } catch (e) { }
 
-  return [
+  const lines = [
     `🔔 NEW ROOM BOOKING - DEEPAK HOTELS GROUP`,
     ``,
     `Booking ID: #${booking.id}`,
@@ -654,12 +654,24 @@ function formatWhatsAppNotificationMessage(booking) {
     `Check-out: ${checkOut}`,
     ``,
     `Guests: ${booking.guests}`,
-    `Rooms: 1`,
+    `Rooms: 1`
+  ];
+
+  if (Array.isArray(booking.food) && booking.food.length > 0) {
+    lines.push(``, `Pure Veg Dining Ordered:`);
+    booking.food.forEach(f => {
+      lines.push(` • ${f.name} x${f.qty} (₹${f.price * f.qty})`);
+    });
+  }
+
+  lines.push(
     ``,
     `Total Amount: ₹${total}`,
     ``,
     `Please check the admin panel for complete booking details.`
-  ].join('\n');
+  );
+
+  return lines.join('\n');
 }
 
 async function dispatchWhatsAppNotification(notif) {
@@ -1534,7 +1546,7 @@ function applyMenuFields(item, body) {
 
 route('GET', '/api/menu', async (req, res) => {
   let items = (DB.menuItems || []).filter(i => i.available);
-  sendJson(res, 200, { menu: groupedMenu(items) });
+  sendJson(res, 200, { menu: groupedMenu(items), items: items });
 });
 
 route('GET', '/api/menu/all', async (req, res) => {
