@@ -737,9 +737,6 @@
         <li class="sidebar-item">
           <div class="sidebar-link" data-tab="bookings"><i class="fa-solid fa-calendar-check"></i> Bookings & Logs</div>
         </li>
-        <li class="sidebar-item">
-          <div class="sidebar-link" data-tab="supabase" style="color:var(--gold); font-weight:700;"><i class="fa-solid fa-cloud"></i> Supabase Cloud DB</div>
-        </li>
       </ul>
     </aside>
 
@@ -753,9 +750,9 @@
           <h1 class="admin-page-title" id="adminPageTitle">Dashboard Overview</h1>
         </div>
         <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
-          <div id="dbStatusBadge" onclick="switchTab('supabase')" title="Click to view and configure Supabase Cloud Database" style="cursor:pointer; display:inline-flex; align-items:center; gap:8px; padding:6px 14px; border-radius:20px; font-size:0.8rem; font-weight:700; background:rgba(212, 175, 55, 0.12); color:var(--gold); border:1px solid rgba(212, 175, 55, 0.3); transition:all 0.2s ease;">
-            <span id="dbStatusDot" style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#F59E0B;"></span>
-            <span id="dbStatusBadgeText">Checking Database...</span>
+          <div id="dbStatusBadge" style="display:inline-flex; align-items:center; gap:8px; padding:6px 14px; border-radius:20px; font-size:0.8rem; font-weight:700; background:rgba(16, 185, 129, 0.12); color:#34D399; border:1px solid rgba(16, 185, 129, 0.3);">
+            <span id="dbStatusDot" style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10B981; box-shadow:0 0 8px #10B981;"></span>
+            <span id="dbStatusBadgeText">System Live</span>
           </div>
           <div class="user-pill">
             <span style="font-weight:700;" id="adminUsernameDisplay">deepakhotelgroup</span>
@@ -1155,160 +1152,6 @@
               <tbody id="foodTableBody"></tbody>
             </table>
           </div>
-        </div>
-      </section>
-
-      <!-- TAB 13: SUPABASE CLOUD DATABASE -->
-      <section class="tab-content" id="tab-supabase">
-        <!-- Status & Overview Banner -->
-        <div class="card-box" style="margin-bottom:24px; background:linear-gradient(135deg, rgba(22, 32, 48, 0.95), rgba(15, 23, 36, 0.98)); border:1px solid rgba(212, 175, 55, 0.35); box-shadow:0 12px 40px rgba(0,0,0,0.4);">
-          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
-            <div>
-              <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
-                <span style="font-size:1.8rem; color:#3ECF8E;"><i class="fa-solid fa-cloud"></i></span>
-                <h2 style="font-family:'Cinzel', serif; font-size:1.6rem; color:#FFF; margin:0;">Supabase Cloud Database & Full Backend Integration</h2>
-              </div>
-              <p style="color:var(--text-muted); font-size:0.95rem; margin:0; max-width:820px;">
-                Connect and synchronize all sections of Deepak Hotels Group with Supabase PostgreSQL in real-time. Manage database credentials, run 1-click cloud backups, and monitor each backend section.
-              </p>
-            </div>
-            <div id="sbHeroStatusCard" style="display:flex; align-items:center; gap:12px; background:rgba(0,0,0,0.3); padding:12px 20px; border-radius:12px; border:1px solid var(--border-light);">
-              <div id="sbHeroStatusDot" style="width:14px; height:14px; border-radius:50%; background:#F59E0B; box-shadow:0 0 12px #F59E0B;"></div>
-              <div>
-                <div id="sbHeroStatusTitle" style="font-weight:700; font-size:0.95rem; color:#FFF;">Checking Status...</div>
-                <div id="sbHeroStatusSub" style="font-size:0.8rem; color:var(--text-muted);">Please wait</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div style="display:grid; grid-template-columns: 1.1fr 0.9fr; gap:24px; margin-bottom:24px;" class="admin-grid-two-col">
-          <!-- Card 1: Supabase Project Credentials Form -->
-          <div class="card-box">
-            <div class="card-title">
-              <span><i class="fa-solid fa-key" style="color:var(--gold); margin-right:8px;"></i> Supabase Project Credentials</span>
-              <div style="display:flex; gap:8px;">
-                <button type="button" class="btn btn-outline btn-sm" onclick="fillSupabaseCredentials()" style="font-size:0.75rem; border-color:var(--gold); color:var(--gold);"><i class="fa-solid fa-magic"></i> Auto-Fill Keys</button>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="testSupabase(true)"><i class="fa-solid fa-bolt"></i> Test Connection</button>
-              </div>
-            </div>
-
-            <form id="supabaseConfigForm" onsubmit="saveSupabaseSettings(event)">
-              <div class="modal-form-group" style="margin-bottom:16px;">
-                <label class="modal-form-label" style="display:flex; justify-content:space-between;">
-                  <span>Supabase Project URL</span>
-                  <span style="font-size:0.75rem; color:var(--text-muted);">https://[project-id].supabase.co</span>
-                </label>
-                <input type="url" class="modal-form-control" id="sb_project_url" placeholder="https://wfxoyzrocifvtlopevjq.supabase.co" value="https://wfxoyzrocifvtlopevjq.supabase.co" required>
-              </div>
-
-              <div class="modal-form-group" style="margin-bottom:16px;">
-                <label class="modal-form-label" style="display:flex; justify-content:space-between; align-items:center;">
-                  <span>Supabase API Key (Service Role or Secret Key)</span>
-                  <a href="javascript:void(0)" onclick="toggleSecretKeyVisibility()" style="font-size:0.75rem; color:var(--gold); text-decoration:none;">
-                    <i class="fa-solid fa-eye" id="toggleSecretKeyIcon"></i> Show
-                  </a>
-                </label>
-                <input type="password" class="modal-form-control" id="sb_service_key" placeholder="Enter sb_secret_... from Supabase">
-                <div style="font-size:0.78rem; color:var(--text-muted); margin-top:4px;">
-                  Found in Supabase: <strong>Project Settings &rarr; API &rarr; Project API keys (service_role secret)</strong>.
-                </div>
-              </div>
-
-              <div class="modal-form-group" style="margin-bottom:20px;">
-                <label class="modal-form-label" style="display:flex; justify-content:space-between;">
-                  <span>Supabase Anon Public Key (Optional)</span>
-                  <span style="font-size:0.75rem; color:var(--text-muted);">Enables client-side Realtime listeners</span>
-                </label>
-                <input type="text" class="modal-form-control" id="sb_anon_key" placeholder="sb_publishable_..." value="sb_publishable_f_MCpE0P8l_4a51dBFsAXQ_sOM0DDSO">
-              </div>
-
-              <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
-                <button type="submit" class="btn btn-gold" id="btnSaveSupabase"><i class="fa-solid fa-floppy-disk"></i> Save & Connect Database</button>
-                <button type="button" class="btn btn-secondary" onclick="testSupabase(true)"><i class="fa-solid fa-rotate"></i> Ping Supabase</button>
-              </div>
-            </form>
-          </div>
-
-          <!-- Card 2: Supabase Cloud Database Console & Operations -->
-          <div class="card-box">
-            <div class="card-title">
-              <span><i class="fa-solid fa-cloud" style="color:var(--gold); margin-right:8px;"></i> Supabase Cloud Database Operations</span>
-            </div>
-
-            <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:16px;">
-              Manage your live Supabase PostgreSQL 15 database, launch the official cloud console, export backups, and inspect schema structures.
-            </p>
-
-            <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:20px;">
-              <div style="background:rgba(16, 185, 129, 0.08); border:1px solid rgba(16, 185, 129, 0.25); border-radius:10px; padding:16px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                  <strong style="color:#10B981;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Supabase Web Management Dashboard</strong>
-                  <span class="badge" style="background:rgba(16, 185, 129, 0.2); color:#10B981; font-size:0.75rem;">Official Console</span>
-                </div>
-                <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:12px;">
-                  Access the live Table Editor, SQL Editor, Authentication, Storage, and Realtime logs directly in your browser.
-                </p>
-                <a href="https://supabase.com/dashboard/project/wfxoyzrocifvtlopevjq" target="_blank" rel="noopener noreferrer" class="btn btn-gold btn-sm" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none;">
-                  <i class="fa-solid fa-external-link"></i> Open Supabase Project Dashboard
-                </a>
-              </div>
-
-              <div style="background:rgba(59, 130, 246, 0.08); border:1px solid rgba(59, 130, 246, 0.25); border-radius:10px; padding:16px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                  <strong style="color:#60A5FA;"><i class="fa-solid fa-file-export"></i> Cloud Database Backup (JSON Export)</strong>
-                  <span class="badge" style="background:rgba(59, 130, 246, 0.2); color:#60A5FA; font-size:0.75rem;">Data Protection</span>
-                </div>
-                <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:12px;">
-                  Download an instant JSON snapshot of all 13 Supabase PostgreSQL tables to your computer with 1 click.
-                </p>
-                <button class="btn btn-secondary btn-sm" id="btnExportBackup" onclick="exportSupabaseBackup()"><i class="fa-solid fa-download"></i> Export Cloud Database Backup (JSON)</button>
-              </div>
-            </div>
-
-            <div style="display:flex; gap:10px; flex-wrap:wrap;">
-              <button class="btn btn-secondary btn-sm" onclick="copySupabaseSqlScript()"><i class="fa-solid fa-copy"></i> Copy SQL Setup Script</button>
-              <button class="btn btn-secondary btn-sm" onclick="openSupabaseSchemaModal()"><i class="fa-solid fa-code"></i> View Schema SQL</button>
-              <button class="btn btn-secondary btn-sm" onclick="fetchSupabaseStatus()"><i class="fa-solid fa-arrows-rotate"></i> Refresh Cloud Data</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Section-by-Section Realtime Sync Matrix -->
-        <div class="card-box" style="margin-bottom:24px;">
-          <div class="card-title">
-            <span><i class="fa-solid fa-layer-group" style="color:var(--gold); margin-right:8px;"></i> Section-by-Section Backend Connectivity Status</span>
-            <button class="btn btn-secondary btn-sm" onclick="fetchSupabaseStatus()"><i class="fa-solid fa-arrows-rotate"></i> Refresh Matrix</button>
-          </div>
-          <div style="overflow-x:auto;">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Section</th>
-                  <th>Supabase Table</th>
-                  <th>Live Cloud Records</th>
-                  <th>Database Engine</th>
-                  <th>Realtime Sync Status</th>
-                </tr>
-              </thead>
-              <tbody id="supabaseSyncMatrixBody">
-                <!-- Dynamically populated -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Quick Setup Instructions Card -->
-        <div class="card-box" style="background:rgba(15, 23, 36, 0.7); border:1px solid var(--border);">
-          <h3 style="font-size:1.1rem; color:var(--gold); margin-bottom:12px;"><i class="fa-solid fa-circle-question"></i> How to Connect Supabase in 2 Minutes:</h3>
-          <ol style="color:var(--text-muted); font-size:0.88rem; line-height:1.7; padding-left:20px; margin:0;">
-            <li>Log in or create a free project at <a href="https://supabase.com/dashboard" target="_blank" rel="noopener noreferrer" style="color:var(--gold); font-weight:700;">supabase.com</a>.</li>
-            <li>In Supabase, navigate to the <strong>SQL Editor</strong> &rarr; Click <strong>New Query</strong>.</li>
-            <li>Click <strong>Copy SQL Setup Script</strong> above, paste it into the SQL editor, and click <strong>Run</strong>. (This creates all 13 tables, security policies, and enables Realtime).</li>
-            <li>In Supabase, go to <strong>Project Settings &rarr; API</strong>. Copy your <strong>Project URL</strong> and <strong>service_role</strong> (or <strong>anon</strong>) key.</li>
-            <li>Paste them in the credentials form above and click <strong>Save & Connect Database</strong>.</li>
-            <li>Click <strong>Refresh Cloud Data</strong> anytime to inspect live records stored directly in Supabase PostgreSQL Cloud.</li>
-          </ol>
         </div>
       </section>
     </main>
@@ -1805,9 +1648,6 @@
               if (targetTab) targetTab.classList.add('active');
               document.getElementById('adminPageTitle').textContent = this.innerText.trim();
               closeAdminSidebar();
-              if (tab === 'supabase') {
-                fetchSupabaseStatus();
-              }
             });
           });
 

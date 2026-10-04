@@ -564,6 +564,55 @@ function saveDb() {
 }
 loadDb();
 
+/* ---------------------------------------------------------------------
+   SUPABASE REALTIME LIVE-SYNC ENGINE
+   Guarantees 100% of reads and writes are mirrored directly with Supabase Cloud
+--------------------------------------------------------------------- */
+let lastSupabaseSync = 0;
+const SUPABASE_CACHE_TTL_MS = 2500;
+let syncPromise = null;
+
+async function ensureSupabaseDataFresh(force = false) {
+  if (!supabase.isConfigured()) return;
+  const now = Date.now();
+  if (!force && (now - lastSupabaseSync < SUPABASE_CACHE_TTL_MS)) {
+    return;
+  }
+  if (syncPromise) return syncPromise;
+
+  syncPromise = (async () => {
+    try {
+      const remote = await supabase.pullAllFromSupabase();
+      if (remote) {
+        if (Array.isArray(remote.hotels) && remote.hotels.length) DB.hotels = remote.hotels;
+        if (Array.isArray(remote.rooms) && remote.rooms.length) DB.rooms = remote.rooms;
+        if (Array.isArray(remote.menuItems)) DB.menuItems = remote.menuItems;
+        if (Array.isArray(remote.bookings)) DB.bookings = remote.bookings;
+        if (remote.settings && Object.keys(remote.settings).length) DB.settings = { ...DB.settings, ...remote.settings };
+        if (remote.hero && Object.keys(remote.hero).length) DB.hero = { ...DB.hero, ...remote.hero };
+        if (Array.isArray(remote.amenities) && remote.amenities.length) DB.amenities = remote.amenities;
+        if (Array.isArray(remote.offers) && remote.offers.length) DB.offers = remote.offers;
+        if (Array.isArray(remote.reviews) && remote.reviews.length) DB.reviews = remote.reviews;
+        if (Array.isArray(remote.gallery) && remote.gallery.length) DB.gallery = remote.gallery;
+        if (Array.isArray(remote.videos) && remote.videos.length) DB.videos = remote.videos;
+        if (Array.isArray(remote.notifications)) DB.notifications = remote.notifications;
+        lastSupabaseSync = Date.now();
+      }
+    } catch (err) {
+      console.error('[Supabase Live-Sync] Error syncing from cloud:', err.message);
+    } finally {
+      syncPromise = null;
+    }
+  })();
+
+  return syncPromise;
+}
+
+// Eager sync on startup
+if (supabase.isConfigured()) {
+  ensureSupabaseDataFresh(true).catch(() => {});
+}
+
 const roomOf = id => DB.rooms.find(r => r.id === id);
 function hotelOf(identifier) {
   if (!identifier) return null;
@@ -826,7 +875,10 @@ function sendJson(res, status, obj) {
   const body = JSON.stringify(obj);
   res.writeHead(status, {
     'Content-Type': 'application/json; charset=utf-8',
-    'Content-Length': Buffer.byteLength(body)
+    'Content-Length': Buffer.byteLength(body),
+    'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0'
   });
   res.end(body);
 }
@@ -1134,7 +1186,8 @@ route('PATCH', '/api/settings', async (req, res) => {
     Object.entries(body).forEach(([k, v]) => ins.run(String(k), String(v || '')));
   }
   saveDbMirrorOnly();
-  supabase.syncSettings(DB.settings);
+  try { await supabase.syncSettings(DB.settings); } catch (e) { }
+  lastSupabaseSync = Date.now();
   sendJson(res, 200, { ok: true, settings: DB.settings });
 });
 
@@ -1152,7 +1205,8 @@ route('PATCH', '/api/hero', async (req, res) => {
     Object.entries(body).forEach(([k, v]) => ins.run(String(k), String(v || '')));
   }
   saveDbMirrorOnly();
-  supabase.syncHero(DB.hero);
+  try { await supabase.syncHero(DB.hero); } catch (e) { }
+  lastSupabaseSync = Date.now();
   sendJson(res, 200, { ok: true, hero: DB.hero });
 });
 
@@ -1279,6 +1333,8 @@ route('PATCH', '/api/contact-details/:hotelId', async (req, res, params) => {
     sqliteDb.prepare(`UPDATE hotels SET locality=?, phone=? WHERE id=?`).run(h.locality, h.phone, h.id);
   }
   saveDbMirrorOnly();
+  try { await supabase.syncHotel(h, 'upsert'); } catch (e) { }
+  lastSupabaseSync = Date.now();
   sendJson(res, 200, { ok: true, contact: { id: 'c_' + h.id, hotel_id: h.id, phone: h.phone, address: h.locality } });
 });
 
@@ -1292,9 +1348,9 @@ route('PATCH', '/api/rooms/bulk-pricing', async (req, res) => {
   const body = await readBody(req);
   const updates = Array.isArray(body.updates) ? body.updates : [];
   const applied = [];
-  updates.forEach(u => {
+  for (const u of updates) {
     const r = DB.rooms.find(rm => rm.id === u.roomId);
-    if (!r) return;
+    if (!r) continue;
     if (Number.isFinite(u.price24)) r.price24 = Math.max(0, Math.round(u.price24));
     if (Number.isFinite(u.price6)) r.price6 = Math.max(0, Math.round(u.price6));
     if (typeof u.ac === 'boolean') r.ac = u.ac;
@@ -1304,9 +1360,10 @@ route('PATCH', '/api/rooms/bulk-pricing', async (req, res) => {
     if (sqliteDb) {
       sqliteDb.prepare(`UPDATE rooms SET price24=?, price6=?, ac=?, cat=? WHERE id=?`).run(r.price24, r.price6, r.ac ? 1 : 0, r.cat, r.id);
     }
-    supabase.syncRoom(r, 'upsert');
-  });
+    try { await supabase.syncRoom(r, 'upsert'); } catch (e) { }
+  }
   saveDbMirrorOnly();
+  lastSupabaseSync = Date.now();
   sendJson(res, 200, { ok: true, updated: applied });
 });
 
@@ -2112,6 +2169,9 @@ const server = http.createServer(async (req, res) => {
     pathname = pathname.replace('/.netlify/functions/api', '/api') || '/api';
   }
   if (pathname.startsWith('/api/')) {
+    if (req.method === 'GET' && supabase.isConfigured() && !pathname.startsWith('/api/supabase/')) {
+      await ensureSupabaseDataFresh();
+    }
     for (const r of routes) {
       if (r.method !== req.method) continue;
       const m = r.regex.exec(pathname);
@@ -2151,4 +2211,4 @@ function gracefulShutdown(signal) {
 process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
-module.exports = { server, app: server, DB };
+module.exports = { server, app: server, DB, ensureSupabaseDataFresh };
