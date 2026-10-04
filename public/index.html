@@ -714,6 +714,7 @@
       transition: all 0.4s ease;
       display: flex;
       flex-direction: column;
+      min-width: 0;
     }
     .room-card:hover {
       transform: translateY(-8px);
@@ -1138,13 +1139,170 @@
       .booking-bar-grid { grid-template-columns: 1fr !important; gap: 16px; }
       .about-grid, .contact-grid, .footer-grid, .dining-grid { grid-template-columns: 1fr !important; gap: 36px; }
       .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
-      .hotels-grid, .rooms-grid, .amenities-grid, .offers-grid, .reviews-grid { grid-template-columns: 1fr !important; }
+      .hotels-grid, .amenities-grid, .offers-grid, .reviews-grid { grid-template-columns: 1fr !important; }
+      .rooms-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 20px; }
       .gallery-grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !important; }
       .modal-window { max-width: 94vw !important; width: 100% !important; padding: 24px 18px !important; max-height: 90vh; }
     }
 
+    /* TABLET & MOBILE ROOM LISTING (<= 768px) */
+    @media (max-width: 768px) {
+      .rooms-section { padding: 60px 0; }
+      .rooms-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px;
+      }
+      .room-card {
+        border-radius: 14px;
+        min-width: 0;
+      }
+      .room-card:hover {
+        transform: none;
+        box-shadow: var(--shadow-md);
+        border-color: var(--border-light);
+      }
+      .room-thumb {
+        height: 125px;
+      }
+      .room-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .room-card:hover .room-thumb img {
+        transform: none;
+      }
+      .room-badges {
+        top: 8px; left: 8px;
+        gap: 4px;
+        flex-wrap: wrap;
+        max-width: calc(100% - 16px);
+      }
+      .room-badge {
+        padding: 3px 8px;
+        font-size: 0.65rem;
+        border-radius: 4px;
+        line-height: 1.2;
+      }
+      .room-body {
+        padding: 12px 10px 14px;
+        min-width: 0;
+      }
+      .room-hotel-name {
+        font-size: 0.68rem;
+        margin-bottom: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+      }
+      .room-title {
+        font-size: 0.95rem;
+        margin-bottom: 6px;
+        line-height: 1.25;
+        word-break: break-word;
+      }
+      .room-specs {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        font-size: 0.72rem;
+        color: var(--slate-500);
+        margin-bottom: 8px;
+      }
+      .room-specs span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .room-specs i {
+        font-size: 0.7rem;
+      }
+      .room-amenities-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-bottom: 10px;
+        max-height: 42px;
+        overflow: hidden;
+      }
+      .amenity-chip {
+        font-size: 0.65rem;
+        padding: 2px 6px;
+        border-radius: 3px;
+        line-height: 1.2;
+        white-space: nowrap;
+      }
+      .room-price-box {
+        margin-top: auto;
+        padding-top: 8px;
+        border-top: 1px dashed #E2E8F0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        align-items: stretch;
+      }
+      .price-24h {
+        font-size: 1.05rem;
+        line-height: 1.1;
+      }
+      .price-24h span {
+        font-size: 0.65rem;
+      }
+      .price-6h {
+        font-size: 0.68rem;
+        padding: 2px 6px;
+        display: inline-block;
+        margin-top: 2px;
+      }
+      .room-price-box .btn {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 7px 8px !important;
+        font-size: 0.78rem !important;
+        line-height: 1.2 !important;
+        border-radius: 6px !important;
+        min-height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+
+      /* COMPACT CATEGORY PILL NAVIGATION */
+      .filter-tabs {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        justify-content: flex-start;
+        gap: 8px;
+        padding: 4px 4px 12px;
+        margin-bottom: 24px;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        max-width: 100%;
+      }
+      .filter-tabs::-webkit-scrollbar {
+        display: none;
+      }
+      .filter-btn {
+        flex: 0 0 auto;
+        white-space: nowrap;
+        padding: 8px 16px;
+        font-size: 0.8rem;
+        border-radius: var(--radius-full);
+        width: auto !important;
+        text-align: center;
+      }
+    }
+
+    /* COMPACT 2-COLUMN ROOM GRID FOR MOBILE PHONES (<= 480px) */
     @media (max-width: 480px) {
-      .container { padding: 0 16px; }
+      .container { padding: 0 10px; }
       .brand-title { font-size: 1.05rem; }
       .brand-subtitle { font-size: 0.6rem; }
       .brand-logo img { height: 40px; }
@@ -1152,9 +1310,162 @@
       .btn-sm { width: auto; }
       .hero-btns { flex-direction: column; width: 100%; }
       .hero-btns .btn { width: 100%; }
-      .section-title { font-size: 1.7rem; }
-      .filter-tabs { flex-direction: column; align-items: stretch; }
-      .filter-btn { text-align: center; width: 100%; }
+      .section-title { font-size: 1.6rem; }
+
+      .rooms-section { padding: 44px 0; }
+      .rooms-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 8px;
+      }
+      .room-card {
+        border-radius: 12px;
+        min-width: 0;
+      }
+      .room-thumb {
+        height: 110px;
+      }
+      .room-badges {
+        top: 6px;
+        left: 6px;
+        gap: 3px;
+        max-width: calc(100% - 12px);
+      }
+      .room-badge {
+        padding: 2px 5px;
+        font-size: 0.6rem;
+        border-radius: 3px;
+      }
+      .room-body {
+        padding: 8px 8px 10px;
+        min-width: 0;
+      }
+      .room-hotel-name {
+        font-size: 0.62rem;
+        margin-bottom: 2px;
+        letter-spacing: 0.02em;
+      }
+      .room-title {
+        font-size: 0.82rem;
+        margin-bottom: 4px;
+        line-height: 1.2;
+      }
+      .room-specs {
+        gap: 2px;
+        font-size: 0.65rem;
+        margin-bottom: 6px;
+      }
+      .room-specs span {
+        gap: 3px;
+      }
+      .room-specs i {
+        font-size: 0.62rem;
+      }
+      .room-amenities-chips {
+        gap: 3px;
+        margin-bottom: 6px;
+        max-height: 36px;
+        overflow: hidden;
+      }
+      .amenity-chip {
+        font-size: 0.58rem;
+        padding: 1px 4px;
+        border-radius: 3px;
+      }
+      .room-price-box {
+        padding-top: 6px;
+        gap: 5px;
+      }
+      .price-24h {
+        font-size: 0.96rem;
+      }
+      .price-24h span {
+        font-size: 0.58rem;
+      }
+      .price-6h {
+        font-size: 0.62rem;
+        padding: 1px 4px;
+        margin-top: 1px;
+      }
+      .room-price-box .btn {
+        width: 100% !important;
+        padding: 6px 6px !important;
+        font-size: 0.74rem !important;
+        min-height: 29px;
+        border-radius: 5px;
+      }
+
+      /* MOBILE HORIZONTAL SCROLLABLE CATEGORY NAVIGATION */
+      .filter-tabs {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        justify-content: flex-start !important;
+        gap: 6px !important;
+        padding: 2px 2px 10px !important;
+        margin-bottom: 20px !important;
+        scrollbar-width: none !important;
+        -ms-overflow-style: none !important;
+        max-width: 100% !important;
+      }
+      .filter-tabs::-webkit-scrollbar {
+        display: none !important;
+      }
+      .filter-btn {
+        flex: 0 0 auto !important;
+        width: auto !important;
+        white-space: nowrap !important;
+        padding: 6px 13px !important;
+        font-size: 0.76rem !important;
+        text-align: center !important;
+        border-radius: var(--radius-full) !important;
+      }
+    }
+
+    /* ULTRA-COMPACT 2-COLUMN ROOM GRID FOR VERY SMALL MOBILE SCREENS (<= 360px) */
+    @media (max-width: 360px) {
+      .container { padding: 0 8px; }
+      .rooms-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 6px;
+      }
+      .room-thumb {
+        height: 100px;
+      }
+      .room-body {
+        padding: 6px 6px 8px;
+      }
+      .room-hotel-name {
+        font-size: 0.58rem;
+      }
+      .room-title {
+        font-size: 0.76rem;
+        margin-bottom: 3px;
+      }
+      .room-specs {
+        font-size: 0.62rem;
+        gap: 1px;
+        margin-bottom: 4px;
+      }
+      .price-24h {
+        font-size: 0.88rem;
+      }
+      .price-24h span {
+        font-size: 0.54rem;
+      }
+      .price-6h {
+        font-size: 0.58rem;
+      }
+      .room-price-box .btn {
+        padding: 5px 4px !important;
+        font-size: 0.7rem !important;
+        min-height: 27px;
+      }
+      .filter-btn {
+        padding: 5px 10px !important;
+        font-size: 0.72rem !important;
+      }
     }
   </style>
 </head>
@@ -1256,7 +1567,6 @@
             <option value="Single">Single Room (1 Guest)</option>
             <option value="Couple">Couple Room (2 Guests)</option>
             <option value="Family">Family Suite (4 Guests)</option>
-            <option value="Suite">Royal Suite (4+ Guests)</option>
           </select>
         </div>
 
@@ -1339,7 +1649,7 @@
   <section class="rooms-section" id="rooms">
     <div class="container text-center reveal">
       <span class="eyebrow">Luxury Accommodation</span>
-      <h2 class="section-title">Executive Rooms & Royal Suites</h2>
+      <h2 class="section-title">Executive Rooms & Family Suites</h2>
       <p class="section-desc">Air-conditioned comfort with high-speed Wi-Fi, smart TVs, and 24/7 room dining.</p>
 
       <div class="filter-tabs" id="roomCategoryTabs">
@@ -1347,7 +1657,6 @@
         <button class="filter-btn" data-cat="Single">Single Rooms</button>
         <button class="filter-btn" data-cat="Couple">Couple Rooms</button>
         <button class="filter-btn" data-cat="Family">Family Suites</button>
-        <button class="filter-btn" data-cat="Suite">Royal Suites</button>
       </div>
     </div>
 
@@ -1885,13 +2194,13 @@
 
       list.forEach(r => {
         const hotel = APP_STATE.hotels.find(h => h.id === r.hotel) || {};
-        const photo = r.photo || (r.cat === 'Suite' ? '/images/room-suite.jpg' : '/images/hero-bg.jpg');
+        const photo = r.photo || ((r.cat === 'Family' || r.cat === 'Suite') ? '/images/room-suite.jpg' : '/images/hero-bg.jpg');
         
         const card = document.createElement('div');
         card.className = 'room-card reveal active';
         card.innerHTML = `
           <div class="room-thumb">
-            <img src="${photo}" alt="Room ${r.num}">
+            <img src="${photo}" alt="Room ${r.num}" onerror="this.src='/images/hero-bg.jpg'">
             <div class="room-badges">
               <span class="room-badge">${r.ac ? 'AC Room' : 'Non-AC'}</span>
               <span class="room-badge room-badge-gold">${r.cat}</span>

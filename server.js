@@ -61,12 +61,12 @@ const SEED_ROOMS_RAW = [
   ['sv2', '302', 3, false, 'Family', 2100, 1250, 4, '2 Double Beds', 'Wi-Fi, TV'],
   ['sv2', '303', 3, true, 'Family', 2900, 1750, 4, '2 King Beds', 'Wi-Fi, AC, Smart TV'],
   ['sv2', '304', 3, true, 'Couple', 2100, 1250, 2, 'King Bed', 'Wi-Fi, AC, Smart TV'],
-  ['sv2', '305', 3, true, 'Suite', 3800, 2300, 4, 'Royal Suite Bed', 'Wi-Fi, AC, Smart TV, Lounge'],
+  ['sv2', '305', 3, true, 'Family', 3800, 2300, 4, 'Royal Suite Bed', 'Wi-Fi, AC, Smart TV, Lounge'],
   ['sv2', '401', 4, true, 'Family', 2900, 1750, 4, '2 King Beds', 'Wi-Fi, AC, Smart TV'],
   ['sv2', '402', 4, false, 'Couple', 1450, 850, 2, 'Queen Bed', 'Wi-Fi, TV'],
   ['sv2', '403', 4, true, 'Couple', 2100, 1250, 2, 'King Bed', 'Wi-Fi, AC, Smart TV'],
-  ['sv2', '404', 4, true, 'Suite', 3800, 2300, 4, 'Royal Suite Bed', 'Wi-Fi, AC, Smart TV, Lounge'],
-  ['sv2', '405', 4, true, 'Suite', 3800, 2300, 4, 'Royal Suite Bed', 'Wi-Fi, AC, Smart TV, Lounge'],
+  ['sv2', '404', 4, true, 'Family', 3800, 2300, 4, 'Royal Suite Bed', 'Wi-Fi, AC, Smart TV, Lounge'],
+  ['sv2', '405', 4, true, 'Family', 3800, 2300, 4, 'Royal Suite Bed', 'Wi-Fi, AC, Smart TV, Lounge'],
   
   ['sv3', '301', 1, false, 'Single', 1100, 650, 1, 'Single Bed', 'Wi-Fi, TV'],
   ['sv3', '302', 1, false, 'Single', 1100, 650, 1, 'Single Bed', 'Wi-Fi, TV'],
@@ -77,7 +77,7 @@ const SEED_ROOMS_RAW = [
   ['sv3', '402', 2, true, 'Family', 2900, 1750, 4, '2 King Beds', 'Wi-Fi, AC, Smart TV'],
   ['sv3', '403', 2, true, 'Family', 2900, 1750, 4, '2 King Beds', 'Wi-Fi, AC, Smart TV'],
   ['sv3', '404', 2, false, 'Couple', 1450, 850, 2, 'Queen Bed', 'Wi-Fi, TV'],
-  ['sv3', '405', 2, true, 'Suite', 3800, 2300, 4, 'Royal Suite Bed', 'Wi-Fi, AC, Smart TV']
+  ['sv3', '405', 2, true, 'Family', 3800, 2300, 4, 'Royal Suite Bed', 'Wi-Fi, AC, Smart TV']
 ];
 
 const SEED_ROOMS = SEED_ROOMS_RAW.map(([hotel, num, floor, ac, cat, price24, price6, maxGuests, bedType, amenities]) => ({
@@ -85,7 +85,7 @@ const SEED_ROOMS = SEED_ROOMS_RAW.map(([hotel, num, floor, ac, cat, price24, pri
   hotel, num, floor,
   ac: Boolean(ac),
   cat, price24, price6,
-  photo: cat === 'Suite' ? '/images/room-suite.jpg' : null,
+  photo: (cat === 'Family' || cat === 'Suite') ? '/images/room-suite.jpg' : null,
   maxGuests: maxGuests || 2,
   bedType: bedType || 'King Bed',
   amenities: amenities || 'Wi-Fi, AC, TV, Room Service',

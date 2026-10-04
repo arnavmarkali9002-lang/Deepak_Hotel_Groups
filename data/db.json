@@ -4,113 +4,41 @@
     {
       "id": "sv1",
       "name": "Hotel Sai View",
-      "tag": "The Original Luxury Wing",
+      "tag": "The Original",
       "locality": "Vivekanand nagar, Nagar, Manmad Rd, near S T Bus stand, near Holiday Park, Sai Nagar, Shirdi, Maharashtra 423109",
       "phone": "+91 98514 15415",
       "accent": "#E8A33D",
       "image": "/images/hotel-sai-view.jpg",
-      "desc": "Our flagship luxury property featuring 10 executive rooms, 24/7 dining, and panoramic temple views.",
+      "desc": "Our flagship property with 10 rooms across single, couple, family and suite categories.",
       "exact_location": "hotel sai view ,Vivekanand nagar, Nagar, Manmad Rd, near S T Bus stand, near Holiday Park, Sai Nagar, Shirdi, Maharashtra 423109 QF6H+93 Shirdi, Maharashtra",
       "map_url": "https://www.google.com/maps/search/?api=1&query=hotel%20sai%20view%20%2CVivekanand%20nagar%2C%20Nagar%2C%20Manmad%20Rd%2C%20near%20S%20T%20Bus%20stand%2C%20near%20Holiday%20Park%2C%20Sai%20Nagar%2C%20Shirdi%2C%20Maharashtra%20423109%20QF6H%2B93%20Shirdi%2C%20Maharashtra"
     },
     {
       "id": "sv2",
       "name": "Hotel Sai Santosh",
-      "tag": "The Grand Family Wing",
+      "tag": "The Family Wing",
       "locality": "QF6H+WH7 city market, road gaikwad chowk, near addarsha school, Shirdi, Maharashtra 423109",
       "phone": "+91 83293 21838",
       "accent": "#2F6E62",
       "image": "/images/hotel-sai-santosh.jpg",
-      "desc": "A serene sanctuary popular with families, 20 spacious suites with private courtyard and ample parking.",
+      "desc": "A quieter property popular with families, 20 rooms with a bigger courtyard and parking.",
       "exact_location": "hotel sai santosh, QF6H+WH7 city market, road gaikwad chowk, near addarsha school, Shirdi, Maharashtra 423109",
       "map_url": "https://www.google.com/maps/search/?api=1&query=hotel%20sai%20santosh%2C%20QF6H%2BWH7%20city%20market%2C%20road%20gaikwad%20chowk%2C%20near%20addarsha%20school%2C%20Shirdi%2C%20Maharashtra%20423109"
     },
     {
       "id": "sv3",
       "name": "Hotel Om Sai",
-      "tag": "The Highway Express Stop",
+      "tag": "The Highway Stop",
       "locality": "Vivekanand Nagar, Nagar, Manmad Rd, Sai Nagar, Shirdi, Maharashtra 423109 QF6G+9W Shirdi, Maharashtra",
       "phone": "+91 90227 51848",
       "accent": "#7C2D2D",
       "image": "/images/hotel-om-sai.jpg",
-      "desc": "Modern high-comfort express hotel for travellers, 10 rooms with instant 6-hour & 24-hour check-in.",
+      "desc": "Convenient for travellers passing through, 10 rooms with easy parking and quick check-in.",
       "exact_location": "hotel om sai, Vivekanand Nagar, Nagar, Manmad Rd, Sai Nagar, Shirdi, Maharashtra 423109 QF6G+9W Shirdi, Maharashtra",
       "map_url": "https://www.google.com/maps/search/?api=1&query=hotel%20om%20sai%2C%20Vivekanand%20Nagar%2C%20Nagar%2C%20Manmad%20Rd%2C%20Sai%20Nagar%2C%20Shirdi%2C%20Maharashtra%20423109%20QF6G%2B9W%20Shirdi%2C%20Maharashtra"
     }
   ],
   "rooms": [
-    {
-      "id": "sv1-1111",
-      "hotel": "sv1",
-      "num": "1111",
-      "floor": 1,
-      "ac": true,
-      "cat": "Executive",
-      "price24": 2200,
-      "price6": 1300,
-      "photo": null,
-      "maxGuests": 2,
-      "bedType": "King Bed",
-      "amenities": "Wi-Fi, AC, Smart TV, Room Service",
-      "status": "available",
-      "desc": "",
-      "video_url": "",
-      "discount_price": 0
-    },
-    {
-      "id": "sv1-101",
-      "hotel": "sv1",
-      "num": "101",
-      "floor": 1,
-      "ac": false,
-      "cat": "Single",
-      "price24": 1200,
-      "price6": 700,
-      "photo": null,
-      "maxGuests": 1,
-      "bedType": "Single Bed",
-      "amenities": "Wi-Fi, TV, Hot Water",
-      "status": "available",
-      "desc": "",
-      "video_url": "",
-      "discount_price": 0
-    },
-    {
-      "id": "sv1-102",
-      "hotel": "sv1",
-      "num": "102",
-      "floor": 1,
-      "ac": false,
-      "cat": "Single",
-      "price24": 1200,
-      "price6": 700,
-      "photo": null,
-      "maxGuests": 1,
-      "bedType": "Single Bed",
-      "amenities": "Wi-Fi, TV, Hot Water",
-      "status": "available",
-      "desc": "",
-      "video_url": "",
-      "discount_price": 0
-    },
-    {
-      "id": "sv1-103",
-      "hotel": "sv1",
-      "num": "103",
-      "floor": 1,
-      "ac": true,
-      "cat": "Single",
-      "price24": 1800,
-      "price6": 1000,
-      "photo": null,
-      "maxGuests": 1,
-      "bedType": "Single Bed",
-      "amenities": "Wi-Fi, AC, TV, Room Service",
-      "status": "available",
-      "desc": "",
-      "video_url": "",
-      "discount_price": 0
-    },
     {
       "id": "sv1-104",
       "hotel": "sv1",
@@ -122,8 +50,26 @@
       "price6": 900,
       "photo": null,
       "maxGuests": 2,
-      "bedType": "Queen Bed",
-      "amenities": "Wi-Fi, TV, Housekeeping",
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
+      "status": "available",
+      "desc": "",
+      "video_url": "",
+      "discount_price": 0
+    },
+    {
+      "id": "sv1-105",
+      "hotel": "sv1",
+      "num": "105",
+      "floor": 1,
+      "ac": true,
+      "cat": "Couple",
+      "price24": 2200,
+      "price6": 1300,
+      "photo": null,
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
       "status": "available",
       "desc": "",
       "video_url": "",
@@ -140,8 +86,8 @@
       "price6": 900,
       "photo": null,
       "maxGuests": 2,
-      "bedType": "Queen Bed",
-      "amenities": "Wi-Fi, TV, Hot Water",
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
       "status": "available",
       "desc": "",
       "video_url": "",
@@ -159,7 +105,25 @@
       "photo": null,
       "maxGuests": 2,
       "bedType": "King Bed",
-      "amenities": "Wi-Fi, AC, Smart TV, Room Service",
+      "amenities": "Wi-Fi, AC, TV",
+      "status": "available",
+      "desc": "",
+      "video_url": "",
+      "discount_price": 0
+    },
+    {
+      "id": "sv1-203",
+      "hotel": "sv1",
+      "num": "203",
+      "floor": 2,
+      "ac": false,
+      "cat": "Family",
+      "price24": 2200,
+      "price6": 1300,
+      "photo": null,
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
       "status": "available",
       "desc": "",
       "video_url": "",
@@ -175,9 +139,9 @@
       "price24": 3000,
       "price6": 1800,
       "photo": null,
-      "maxGuests": 4,
-      "bedType": "2 King Beds",
-      "amenities": "Wi-Fi, AC, Smart TV, Courtyard View",
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
       "status": "available",
       "desc": "",
       "video_url": "",
@@ -189,13 +153,13 @@
       "num": "205",
       "floor": 2,
       "ac": true,
-      "cat": "Suite",
-      "price24": 3800,
-      "price6": 2300,
-      "photo": "/images/room-suite.jpg",
-      "maxGuests": 4,
-      "bedType": "Royal King Bed",
-      "amenities": "Wi-Fi, Premium AC, Smart TV, Mini Bar, Room Service",
+      "cat": "Family",
+      "price24": 3000,
+      "price6": 1800,
+      "photo": null,
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
       "status": "available",
       "desc": "",
       "video_url": "",
@@ -211,9 +175,9 @@
       "price24": 1100,
       "price6": 650,
       "photo": null,
-      "maxGuests": 1,
-      "bedType": "Single Bed",
-      "amenities": "Wi-Fi, TV",
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
       "status": "available",
       "desc": "",
       "video_url": "",
@@ -229,8 +193,8 @@
       "price24": 1700,
       "price6": 950,
       "photo": null,
-      "maxGuests": 1,
-      "bedType": "Single Bed",
+      "maxGuests": 2,
+      "bedType": "King Bed",
       "amenities": "Wi-Fi, AC, TV",
       "status": "available",
       "desc": "",
@@ -248,8 +212,8 @@
       "price6": 850,
       "photo": null,
       "maxGuests": 2,
-      "bedType": "Queen Bed",
-      "amenities": "Wi-Fi, TV",
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
       "status": "available",
       "desc": "",
       "video_url": "",
@@ -267,7 +231,7 @@
       "photo": null,
       "maxGuests": 2,
       "bedType": "King Bed",
-      "amenities": "Wi-Fi, AC, Smart TV",
+      "amenities": "Wi-Fi, AC, TV",
       "status": "available",
       "desc": "",
       "video_url": "",
@@ -283,9 +247,9 @@
       "price24": 2100,
       "price6": 1250,
       "photo": null,
-      "maxGuests": 4,
-      "bedType": "2 Double Beds",
-      "amenities": "Wi-Fi, TV",
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
       "status": "available",
       "desc": "",
       "video_url": "",
@@ -301,9 +265,9 @@
       "price24": 1100,
       "price6": 650,
       "photo": null,
-      "maxGuests": 1,
-      "bedType": "Single Bed",
-      "amenities": "Wi-Fi, TV",
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
       "status": "available",
       "desc": "",
       "video_url": "",
@@ -319,8 +283,8 @@
       "price24": 1700,
       "price6": 950,
       "photo": null,
-      "maxGuests": 1,
-      "bedType": "Single Bed",
+      "maxGuests": 2,
+      "bedType": "King Bed",
       "amenities": "Wi-Fi, AC, TV",
       "status": "available",
       "desc": "",
@@ -338,8 +302,8 @@
       "price6": 850,
       "photo": null,
       "maxGuests": 2,
-      "bedType": "Queen Bed",
-      "amenities": "Wi-Fi, TV",
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
       "status": "available",
       "desc": "",
       "video_url": "",
@@ -357,7 +321,7 @@
       "photo": null,
       "maxGuests": 2,
       "bedType": "King Bed",
-      "amenities": "Wi-Fi, AC, Smart TV",
+      "amenities": "Wi-Fi, AC, TV",
       "status": "available",
       "desc": "",
       "video_url": "",
@@ -374,8 +338,8 @@
       "price6": 850,
       "photo": null,
       "maxGuests": 2,
-      "bedType": "Queen Bed",
-      "amenities": "Wi-Fi, TV",
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
       "status": "available",
       "desc": "",
       "video_url": "",
@@ -391,9 +355,9 @@
       "price24": 2900,
       "price6": 1750,
       "photo": null,
-      "maxGuests": 4,
-      "bedType": "2 King Beds",
-      "amenities": "Wi-Fi, AC, Smart TV",
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
       "status": "available",
       "desc": "",
       "video_url": "",
@@ -409,27 +373,333 @@
       "price24": 2100,
       "price6": 1250,
       "photo": null,
-      "maxGuests": 4,
-      "bedType": "2 Double Beds",
-      "amenities": "Wi-Fi, TV",
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
       "status": "available",
       "desc": "",
       "video_url": "",
       "discount_price": 0
     },
     {
-      "id": "sv1-4444",
-      "hotel": "sv1",
-      "num": "4444",
-      "floor": 1,
+      "id": "sv2-303",
+      "hotel": "sv2",
+      "num": "303",
+      "floor": 3,
       "ac": true,
-      "cat": "Executive",
-      "price24": 2200,
-      "price6": 1300,
+      "cat": "Family",
+      "price24": 2900,
+      "price6": 1750,
       "photo": null,
       "maxGuests": 2,
       "bedType": "King Bed",
-      "amenities": "Wi-Fi, AC, Smart TV, Room Service",
+      "amenities": "Wi-Fi, AC, TV",
+      "status": "available",
+      "desc": "",
+      "video_url": "",
+      "discount_price": 0
+    },
+    {
+      "id": "sv2-304",
+      "hotel": "sv2",
+      "num": "304",
+      "floor": 3,
+      "ac": true,
+      "cat": "Couple",
+      "price24": 2100,
+      "price6": 1250,
+      "photo": null,
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
+      "status": "available",
+      "desc": "",
+      "video_url": "",
+      "discount_price": 0
+    },
+    {
+      "id": "sv2-305",
+      "hotel": "sv2",
+      "num": "305",
+      "floor": 3,
+      "ac": true,
+      "cat": "Family",
+      "price24": 3800,
+      "price6": 2300,
+      "photo": null,
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
+      "status": "available",
+      "desc": "",
+      "video_url": "",
+      "discount_price": 0
+    },
+    {
+      "id": "sv2-401",
+      "hotel": "sv2",
+      "num": "401",
+      "floor": 4,
+      "ac": true,
+      "cat": "Family",
+      "price24": 2900,
+      "price6": 1750,
+      "photo": null,
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
+      "status": "available",
+      "desc": "",
+      "video_url": "",
+      "discount_price": 0
+    },
+    {
+      "id": "sv2-402",
+      "hotel": "sv2",
+      "num": "402",
+      "floor": 4,
+      "ac": false,
+      "cat": "Couple",
+      "price24": 1450,
+      "price6": 850,
+      "photo": null,
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
+      "status": "available",
+      "desc": "",
+      "video_url": "",
+      "discount_price": 0
+    },
+    {
+      "id": "sv2-403",
+      "hotel": "sv2",
+      "num": "403",
+      "floor": 4,
+      "ac": true,
+      "cat": "Couple",
+      "price24": 2100,
+      "price6": 1250,
+      "photo": null,
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
+      "status": "available",
+      "desc": "",
+      "video_url": "",
+      "discount_price": 0
+    },
+    {
+      "id": "sv2-404",
+      "hotel": "sv2",
+      "num": "404",
+      "floor": 4,
+      "ac": true,
+      "cat": "Family",
+      "price24": 3800,
+      "price6": 2300,
+      "photo": null,
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
+      "status": "available",
+      "desc": "",
+      "video_url": "",
+      "discount_price": 0
+    },
+    {
+      "id": "sv2-405",
+      "hotel": "sv2",
+      "num": "405",
+      "floor": 4,
+      "ac": true,
+      "cat": "Family",
+      "price24": 3800,
+      "price6": 2300,
+      "photo": null,
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
+      "status": "available",
+      "desc": "",
+      "video_url": "",
+      "discount_price": 0
+    },
+    {
+      "id": "sv3-301",
+      "hotel": "sv3",
+      "num": "301",
+      "floor": 1,
+      "ac": false,
+      "cat": "Single",
+      "price24": 1100,
+      "price6": 650,
+      "photo": null,
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
+      "status": "available",
+      "desc": "",
+      "video_url": "",
+      "discount_price": 0
+    },
+    {
+      "id": "sv3-302",
+      "hotel": "sv3",
+      "num": "302",
+      "floor": 1,
+      "ac": false,
+      "cat": "Single",
+      "price24": 1100,
+      "price6": 650,
+      "photo": null,
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
+      "status": "available",
+      "desc": "",
+      "video_url": "",
+      "discount_price": 0
+    },
+    {
+      "id": "sv3-303",
+      "hotel": "sv3",
+      "num": "303",
+      "floor": 1,
+      "ac": true,
+      "cat": "Couple",
+      "price24": 2100,
+      "price6": 1250,
+      "photo": null,
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
+      "status": "available",
+      "desc": "",
+      "video_url": "",
+      "discount_price": 0
+    },
+    {
+      "id": "sv3-304",
+      "hotel": "sv3",
+      "num": "304",
+      "floor": 1,
+      "ac": false,
+      "cat": "Couple",
+      "price24": 1450,
+      "price6": 850,
+      "photo": null,
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
+      "status": "available",
+      "desc": "",
+      "video_url": "",
+      "discount_price": 0
+    },
+    {
+      "id": "sv3-305",
+      "hotel": "sv3",
+      "num": "305",
+      "floor": 1,
+      "ac": true,
+      "cat": "Couple",
+      "price24": 2100,
+      "price6": 1250,
+      "photo": null,
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
+      "status": "available",
+      "desc": "",
+      "video_url": "",
+      "discount_price": 0
+    },
+    {
+      "id": "sv3-401",
+      "hotel": "sv3",
+      "num": "401",
+      "floor": 2,
+      "ac": false,
+      "cat": "Family",
+      "price24": 2100,
+      "price6": 1250,
+      "photo": null,
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
+      "status": "available",
+      "desc": "",
+      "video_url": "",
+      "discount_price": 0
+    },
+    {
+      "id": "sv3-402",
+      "hotel": "sv3",
+      "num": "402",
+      "floor": 2,
+      "ac": true,
+      "cat": "Family",
+      "price24": 2900,
+      "price6": 1750,
+      "photo": null,
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
+      "status": "available",
+      "desc": "",
+      "video_url": "",
+      "discount_price": 0
+    },
+    {
+      "id": "sv3-403",
+      "hotel": "sv3",
+      "num": "403",
+      "floor": 2,
+      "ac": true,
+      "cat": "Family",
+      "price24": 2900,
+      "price6": 1750,
+      "photo": null,
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
+      "status": "available",
+      "desc": "",
+      "video_url": "",
+      "discount_price": 0
+    },
+    {
+      "id": "sv3-404",
+      "hotel": "sv3",
+      "num": "404",
+      "floor": 2,
+      "ac": false,
+      "cat": "Couple",
+      "price24": 1450,
+      "price6": 850,
+      "photo": null,
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
+      "status": "available",
+      "desc": "",
+      "video_url": "",
+      "discount_price": 0
+    },
+    {
+      "id": "sv3-405",
+      "hotel": "sv3",
+      "num": "405",
+      "floor": 2,
+      "ac": true,
+      "cat": "Family",
+      "price24": 3800,
+      "price6": 2300,
+      "photo": null,
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
       "status": "available",
       "desc": "",
       "video_url": "",
@@ -470,84 +740,14 @@
       "desc": "",
       "video_url": "",
       "discount_price": 0
-    },
-    {
-      "id": "sv2-303",
-      "hotel": "sv2",
-      "num": "303",
-      "floor": 3,
-      "ac": true,
-      "cat": "Family",
-      "price24": 2900,
-      "price6": 1750,
-      "photo": null,
-      "maxGuests": 4,
-      "bedType": "2 King Beds",
-      "amenities": "Wi-Fi, AC, Smart TV",
-      "status": "available",
-      "desc": "",
-      "video_url": "",
-      "discount_price": 0
-    },
-    {
-      "id": "sv2-304",
-      "hotel": "sv2",
-      "num": "304",
-      "floor": 3,
-      "ac": true,
-      "cat": "Couple",
-      "price24": 2100,
-      "price6": 1250,
-      "photo": null,
-      "maxGuests": 2,
-      "bedType": "King Bed",
-      "amenities": "Wi-Fi, AC, Smart TV",
-      "status": "available",
-      "desc": "",
-      "video_url": "",
-      "discount_price": 0
-    },
-    {
-      "id": "sv2-305",
-      "hotel": "sv2",
-      "num": "305",
-      "floor": 3,
-      "ac": true,
-      "cat": "Suite",
-      "price24": 3800,
-      "price6": 2300,
-      "photo": "/images/room-suite.jpg",
-      "maxGuests": 4,
-      "bedType": "Royal Suite Bed",
-      "amenities": "Wi-Fi, AC, Smart TV, Lounge",
-      "status": "available",
-      "desc": "",
-      "video_url": "",
-      "discount_price": 0
     }
   ],
   "menuItems": [
     {
-      "id": "mmutkbl3re9a4e3",
-      "name": "nnn",
-      "category": "Thalis",
-      "price": 180,
-      "photo": "https://th.bing.com/th/id/R.f06072486a083db06231efcee76fef88?rik=8U6wWDkl8%2fS1Nw&riu=http%3a%2f%2fgetwallpapers.com%2fwallpaper%2ffull%2f0%2f8%2f2%2f53557.jpg&ehk=htYcBEqnSIIsBxph2A3b57PeG0a05VEugG949lBD2pI%3d&risl=&pid=ImgRaw&r=0",
-      "available": true
-    },
-    {
-      "id": "mmutkbtdt5e17fc",
-      "name": "mmm",
-      "category": "Thalis",
-      "price": 180,
-      "photo": "https://th.bing.com/th/id/R.f06072486a083db06231efcee76fef88?rik=8U6wWDkl8%2fS1Nw&riu=http%3a%2f%2fgetwallpapers.com%2fwallpaper%2ffull%2f0%2f8%2f2%2f53557.jpg&ehk=htYcBEqnSIIsBxph2A3b57PeG0a05VEugG949lBD2pI%3d&risl=&pid=ImgRaw&r=0",
-      "available": true
-    },
-    {
-      "id": "mmutkcwea0ca5ac",
+      "id": "mmuqob1xx9e23d0",
       "name": "tea",
-      "category": "Thalis",
-      "price": 180,
+      "category": "Breakfast",
+      "price": 20,
       "photo": null,
       "available": true
     }
@@ -568,7 +768,7 @@
       "requests": "",
       "food": [],
       "status": "checkedin",
-      "createdAt": "2026-10-04T06:48:02.483598+00:00"
+      "createdAt": "2026-09-29T09:31:16.586Z"
     },
     {
       "id": "SV10480002",
@@ -585,7 +785,7 @@
       "requests": "",
       "food": [],
       "status": "pending",
-      "createdAt": "2026-10-04T06:48:02.483598+00:00"
+      "createdAt": "2026-09-29T18:54:19.272Z"
     },
     {
       "id": "SV10480003",
@@ -602,7 +802,7 @@
       "requests": "High floor room please",
       "food": [],
       "status": "pending",
-      "createdAt": "2026-10-04T06:48:02.483598+00:00"
+      "createdAt": "2026-10-02T15:46:35.916Z"
     },
     {
       "id": "SV10480004",
@@ -619,7 +819,7 @@
       "requests": "",
       "food": [],
       "status": "pending",
-      "createdAt": "2026-10-04T06:48:02.483598+00:00"
+      "createdAt": "2026-10-02T15:49:05.331Z"
     },
     {
       "id": "SV10480005",
@@ -636,7 +836,7 @@
       "requests": "",
       "food": [],
       "status": "confirmed",
-      "createdAt": "2026-10-04T06:48:02.483598+00:00"
+      "createdAt": "2026-10-02T16:03:00.963Z"
     },
     {
       "id": "SV10480006",
@@ -653,7 +853,7 @@
       "requests": "",
       "food": [],
       "status": "pending",
-      "createdAt": "2026-10-04T06:48:02.483598+00:00"
+      "createdAt": "2026-10-02T16:05:30.380Z"
     },
     {
       "id": "SV10480007",
@@ -670,7 +870,7 @@
       "requests": "",
       "food": [],
       "status": "pending",
-      "createdAt": "2026-10-04T06:48:02.483598+00:00"
+      "createdAt": "2026-10-02T16:06:24.464Z"
     },
     {
       "id": "SV10480008",
@@ -687,7 +887,7 @@
       "requests": "Ground floor room",
       "food": [],
       "status": "pending",
-      "createdAt": "2026-10-04T06:48:02.483598+00:00"
+      "createdAt": "2026-10-02T16:17:35.523Z"
     },
     {
       "id": "SV10480009",
@@ -704,7 +904,7 @@
       "requests": "",
       "food": [],
       "status": "pending",
-      "createdAt": "2026-10-04T06:48:02.483598+00:00"
+      "createdAt": "2026-10-02T16:20:11.122Z"
     },
     {
       "id": "SV10480010",
@@ -721,7 +921,7 @@
       "requests": "Spiritual view suite requested",
       "food": [],
       "status": "pending",
-      "createdAt": "2026-10-04T06:48:02.483598+00:00"
+      "createdAt": "2026-10-02T16:27:35.559Z"
     },
     {
       "id": "SV10480011",
@@ -738,14 +938,14 @@
       "requests": "",
       "food": [],
       "status": "confirmed",
-      "createdAt": "2026-10-04T06:48:02.483598+00:00"
+      "createdAt": "2026-10-02T16:29:16.147Z"
     },
     {
       "id": "SV10480012",
       "hotelRoom": "sv1-101",
       "name": "Automated Test Guest",
       "phone": "9860190506",
-      "email": null,
+      "email": "",
       "guests": 2,
       "stay": "24hr",
       "date": "2026-10-05",
@@ -755,14 +955,14 @@
       "requests": "",
       "food": [],
       "status": "confirmed",
-      "createdAt": "2026-10-04T06:48:02.483598+00:00"
+      "createdAt": "2026-10-02T17:24:36.104Z"
     },
     {
       "id": "SV10480013",
       "hotelRoom": "sv1-102",
       "name": "Rohan Sharma",
       "phone": "9851415415",
-      "email": null,
+      "email": "",
       "guests": 2,
       "stay": "24hr",
       "date": "2026-10-28",
@@ -772,14 +972,14 @@
       "requests": "",
       "food": [],
       "status": "confirmed",
-      "createdAt": "2026-10-04T06:48:02.483598+00:00"
+      "createdAt": "2026-10-02T18:40:12.664Z"
     },
     {
       "id": "SV10480014",
       "hotelRoom": "sv1-102",
       "name": "Arnav Markali",
       "phone": "9860190506",
-      "email": null,
+      "email": "",
       "guests": 2,
       "stay": "24hr",
       "date": "2026-10-09",
@@ -789,14 +989,14 @@
       "requests": "",
       "food": [],
       "status": "confirmed",
-      "createdAt": "2026-10-04T06:48:02.483598+00:00"
+      "createdAt": "2026-10-02T18:43:06.807Z"
     },
     {
       "id": "SV10480015",
       "hotelRoom": "sv1-104",
       "name": "Test Guest",
       "phone": "9876543210",
-      "email": null,
+      "email": "",
       "guests": 2,
       "stay": "24hr",
       "date": "2026-10-28",
@@ -806,24 +1006,7 @@
       "requests": "",
       "food": [],
       "status": "pending",
-      "createdAt": "2026-10-04T06:48:02.483598+00:00"
-    },
-    {
-      "id": "SV10480016",
-      "hotelRoom": "sv1-101",
-      "name": "Audit Test Guest",
-      "phone": "9851415415",
-      "email": "guest@audit.com",
-      "guests": 2,
-      "stay": "24hr",
-      "date": "2026-11-15",
-      "time": "12:00",
-      "idMethod": "hotel",
-      "idPhotoBase64": null,
-      "requests": "",
-      "food": [],
-      "status": "confirmed",
-      "createdAt": "2026-10-04T08:08:20.497403+00:00"
+      "createdAt": "2026-10-03T18:39:27.476Z"
     },
     {
       "id": "SV10480018",
@@ -861,7 +1044,7 @@
     "tagline": "Experience Luxury & Spiritual Peace in Shirdi",
     "logo": "/images/deepak-hotels-logo.png",
     "favicon": "/images/deepak-hotels-logo.png",
-    "phone": "9851415415",
+    "phone": "+91 98514 15415",
     "email": "contact@deepakhotelsgroup.com",
     "address": "Nagar-Manmad Highway, Near ST Bus Stand, Shirdi, Maharashtra 423109",
     "facebook": "https://facebook.com",
@@ -880,20 +1063,6 @@
     "cta_link": "#availability"
   },
   "gallery": [
-    {
-      "id": "gal1",
-      "title": "Grand Hotel Façade",
-      "category": "Exterior",
-      "image": "/images/hero-bg.jpg",
-      "display_order": 1
-    },
-    {
-      "id": "gal_mutk6bfo_6a3d65",
-      "title": "img",
-      "category": "Exterior",
-      "image": "https://th.bing.com/th/id/R.f06072486a083db06231efcee76fef88?rik=8U6wWDkl8%2fS1Nw&riu=http%3a%2f%2fgetwallpapers.com%2fwallpaper%2ffull%2f0%2f8%2f2%2f53557.jpg&ehk=htYcBEqnSIIsBxph2A3b57PeG0a05VEugG949lBD2pI%3d&risl=&pid=ImgRaw&r=0",
-      "display_order": 1
-    },
     {
       "id": "gal2",
       "title": "Executive Bedroom Suite",
@@ -928,13 +1097,6 @@
       "category": "Exterior",
       "image": "/images/hotel-om-sai.jpg",
       "display_order": 6
-    },
-    {
-      "id": "gal_mutjgvwp_ed6d6c",
-      "title": "Updated Suite Photo",
-      "category": "Rooms",
-      "image": "/images/room-suite.jpg",
-      "display_order": 99
     }
   ],
   "videos": [
@@ -944,26 +1106,12 @@
       "video_url": "/uploads/12710580_1920_1080_30fps_1790965226553.mp4",
       "is_homepage": true,
       "is_active": true
-    },
-    {
-      "id": "vid1",
-      "title": "Deepak Hotels Group Luxury Walkthrough",
-      "video_url": "https://www.w3schools.com/html/mov_bbb.mp4",
-      "is_homepage": true,
-      "is_active": true
-    },
-    {
-      "id": "vid_mutjgvxe_5c9296",
-      "title": "Updated Video Tour",
-      "video_url": "https://www.w3schools.com/html/mov_bbb.mp4",
-      "is_homepage": false,
-      "is_active": true
     }
   ],
   "amenities": [
     {
       "id": "am1",
-      "name": "Free High-Speed Wi-Fi",
+      "name": "Ultra High-Speed 5G Wi-Fi",
       "icon": "wifi",
       "category": "Technology",
       "desc": "Seamless high-speed wireless Internet coverage in all rooms and common lounges."
@@ -988,20 +1136,6 @@
       "icon": "zap",
       "category": "Facility",
       "desc": "Heavy-duty silent generator backup guaranteeing uninterrupted electricity."
-    },
-    {
-      "id": "am6",
-      "name": "Free Secure Parking",
-      "icon": "parking",
-      "category": "Facility",
-      "desc": "Spacious guarded parking space for private cars, travel coaches, and SUVs."
-    },
-    {
-      "id": "am_mutkad0z_087cf3",
-      "name": "nnn",
-      "icon": "snowflake",
-      "category": "General",
-      "desc": "nnn"
     }
   ],
   "offers": [
@@ -1015,38 +1149,16 @@
       "valid_to": "2026-12-31",
       "code": "EXPRESS6",
       "is_active": true
-    },
-    {
-      "id": "off_mutjgvva_dd16f2",
-      "title": "Audit Weekend Special",
-      "desc": "Special test offer",
-      "discount": "25% OFF",
-      "image": "/images/hero-bg.jpg",
-      "valid_from": "2026-10-01",
-      "valid_to": "2026-12-31",
-      "code": "AUDIT20",
-      "is_active": true
-    },
-    {
-      "id": "off_mutk89x7_900993",
-      "title": "nnn",
-      "desc": "nnn",
-      "discount": "15% OFF",
-      "image": "/images/hero-bg.jpg",
-      "valid_from": "2026-10-01",
-      "valid_to": "2026-12-31",
-      "code": "SAIBABA15",
-      "is_active": true
     }
   ],
   "reviews": [
     {
-      "id": "rev2",
-      "guest_name": "Priya Sharma",
+      "id": "rev1",
+      "guest_name": "Rahul & Swati Deshmukh",
       "rating": 5,
-      "review_text": "We stayed at Hotel Sai Santosh with family. Very peaceful location, spacious parking, and wonderful hospitality.",
+      "review_text": "Outstanding experience at Hotel Sai View! Extremely clean rooms, super polite staff, and excellent food delivered to our room after late night Aarti.",
       "guest_image": "",
-      "hotel_tag": "Hotel Sai Santosh"
+      "hotel_tag": "Hotel Sai View"
     },
     {
       "id": "rev3",
@@ -1055,14 +1167,6 @@
       "review_text": "Booked the 6-hour express stay option at Hotel Om Sai. Very smooth booking and extremely convenient for travellers!",
       "guest_image": "",
       "hotel_tag": "Hotel Om Sai"
-    },
-    {
-      "id": "rev_mutk7mh1_2c22ef",
-      "guest_name": "nnn",
-      "rating": 5,
-      "review_text": "nnn",
-      "guest_image": "",
-      "hotel_tag": "Deepak Hotels Group"
     }
   ],
   "notifications": [
@@ -1076,8 +1180,8 @@
       "provider_message_id": "msg_sim_1790955995938_9nvx",
       "error_message": null,
       "attempts": 2,
-      "created_at": "2026-10-04T06:46:08.53341+00:00",
-      "sent_at": null
+      "created_at": "2026-10-02T15:46:35.923Z",
+      "sent_at": "2026-10-02T15:46:35.938Z"
     },
     {
       "id": "notif_mur51pz3_85ae59",
@@ -1089,8 +1193,8 @@
       "provider_message_id": "msg_sim_1790956145355_ujob",
       "error_message": null,
       "attempts": 1,
-      "created_at": "2026-10-04T06:46:08.53341+00:00",
-      "sent_at": null
+      "created_at": "2026-10-02T15:49:05.343Z",
+      "sent_at": "2026-10-02T15:49:05.355Z"
     },
     {
       "id": "notif_mur5jmra_8d9d08",
@@ -1102,8 +1206,8 @@
       "provider_message_id": "msg_sim_1790957099127_k43j",
       "error_message": null,
       "attempts": 4,
-      "created_at": "2026-10-04T06:46:08.53341+00:00",
-      "sent_at": null
+      "created_at": "2026-10-02T16:03:00.982Z",
+      "sent_at": "2026-10-02T16:04:59.127Z"
     },
     {
       "id": "notif_mur5mu1i_bf0d67",
@@ -1115,8 +1219,8 @@
       "provider_message_id": "msg_sim_1790957130402_7n1s",
       "error_message": null,
       "attempts": 1,
-      "created_at": "2026-10-04T06:46:08.53341+00:00",
-      "sent_at": null
+      "created_at": "2026-10-02T16:05:30.390Z",
+      "sent_at": "2026-10-02T16:05:30.402Z"
     },
     {
       "id": "notif_mur5nzrv_f44165",
@@ -1128,8 +1232,8 @@
       "provider_message_id": "msg_sim_1790957184485_n7jh",
       "error_message": null,
       "attempts": 1,
-      "created_at": "2026-10-04T06:46:08.53341+00:00",
-      "sent_at": null
+      "created_at": "2026-10-02T16:06:24.475Z",
+      "sent_at": "2026-10-02T16:06:24.485Z"
     },
     {
       "id": "notif_mur62djo_358480",
@@ -1141,8 +1245,8 @@
       "provider_message_id": "msg_tx_1790957855514_b9lp",
       "error_message": null,
       "attempts": 1,
-      "created_at": "2026-10-04T06:46:08.53341+00:00",
-      "sent_at": null
+      "created_at": "2026-10-02T16:17:35.508Z",
+      "sent_at": "2026-10-02T16:17:35.514Z"
     },
     {
       "id": "notif_mur62dk9_c64d44",
@@ -1154,8 +1258,8 @@
       "provider_message_id": "msg_tx_1790957855534_o21z",
       "error_message": null,
       "attempts": 1,
-      "created_at": "2026-10-04T06:46:08.53341+00:00",
-      "sent_at": null
+      "created_at": "2026-10-02T16:17:35.529Z",
+      "sent_at": "2026-10-02T16:17:35.534Z"
     },
     {
       "id": "notif_mur65pml_ac0efb",
@@ -1167,8 +1271,8 @@
       "provider_message_id": "msg_tx_1790958011145_kaba",
       "error_message": null,
       "attempts": 1,
-      "created_at": "2026-10-04T06:46:08.53341+00:00",
-      "sent_at": null
+      "created_at": "2026-10-02T16:20:11.133Z",
+      "sent_at": "2026-10-02T16:20:11.145Z"
     },
     {
       "id": "notif_mur66jn0_a709a0",
@@ -1180,8 +1284,8 @@
       "provider_message_id": "msg_tx_1790958069234_z3g7",
       "error_message": null,
       "attempts": 2,
-      "created_at": "2026-10-04T06:46:08.53341+00:00",
-      "sent_at": null
+      "created_at": "2026-10-02T16:20:50.028Z",
+      "sent_at": "2026-10-02T16:21:09.234Z"
     },
     {
       "id": "notif_mur6f8jc_9452f9",
@@ -1193,8 +1297,8 @@
       "provider_message_id": "wamid.HBgL_1790958455551_juggee",
       "error_message": null,
       "attempts": 1,
-      "created_at": "2026-10-04T06:46:08.53341+00:00",
-      "sent_at": null
+      "created_at": "2026-10-02T16:27:35.544Z",
+      "sent_at": "2026-10-02T16:27:35.551Z"
     },
     {
       "id": "notif_mur6f8jx_b551e7",
@@ -1206,8 +1310,8 @@
       "provider_message_id": "wamid.HBgL_1790958455570_sp0azj",
       "error_message": null,
       "attempts": 1,
-      "created_at": "2026-10-04T06:46:08.53341+00:00",
-      "sent_at": null
+      "created_at": "2026-10-02T16:27:35.565Z",
+      "sent_at": "2026-10-02T16:27:35.570Z"
     },
     {
       "id": "notif_mur6he68_5d0f57",
@@ -1219,8 +1323,8 @@
       "provider_message_id": "wamid.HBgL_1790958556170_qiqkkd",
       "error_message": null,
       "attempts": 1,
-      "created_at": "2026-10-04T06:46:08.53341+00:00",
-      "sent_at": null
+      "created_at": "2026-10-02T16:29:16.160Z",
+      "sent_at": "2026-10-02T16:29:16.170Z"
     },
     {
       "id": "notif_murb5san_1140e0",
@@ -1232,8 +1336,8 @@
       "provider_message_id": "wamid.HBgL_1790966412677_o1qa24",
       "error_message": null,
       "attempts": 1,
-      "created_at": "2026-10-04T06:46:08.53341+00:00",
-      "sent_at": null
+      "created_at": "2026-10-02T18:40:12.671Z",
+      "sent_at": "2026-10-02T18:40:12.677Z"
     },
     {
       "id": "notif_murb9io9_ff03d3",
@@ -1245,48 +1349,8 @@
       "provider_message_id": "wamid.HBgL_1790966586845_gzsigp",
       "error_message": null,
       "attempts": 1,
-      "created_at": "2026-10-04T06:46:08.53341+00:00",
-      "sent_at": null
-    },
-    {
-      "id": "notif_mutjgwex_80a818",
-      "booking_id": "SV10480016",
-      "recipient_number": "919851415415",
-      "notification_type": "whatsapp",
-      "message": "🔔 NEW ROOM BOOKING - DEEPAK HOTELS GROUP\n\nBooking ID: #SV10480016\n\nCustomer: Audit Test Guest\nPhone: 9851415415\n\nHotel: Hotel Sai View\nRoom: Room 101 (Single)\n\nCheck-in: 2026-11-15 at 12:00\nCheck-out: 2026-11-16\n\nGuests: 2\nRooms: 1\n\nTotal Amount: ₹1200\n\nPlease check the admin panel for complete booking details.",
-      "status": "sent",
-      "provider_message_id": "wamid.HBgL_1791101300508_58rxni",
-      "error_message": null,
-      "attempts": 1,
-      "created_at": "2026-10-04T08:08:20.495051+00:00",
-      "sent_at": "2026-10-04T08:08:20.508+00:00"
-    },
-    {
-      "id": "notif_mutjtgzi_2c037e",
-      "booking_id": "SV10480017",
-      "recipient_number": "919851415415",
-      "notification_type": "whatsapp",
-      "message": "🔔 NEW ROOM BOOKING - DEEPAK HOTELS GROUP\n\nBooking ID: #SV10480017\n\nCustomer: Audit Test Guest\nPhone: 9851415415\n\nHotel: Hotel Sai View\nRoom: Room 101 (Single)\n\nCheck-in: 2026-12-25 at 12:00\nCheck-out: 2026-12-26\n\nGuests: 1\nRooms: 1\n\nTotal Amount: ₹1200\n\nPlease check the admin panel for complete booking details.",
-      "status": "sent",
-      "provider_message_id": "wamid.HBgL_1791101887041_fs4lso",
-      "error_message": null,
-      "attempts": 1,
-      "created_at": "2026-10-04T08:18:07.166507+00:00",
-      "sent_at": "2026-10-04T08:18:07.041+00:00"
-    },
-    {
-      "id": "notif_mutl1okv_8b993f",
-      "booking_id": "SV10480018",
-      "recipient": "919851415415",
-      "recipient_number": "919851415415",
-      "notification_type": "whatsapp",
-      "message": "🔔 NEW ROOM BOOKING - DEEPAK HOTELS GROUP\n\nBooking ID: #SV10480018\n\nCustomer: Ramesh Sharma\nPhone: 9851415415\n\nHotel: Hotel Sai View\nRoom: Room 101 (Single)\n\nCheck-in: 2026-11-20 at 14:00\nCheck-out: 2026-11-21\n\nGuests: 2\nRooms: 1\n\nPure Veg Dining Ordered:\n • nnn x2 (₹360)\n\nTotal Amount: ₹1560\n\nPlease check the admin panel for complete booking details.",
-      "status": "sent",
-      "provider_message_id": "wamid.HBgL_1791103949748_jfqatj",
-      "error_message": null,
-      "attempts": 1,
-      "created_at": "2026-10-04T08:52:29.744Z",
-      "sent_at": "2026-10-04T08:52:29.748Z"
+      "created_at": "2026-10-02T18:43:06.826Z",
+      "sent_at": "2026-10-02T18:43:06.846Z"
     }
   ],
   "nextBookingSeq": 19
