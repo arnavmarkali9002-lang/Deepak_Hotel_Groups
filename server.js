@@ -23,8 +23,8 @@ const UPLOADS_DIR = path.join(PUBLIC_DIR, 'uploads');
 const ADMIN_MOBILE = process.env.ADMIN_BOOKING_PHONE || process.env.ADMIN_MOBILE_NUMBER || '+919851415415';
 const ADMIN_WHATSAPP = process.env.ADMIN_WHATSAPP_NUMBER || '919851415415';
 
-// Ensure uploads directory exists
-fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+// Ensure uploads directory exists (safe for serverless read-only filesystem)
+try { fs.mkdirSync(UPLOADS_DIR, { recursive: true }); } catch (e) { }
 
 /* ---------------------------------------------------------------------
    DEFAULT SEED DATA
@@ -516,7 +516,7 @@ function loadDbFromSqlite() {
 }
 
 function loadDb() {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
+  try { fs.mkdirSync(DATA_DIR, { recursive: true }); } catch (e) { }
   initSqliteDatabase();
 
   let loaded = false;

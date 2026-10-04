@@ -185,7 +185,7 @@ async function getStatus() {
 }
 
 function saveConfig(newConfig) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
+  try { fs.mkdirSync(DATA_DIR, { recursive: true }); } catch (e) { }
 
   const current = readConfigFile();
   const updated = {
@@ -196,7 +196,11 @@ function saveConfig(newConfig) {
     updated_at: new Date().toISOString()
   };
 
-  fs.writeFileSync(CONFIG_FILE, JSON.stringify(updated, null, 2));
+  try {
+    fs.writeFileSync(CONFIG_FILE, JSON.stringify(updated, null, 2));
+  } catch (e) {
+    // Read-only filesystem in serverless
+  }
 
   // Also update or create .env file for environment persistence
   try {

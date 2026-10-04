@@ -1738,8 +1738,9 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username: u, password: p })
               });
-              const data = await res.json();
-              if (data.ok) {
+              let data = {};
+              try { data = await res.json(); } catch (e) { }
+              if (res.ok && data.ok) {
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminApp').style.display = 'flex';
                 if (document.getElementById('adminUsernameDisplay')) {
@@ -1748,7 +1749,8 @@
                 showToast('Login successful!');
                 loadAdminData();
               } else {
-                showToast('Login failed: ' + (data.error || 'Invalid credentials'), 'error');
+                const msg = data.error || (res.status === 502 ? 'Server function starting up, please try again in 5 seconds.' : 'Invalid credentials');
+                showToast('Login failed: ' + msg, 'error');
               }
             } catch (err) {
               showToast('Server login error: ' + err.message, 'error');
