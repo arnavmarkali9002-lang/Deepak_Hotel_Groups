@@ -2,7 +2,7 @@
    DEEPAK HOTELS GROUP — Persistent Server Engine & SQL API Backend
    Zero-dependency Node.js HTTP server with dual-sync SQLite database (data/deepak_hotels.db)
    and JSON file database fallback (data/db.json).
-   Serves /public (customer luxury site + admin management panel).
+   Serves /public (customer website + admin management panel).
    ========================================================================= */
 'use strict';
 const http = require('http');
@@ -62,7 +62,7 @@ try { fs.mkdirSync(UPLOADS_DIR, { recursive: true }); } catch (e) { }
    DEFAULT SEED DATA
 --------------------------------------------------------------------- */
 const SEED_HOTELS = [
-  { id: 'sv1', name: 'Hotel Sai View', tag: 'The Original Luxury Wing', locality: 'Vivekanand nagar, Nagar, Manmad Rd, near S T Bus stand, near Holiday Park, Sai Nagar, Shirdi, Maharashtra 423109', phone: '+91 98514 15415', accent: '#E8A33D', image: '/images/hotel-sai-view.jpg', desc: 'Our flagship luxury property featuring 10 executive rooms, 24/7 dining, and panoramic temple views.', exact_location: 'hotel sai view ,Vivekanand nagar, Nagar, Manmad Rd, near S T Bus stand, near Holiday Park, Sai Nagar, Shirdi, Maharashtra 423109 QF6H+93 Shirdi, Maharashtra', map_url: 'https://www.google.com/maps/search/?api=1&query=hotel%20sai%20view%20%2CVivekanand%20nagar%2C%20Nagar%2C%20Manmad%20Rd%2C%20near%20S%20T%20Bus%20stand%2C%20near%20Holiday%20Park%2C%20Sai%20Nagar%2C%20Shirdi%2C%20Maharashtra%20423109%20QF6H%2B93%20Shirdi%2C%20Maharashtra' },
+  { id: 'sv1', name: 'Hotel Sai View', tag: 'The Original Flagship Wing', locality: 'Vivekanand nagar, Nagar, Manmad Rd, near S T Bus stand, near Holiday Park, Sai Nagar, Shirdi, Maharashtra 423109', phone: '+91 98514 15415', accent: '#E8A33D', image: '/images/hotel-sai-view.jpg', desc: 'Our flagship property featuring 10 executive rooms, 24/7 room service, and panoramic temple views.', exact_location: 'hotel sai view ,Vivekanand nagar, Nagar, Manmad Rd, near S T Bus stand, near Holiday Park, Sai Nagar, Shirdi, Maharashtra 423109 QF6H+93 Shirdi, Maharashtra', map_url: 'https://www.google.com/maps/search/?api=1&query=hotel%20sai%20view%20%2CVivekanand%20nagar%2C%20Nagar%2C%20Manmad%20Rd%2C%20near%20S%20T%20Bus%20stand%2C%20near%20Holiday%20Park%2C%20Sai%20Nagar%2C%20Shirdi%2C%20Maharashtra%20423109%20QF6H%2B93%20Shirdi%2C%20Maharashtra' },
   { id: 'sv2', name: 'Hotel Sai Santosh', tag: 'The Grand Family Wing', locality: 'QF6H+WH7 city market, road gaikwad chowk, near addarsha school, Shirdi, Maharashtra 423109', phone: '+91 83293 21838', accent: '#2F6E62', image: '/images/hotel-sai-santosh.jpg', desc: 'A serene sanctuary popular with families, 20 spacious suites with private courtyard and ample parking.', exact_location: 'hotel sai santosh, QF6H+WH7 city market, road gaikwad chowk, near addarsha school, Shirdi, Maharashtra 423109', map_url: 'https://www.google.com/maps/search/?api=1&query=hotel%20sai%20santosh%2C%20QF6H%2BWH7%20city%20market%2C%20road%20gaikwad%20chowk%2C%20near%20addarsha%20school%2C%20Shirdi%2C%20Maharashtra%20423109' },
   { id: 'sv3', name: 'Hotel Om Sai', tag: 'The Highway Express Stop', locality: 'Vivekanand Nagar, Nagar, Manmad Rd, Sai Nagar, Shirdi, Maharashtra 423109 QF6G+9W Shirdi, Maharashtra', phone: '+91 90227 51848', accent: '#7C2D2D', image: '/images/hotel-om-sai.jpg', desc: 'Modern high-comfort express hotel for travellers, 10 rooms with instant 6-hour & 24-hour check-in.', exact_location: 'hotel om sai, Vivekanand Nagar, Nagar, Manmad Rd, Sai Nagar, Shirdi, Maharashtra 423109 QF6G+9W Shirdi, Maharashtra', map_url: 'https://www.google.com/maps/search/?api=1&query=hotel%20om%20sai%2C%20Vivekanand%20Nagar%2C%20Nagar%2C%20Manmad%20Rd%2C%20Sai%20Nagar%2C%20Shirdi%2C%20Maharashtra%20423109%20QF6G%2B9W%20Shirdi%2C%20Maharashtra' }
 ];
@@ -126,7 +126,7 @@ const SEED_ROOMS = SEED_ROOMS_RAW.map(([hotel, num, floor, ac, cat, price24, pri
 
 const SEED_SETTINGS = {
   hotel_name: 'Deepak Hotels Group',
-  tagline: 'Experience Luxury, Comfort & Spiritual Peace in Shirdi',
+  tagline: 'Experience Comfort & Spiritual Peace in Shirdi',
   logo: '/images/deepak-hotels-logo.png',
   favicon: '/images/deepak-hotels-logo.png',
   phone: '9851415415',
@@ -136,12 +136,12 @@ const SEED_SETTINGS = {
   instagram: 'https://instagram.com',
   whatsapp: 'https://wa.me/919851415415',
   twitter: 'https://twitter.com',
-  footer_text: 'Deepak Hotels Group offers premium hospitality, executive air-conditioned suites, fine dining, and instant online room bookings just minutes away from Shirdi Sai Baba Temple.'
+  footer_text: 'Deepak Hotels Group offers executive air-conditioned suites and instant online room bookings just minutes away from Shirdi Sai Baba Temple.'
 };
 
 const SEED_HERO = {
-  title: 'Luxury Hospitality & Spiritual Peace in Shirdi',
-  subtitle: 'Executive Air-Conditioned Rooms, Pure Veg Fine Dining & 24/7 Hospitality near Sai Baba Temple.',
+  title: 'Executive Comfort & Spiritual Peace in Shirdi',
+  subtitle: 'Air-Conditioned Rooms & 24/7 Hospitality near Sai Baba Temple.',
   bg_image: '/images/hero-bg.jpg',
   bg_video: '',
   cta_text: 'Book Your Stay Now',
@@ -150,7 +150,7 @@ const SEED_HERO = {
 
 const SEED_AMENITIES = [
   { id: 'am1', name: 'Free High-Speed Wi-Fi', icon: 'wifi', category: 'Technology', desc: 'Seamless high-speed wireless Internet coverage in all rooms and common lounges.' },
-  { id: 'am2', name: '24/7 Pure Veg Dining', icon: 'utensils', category: 'Dining', desc: 'Freshly prepared Maharashtrian, North & South Indian vegetarian dishes served round-the-clock.' },
+  { id: 'am2', name: '24/7 Front Desk', icon: 'bell-concierge', category: 'Service', desc: 'Round-the-clock front desk assistance, room service, and guest support.' },
   { id: 'am3', name: 'Climate Controlled AC', icon: 'snowflake', category: 'Comfort', desc: 'Modern whisper-quiet air-conditioning in all executive and family rooms.' },
   { id: 'am4', name: 'Temple Shuttle Transfer', icon: 'car', category: 'Service', desc: 'Complimentary drop and pickup shuttle service to Shirdi Sai Baba Temple.' },
   { id: 'am5', name: '100% Power Backup', icon: 'zap', category: 'Facility', desc: 'Heavy-duty silent generator backup guaranteeing uninterrupted electricity.' },
@@ -163,7 +163,7 @@ const SEED_OFFERS = [
 ];
 
 const SEED_REVIEWS = [
-  { id: 'rev1', guest_name: 'Rahul & Swati Deshmukh', rating: 5, review_text: 'Outstanding experience at Hotel Sai View! Extremely clean rooms, super polite staff, and excellent food delivered to our room after late night Aarti.', guest_image: '', hotel_tag: 'Hotel Sai View' },
+  { id: 'rev1', guest_name: 'Rahul & Swati Deshmukh', rating: 5, review_text: 'Outstanding experience at Hotel Sai View! Extremely clean rooms, super polite staff, and excellent room service after late night Aarti.', guest_image: '', hotel_tag: 'Hotel Sai View' },
   { id: 'rev2', guest_name: 'Priya Sharma', rating: 5, review_text: 'We stayed at Hotel Sai Santosh with family. Very peaceful location, spacious parking, and wonderful hospitality.', guest_image: '', hotel_tag: 'Hotel Sai Santosh' },
   { id: 'rev3', guest_name: 'Amit Verma', rating: 5, review_text: 'Booked the 6-hour express stay option at Hotel Om Sai. Very smooth booking and extremely convenient for travellers!', guest_image: '', hotel_tag: 'Hotel Om Sai' }
 ];
@@ -171,14 +171,14 @@ const SEED_REVIEWS = [
 const SEED_GALLERY = [
   { id: 'gal1', title: 'Grand Hotel Façade', category: 'Exterior', image: '/images/hero-bg.jpg', display_order: 1 },
   { id: 'gal2', title: 'Executive Bedroom Suite', category: 'Rooms', image: '/images/room-suite.jpg', display_order: 2 },
-  { id: 'gal3', title: 'Royal Vegetarian Dining', category: 'Dining', image: '/images/dining-bg.jpg', display_order: 3 },
+  { id: 'gal3', title: 'Hotel Reception Desk', category: 'Facility', image: '/images/hotel-sai-view.jpg', display_order: 3 },
   { id: 'gal4', title: 'Hotel Sai View Exterior', category: 'Exterior', image: '/images/hotel-sai-view.jpg', display_order: 4 },
   { id: 'gal5', title: 'Hotel Sai Santosh Courtyard', category: 'Exterior', image: '/images/hotel-sai-santosh.jpg', display_order: 5 },
   { id: 'gal6', title: 'Hotel Om Sai Highway Wing', category: 'Exterior', image: '/images/hotel-om-sai.jpg', display_order: 6 }
 ];
 
 const SEED_VIDEOS = [
-  { id: 'vid1', title: 'Deepak Hotels Group Luxury Walkthrough', video_url: '/uploads/4d240ca4-e2ca-4ba9-bfc3-7b5698643ce9_1791134169893.mp4', is_homepage: 1, is_active: 1 }
+  { id: 'vid1', title: 'Deepak Hotels Group Walkthrough', video_url: '/uploads/4d240ca4-e2ca-4ba9-bfc3-7b5698643ce9_1791134169893.mp4', is_homepage: 1, is_active: 1 }
 ];
 
 const ROOM_CATEGORIES = ['Single', 'Couple', 'Family', 'Suite'];

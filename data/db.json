@@ -429,7 +429,7 @@
   ],
   "settings": {
     "hotel_name": "Deepak Hotels Group",
-    "tagline": "Experience Luxury & Spiritual Peace in Shirdi",
+    "tagline": "Experience Comfort & Spiritual Peace in Shirdi",
     "logo": "/images/deepak-hotels-logo.png",
     "favicon": "/images/deepak-hotels-logo.png",
     "phone": "+91 98514 15415",
@@ -490,7 +490,7 @@
   "videos": [
     {
       "id": "vid_feat_hotel_tour",
-      "title": "Deepak Hotels Luxury Walkthrough",
+      "title": "Deepak Hotels  Walkthrough",
       "video_url": "/uploads/4d240ca4-e2ca-4ba9-bfc3-7b5698643ce9_1791134169893.mp4",
       "is_homepage": true,
       "is_active": true
