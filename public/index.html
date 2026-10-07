@@ -999,18 +999,111 @@
     }
 
     /* LOCATION & CONTACT SECTION */
-    .contact-section { padding: 110px 0; }
-    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 54px; }
+    .contact-section { padding: 110px 0; width: 100%; max-width: 100%; overflow: hidden; }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 54px; width: 100%; max-width: 1280px; margin: 0 auto; box-sizing: border-box; }
     .contact-card {
       background: #FFFFFF;
       border-radius: var(--radius-md);
-      padding: 26px;
+      padding: 22px 24px;
       box-shadow: var(--shadow-sm);
       border: 1px solid var(--slate-100);
       margin-bottom: 18px;
       transition: transform 0.25s ease;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      overflow-wrap: break-word;
+      word-break: normal;
     }
-    .contact-card:hover { transform: translateY(-3px); }
+    .contact-card:hover { transform: translateY(-3px); border-color: var(--gold-400); }
+    .contact-card-title {
+      color: var(--gold-600);
+      font-size: 1.15rem;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      line-height: 1.2;
+    }
+    .contact-card-address {
+      font-size: 0.9rem;
+      color: var(--slate-700);
+      margin-bottom: 12px;
+      line-height: 1.5;
+      overflow-wrap: break-word;
+      word-break: normal;
+      white-space: normal;
+      width: 100%;
+      max-width: 100%;
+    }
+    .contact-card-bottom-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      width: 100%;
+      min-width: 0;
+      padding-top: 8px;
+      border-top: 1px dashed #E2E8F0;
+    }
+    .contact-card-phone {
+      font-weight: 700;
+      color: var(--navy-900);
+      margin: 0;
+      font-size: 0.9rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      min-width: 0;
+    }
+    .contact-card-phone i { color: var(--gold-500); }
+    .contact-card-phone:hover { color: var(--gold-600); }
+    .contact-card-map {
+      color: var(--gold-600);
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .contact-card-map:hover { text-decoration: underline; color: var(--navy-900); }
+
+    .contact-help-box {
+      background: #FFFFFF;
+      padding: 38px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-gold);
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      overflow-wrap: break-word;
+    }
+    .contact-help-title {
+      margin-bottom: 14px;
+      font-size: 1.5rem;
+      line-height: 1.25;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+    }
+    .contact-help-desc {
+      color: var(--slate-500);
+      font-size: 0.95rem;
+      margin-bottom: 24px;
+      line-height: 1.55;
+      overflow-wrap: break-word;
+    }
+    .contact-help-btn {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
 
     /* FOOTER */
     .footer {
@@ -1476,10 +1569,94 @@
       .gallery-overlay { padding: 8px !important; }
       .gallery-item-title { font-size: 0.78rem !important; }
 
-      /* Contact & Footer */
-      .contact-grid { grid-template-columns: 1fr !important; gap: 18px !important; }
-      .contact-card { padding: 12px 10px !important; margin-bottom: 10px !important; }
-      .contact-help-box { padding: 16px 14px !important; border-radius: 12px !important; }
+      /* Contact & Footer Mobile Fixes */
+      .contact-section { padding: 32px 0 !important; width: 100% !important; max-width: 100% !important; overflow: hidden !important; }
+      .contact-grid {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+      }
+      .contact-card {
+        padding: 14px 14px !important;
+        margin-bottom: 12px !important;
+        border-radius: 12px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        overflow-wrap: break-word !important;
+        word-break: normal !important;
+      }
+      .contact-card-title {
+        font-size: 1rem !important;
+        margin-bottom: 6px !important;
+        line-height: 1.25 !important;
+      }
+      .contact-card-address {
+        font-size: 0.84rem !important;
+        line-height: 1.4 !important;
+        margin-bottom: 10px !important;
+        overflow-wrap: break-word !important;
+        word-break: normal !important;
+        white-space: normal !important;
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+      .contact-card-bottom-row {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 6px !important;
+        flex-wrap: wrap !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        padding-top: 6px !important;
+      }
+      .contact-card-phone {
+        font-size: 0.82rem !important;
+        white-space: nowrap !important;
+        min-width: 0 !important;
+      }
+      .contact-card-map {
+        font-size: 0.8rem !important;
+        white-space: nowrap !important;
+        flex-shrink: 0 !important;
+      }
+
+      .contact-help-box {
+        padding: 18px 14px !important;
+        border-radius: 14px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        margin-top: 8px !important;
+      }
+      .contact-help-title {
+        font-size: 1.25rem !important;
+        line-height: 1.25 !important;
+        margin-bottom: 8px !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+      }
+      .contact-help-desc {
+        font-size: 0.85rem !important;
+        line-height: 1.4 !important;
+        margin-bottom: 16px !important;
+      }
+      .contact-help-btn {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 12px 12px !important;
+        font-size: 0.86rem !important;
+        white-space: normal !important;
+        word-wrap: break-word !important;
+        text-align: center !important;
+        justify-content: center !important;
+        box-sizing: border-box !important;
+      }
       .footer-grid { grid-template-columns: 1fr !important; gap: 20px !important; text-align: left; margin-bottom: 25px; }
 
       /* Booking Modal */
@@ -1493,19 +1670,22 @@
       .modal-close { top: 10px !important; right: 10px !important; width: 30px !important; height: 30px !important; font-size: 0.95rem !important; }
       .modal-form-row { grid-template-columns: 1fr !important; gap: 10px !important; margin-bottom: 10px !important; }
 
-      /* Compact Floating Buttons */
+      /* Compact Non-Overlapping Floating Buttons */
       .floating-whatsapp-btn {
-        bottom: 12px !important;
-        right: 12px !important;
+        bottom: 14px !important;
+        right: 14px !important;
         width: 46px !important;
         height: 46px !important;
         font-size: 24px !important;
+        z-index: 9999 !important;
       }
       .floating-book-btn {
-        bottom: 12px !important;
-        left: 12px !important;
-        padding: 8px 14px !important;
+        bottom: 14px !important;
+        left: 14px !important;
+        padding: 8px 16px !important;
         font-size: 0.78rem !important;
+        z-index: 9999 !important;
+        max-width: calc(100% - 80px) !important;
       }
     }
 
@@ -1519,6 +1699,8 @@
       .price-24h { font-size: 0.98rem !important; }
       .floating-book-btn { padding: 7px 12px !important; font-size: 0.74rem !important; }
       .brand-title { font-size: 0.9rem !important; }
+      .contact-card-phone { font-size: 0.76rem !important; }
+      .contact-card-map { font-size: 0.75rem !important; }
     }
   </style>
 </head>
@@ -1555,6 +1737,7 @@
         <li><a href="#rooms">Rooms & Suites</a></li>
         <li><a href="#amenities">Amenities</a></li>
         <li><a href="#offers">Special Offers</a></li>
+        <li><a href="#menu">Menu</a></li>
         <li><a href="#gallery">Gallery</a></li>
         <li><a href="#contact">Contact</a></li>
         <li><a href="/admin" class="btn btn-gold btn-sm" style="color:#0B111D;"><i class="fa-solid fa-lock"></i> Admin Panel</a></li>
@@ -1602,7 +1785,7 @@
         <div class="booking-field">
           <label class="booking-label"><i class="fa-solid fa-clock"></i> Stay Package</label>
           <select class="booking-select" id="searchStaySelect">
-            <option value="24hr">24-Hour Full Overnight Stay</option>
+            <option value="24hr">12-Hour Full Stay</option>
             <option value="6hr">6-Hour Express Refresh Stay</option>
           </select>
         </div>
@@ -1637,7 +1820,7 @@
         <div class="stat-label">Hotel Wings</div>
       </div>
       <div class="stat-card-box">
-        <div class="stat-number">50+</div>
+        <div class="stat-number">20+</div>
         <div class="stat-label">Executive AC Rooms</div>
       </div>
       <div class="stat-card-box">
@@ -1673,7 +1856,7 @@
         </p>
         <div class="about-highlights-grid">
           <div style="display:flex; align-items:center; gap:10px; font-weight:600;"><i class="fa-solid fa-circle-check" style="color:var(--gold-400);"></i> Direct Temple Drop</div>
-          <div style="display:flex; align-items:center; gap:10px; font-weight:600;"><i class="fa-solid fa-circle-check" style="color:var(--gold-400);"></i> 6-hr & 24-hr Stay Rates</div>
+          <div style="display:flex; align-items:center; gap:10px; font-weight:600;"><i class="fa-solid fa-circle-check" style="color:var(--gold-400);"></i> 6-hr & 12-hr Stay Rates</div>
           <div style="display:flex; align-items:center; gap:10px; font-weight:600;"><i class="fa-solid fa-circle-check" style="color:var(--gold-400);"></i> 100% Power Generator</div>
           <div style="display:flex; align-items:center; gap:10px; font-weight:600;"><i class="fa-solid fa-circle-check" style="color:var(--gold-400);"></i> Guarded Free Parking</div>
         </div>
@@ -1749,6 +1932,21 @@
     </div>
   </section>
 
+  <!-- MENU SECTION -->
+  <section class="menu-section" id="menu" style="padding: 50px 0; background: #FAF7F2;">
+    <div class="container text-center reveal">
+      <span class="eyebrow">In-House Dining</span>
+      <h2 class="section-title">MENU</h2>
+      <p class="section-desc" style="margin-bottom: 24px;">Explore our available food and dining options.</p>
+    </div>
+
+    <div class="container">
+      <div id="foodMenuGridContainer" class="food-menu-grid">
+        <!-- Rendered dynamically via JS from Admin API (/api/menu) -->
+      </div>
+    </div>
+  </section>
+
   <!-- GALLERY & VIDEO SHOWCASE -->
   <section class="gallery-section" id="gallery">
     <div class="container text-center reveal">
@@ -1788,37 +1986,37 @@
         <p style="color:var(--slate-700); margin-bottom:24px;">Our front desk and reservation desk are open 24 hours a day, 7 days a week.</p>
 
         <div class="contact-card">
-          <h4 style="color:var(--gold-600); margin-bottom:6px;"><i class="fa-solid fa-hotel"></i> Hotel Sai View</h4>
-          <p style="font-size:0.9rem; color:var(--slate-700);">Vivekanand nagar, Nagar, Manmad Rd, near S T Bus stand, near Holiday Park, Sai Nagar, Shirdi 423109</p>
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; flex-wrap:wrap; gap:8px;">
-            <p style="font-weight:700; color:var(--navy-900); margin:0;"><i class="fa-solid fa-phone" style="color:var(--gold-500);"></i> +91 98514 15415</p>
-            <a href="https://www.google.com/maps/search/?api=1&query=hotel%20sai%20view%20%2CVivekanand%20nagar%2C%20Nagar%2C%20Manmad%20Rd%2C%20near%20S%20T%20Bus%20stand%2C%20near%20Holiday%20Park%2C%20Sai%20Nagar%2C%20Shirdi%2C%20Maharashtra%20423109%20QF6H%2B93%20Shirdi%2C%20Maharashtra" target="_blank" rel="noopener noreferrer" style="color:var(--gold-600); font-size:0.85rem; font-weight:600; text-decoration:none; display:inline-flex; align-items:center; gap:5px;"><i class="fa-solid fa-location-dot"></i> View Location</a>
+          <h4 class="contact-card-title"><i class="fa-solid fa-hotel"></i> Hotel Sai View</h4>
+          <p class="contact-card-address">Vivekanand nagar, Nagar, Manmad Rd, near S T Bus stand, near Holiday Park, Sai Nagar, Shirdi 423109</p>
+          <div class="contact-card-bottom-row">
+            <a href="tel:+919851415415" class="contact-card-phone" title="Call Hotel Sai View"><i class="fa-solid fa-phone"></i> +91 98514 15415</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=hotel%20sai%20view%20%2CVivekanand%20nagar%2C%20Nagar%2C%20Manmad%20Rd%2C%20near%20S%20T%20Bus%20stand%2C%20near%20Holiday%20Park%2C%20Sai%20Nagar%2C%20Shirdi%2C%20Maharashtra%20423109%20QF6H%2B93%20Shirdi%2C%20Maharashtra" target="_blank" rel="noopener noreferrer" class="contact-card-map"><i class="fa-solid fa-location-dot"></i> View Location</a>
           </div>
         </div>
 
         <div class="contact-card">
-          <h4 style="color:var(--gold-600); margin-bottom:6px;"><i class="fa-solid fa-hotel"></i> Hotel Sai Santosh</h4>
-          <p style="font-size:0.9rem; color:var(--slate-700);">City market road, Gaikwad chowk, near Adarsha school, Shirdi 423109</p>
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; flex-wrap:wrap; gap:8px;">
-            <p style="font-weight:700; color:var(--navy-900); margin:0;"><i class="fa-solid fa-phone" style="color:var(--gold-500);"></i> +91 83293 21838</p>
-            <a href="https://www.google.com/maps/search/?api=1&query=hotel%20sai%20santosh%2C%20QF6H%2BWH7%20city%20market%2C%20road%20gaikwad%20chowk%2C%20near%20addarsha%20school%2C%20Shirdi%2C%20Maharashtra%20423109" target="_blank" rel="noopener noreferrer" style="color:var(--gold-600); font-size:0.85rem; font-weight:600; text-decoration:none; display:inline-flex; align-items:center; gap:5px;"><i class="fa-solid fa-location-dot"></i> View Location</a>
+          <h4 class="contact-card-title"><i class="fa-solid fa-hotel"></i> Hotel Sai Santosh</h4>
+          <p class="contact-card-address">City market road, Gaikwad chowk, near Adarsha school, Shirdi 423109</p>
+          <div class="contact-card-bottom-row">
+            <a href="tel:+918329321838" class="contact-card-phone" title="Call Hotel Sai Santosh"><i class="fa-solid fa-phone"></i> +91 83293 21838</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=hotel%20sai%20santosh%2C%20QF6H%2BWH7%20city%20market%2C%20road%20gaikwad%20chowk%2C%20near%20addarsha%20school%2C%20Shirdi%2C%20Maharashtra%20423109" target="_blank" rel="noopener noreferrer" class="contact-card-map"><i class="fa-solid fa-location-dot"></i> View Location</a>
           </div>
         </div>
 
         <div class="contact-card">
-          <h4 style="color:var(--gold-600); margin-bottom:6px;"><i class="fa-solid fa-hotel"></i> Hotel Om Sai</h4>
-          <p style="font-size:0.9rem; color:var(--slate-700);">Vivekanand Nagar, Nagar, Manmad Rd, Sai Nagar, Shirdi 423109</p>
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; flex-wrap:wrap; gap:8px;">
-            <p style="font-weight:700; color:var(--navy-900); margin:0;"><i class="fa-solid fa-phone" style="color:var(--gold-500);"></i> +91 90227 51848</p>
-            <a href="https://www.google.com/maps/search/?api=1&query=hotel%20om%20sai%2C%20Vivekanand%20Nagar%2C%20Nagar%2C%20Manmad%20Rd%2C%20Sai%20Nagar%2C%20Shirdi%2C%20Maharashtra%20423109%20QF6G%2B9W%20Shirdi%2C%20Maharashtra" target="_blank" rel="noopener noreferrer" style="color:var(--gold-600); font-size:0.85rem; font-weight:600; text-decoration:none; display:inline-flex; align-items:center; gap:5px;"><i class="fa-solid fa-location-dot"></i> View Location</a>
+          <h4 class="contact-card-title"><i class="fa-solid fa-hotel"></i> Hotel Om Sai</h4>
+          <p class="contact-card-address">Vivekanand Nagar, Nagar, Manmad Rd, Sai Nagar, Shirdi 423109</p>
+          <div class="contact-card-bottom-row">
+            <a href="tel:+919022751848" class="contact-card-phone" title="Call Hotel Om Sai"><i class="fa-solid fa-phone"></i> +91 90227 51848</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=hotel%20om%20sai%2C%20Vivekanand%20Nagar%2C%20Nagar%2C%20Manmad%20Rd%2C%20Sai%20Nagar%2C%20Shirdi%2C%20Maharashtra%20423109%20QF6G%2B9W%20Shirdi%2C%20Maharashtra" target="_blank" rel="noopener noreferrer" class="contact-card-map"><i class="fa-solid fa-location-dot"></i> View Location</a>
           </div>
         </div>
       </div>
 
       <div class="reveal contact-help-box">
-        <h3 style="margin-bottom:18px; font-size:1.5rem;">Instant Booking Assistance</h3>
-        <p style="color:var(--slate-500); font-size:0.95rem; margin-bottom:26px;">Need help choosing a room or booking group stay? Message us directly on WhatsApp.</p>
-        <a href="https://wa.me/919851415415" target="_blank" class="btn btn-gold btn-lg" style="width:100%;">
+        <h3 class="contact-help-title">Instant Booking Assistance</h3>
+        <p class="contact-help-desc">Need help choosing a room or booking group stay? Message us directly on WhatsApp.</p>
+        <a href="https://wa.me/919851415415" target="_blank" class="btn btn-gold btn-lg contact-help-btn">
           <i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp (+91 98514 15415)
         </a>
       </div>
@@ -1896,7 +2094,7 @@
             <div class="booking-field">
               <label class="booking-label">Stay Type</label>
               <select class="booking-select" id="modalStayType" onchange="updateModalTotal()">
-                <option value="24hr">24-Hour Stay</option>
+                <option value="24hr">12-Hour Stay</option>
                 <option value="6hr">6-Hour Express Refresh</option>
               </select>
             </div>
@@ -1936,7 +2134,7 @@
             </select>
           </div>
 
-          <!-- PURE VEG DINING OPTION IN BOOKING -->
+          <!-- IN-ROOM MEALS OPTION IN BOOKING -->
           <div class="booking-food-addon-box" style="background:#FFFDF7; border:1px solid #FDE68A; border-radius:12px; padding:16px; margin-bottom:20px;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <div style="display:flex; align-items:center; gap:12px;">
@@ -1944,7 +2142,7 @@
                   <i class="fa-solid fa-utensils"></i>
                 </div>
                 <div>
-                  <div style="font-weight:700; color:var(--navy-900); font-size:0.98rem;">Add Pure Veg Dining to Stay?</div>
+                  <div style="font-weight:700; color:var(--navy-900); font-size:0.98rem;">Add In-Room Meals to Stay?</div>
                   <div style="font-size:0.8rem; color:var(--slate-500);">Optional: Enjoy fresh hot meals served directly to your room</div>
                 </div>
               </div>
@@ -1963,7 +2161,7 @@
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                 <span style="font-size:0.85rem; font-weight:700; color:var(--navy-900);">Select Dishes & Quantity:</span>
                 <span style="font-size:0.78rem; font-weight:700; color:var(--emerald); background:rgba(16,185,129,0.1); padding:2px 8px; border-radius:12px;">
-                  <i class="fa-solid fa-leaf"></i> 100% Pure Veg
+                  <i class="fa-solid fa-utensils"></i> In-House Menu
                 </span>
               </div>
               <div id="bookingDishesContainer" style="display:flex; flex-direction:column; gap:10px; max-height:220px; overflow-y:auto; padding-right:4px;">
@@ -2088,6 +2286,7 @@
         renderRooms();
         renderAmenities();
         renderOffers();
+        renderFoodMenu();
         renderGallery();
         renderReviews();
         renderAboutVideo();
@@ -2142,40 +2341,35 @@
       return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fallbackQuery)}`;
     }
 
-    // Render Hotels Cards
+    // Render Hotels Cards - Simplified (Image -> Hotel Name -> Phone -> Location & Rooms Buttons)
     function renderHotels() {
       const container = document.getElementById('hotelsGridContainer');
+      if (!container) return;
       container.innerHTML = '';
       APP_STATE.hotels.forEach(h => {
         const mapUrl = getHotelLocationMapUrl(h);
-        const cleanPhone = (h.phone || '').replace(/[^0-9+]/g, '');
+        const rawPhone = h.phone || '';
+        const cleanPhone = rawPhone.replace(/[^0-9+]/g, '');
+        
         const card = document.createElement('div');
         card.className = 'hotel-card reveal active';
         card.innerHTML = `
           <div class="hotel-card-img">
             <img src="${h.image || '/images/hero-bg.jpg'}" alt="${h.name}">
-            <div class="hotel-tag-pill">${h.tag || 'Hotel Property'}</div>
           </div>
           <div class="hotel-card-body">
             <h3 class="hotel-card-title">${h.name}</h3>
-            <a href="${mapUrl}" target="_blank" rel="noopener noreferrer" class="hotel-card-locality" title="View exact location on Google Maps">
-              <i class="fa-solid fa-location-dot" style="color:var(--gold-400); margin-top:2px; flex-shrink:0;"></i>
-              <span>${h.locality || ''}</span>
+            <a href="tel:${cleanPhone}" class="hotel-phone" title="Call ${h.name} front desk">
+              <i class="fa-solid fa-phone" style="color:var(--gold-500);"></i>
+              <span>${rawPhone}</span>
             </a>
-            <p class="hotel-card-desc">${h.desc || ''}</p>
-            <div class="hotel-card-footer">
-              <div class="hotel-card-footer-top">
-                <a href="tel:${cleanPhone}" class="hotel-phone" title="Call hotel front desk">
-                  <i class="fa-solid fa-phone" style="color:var(--gold-500);"></i>
-                  <span>${h.phone || ''}</span>
-                </a>
-              </div>
-              <div class="hotel-card-actions">
-                <a href="${mapUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-gold btn-sm btn-view-location" title="View exact location on Google Maps">
-                  <i class="fa-solid fa-location-dot"></i> View Location
-                </a>
-                <button class="btn btn-outline-gold btn-sm" onclick="filterRoomsByHotel('${h.id}')">View Rooms</button>
-              </div>
+            <div class="hotel-card-actions">
+              <a href="${mapUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-gold btn-sm btn-view-location" title="View location on Google Maps">
+                <i class="fa-solid fa-location-dot"></i> View Location
+              </a>
+              <button class="btn btn-gold btn-sm" onclick="filterRoomsByHotel('${h.id}')">
+                <i class="fa-solid fa-bed"></i> View Rooms
+              </button>
             </div>
           </div>
         `;
@@ -2242,7 +2436,7 @@
 
             <div class="room-price-box">
               <div>
-                <div class="price-24h">₹${r.price24} <span>/ 24 hrs</span></div>
+                <div class="price-24h">₹${r.price24} <span>/ 12 hrs</span></div>
                 <div class="price-6h">6-Hr Stay: ₹${r.price6}</div>
               </div>
               <button class="btn btn-gold btn-sm" onclick="openBookingModal('${r.id}')">Book Now</button>
@@ -2331,31 +2525,31 @@
       window.open(src, '_blank');
     }
 
-    // Render Pure Veg Food Menu
+    // Render Menu Cards
     function renderFoodMenu() {
       const container = document.getElementById('foodMenuGridContainer');
       if (!container) return;
       container.innerHTML = '';
       if (!APP_STATE.menuItems || !APP_STATE.menuItems.length) {
-        container.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:var(--slate-500); padding:20px;">Pure Veg dining menu available at hotel reception and room service.</div>';
+        container.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:var(--slate-500); padding:30px 20px; background:#FFF; border-radius:14px; border:1px dashed var(--gold-400); font-weight:600;"><i class="fa-solid fa-utensils" style="font-size:2rem; color:var(--gold-500); margin-bottom:10px; display:block;"></i>Explore our available food and dining options at hotel reception and 24/7 room service.</div>';
         return;
       }
       APP_STATE.menuItems.forEach(item => {
         const card = document.createElement('div');
-        card.style.cssText = 'background:#FFF; border-radius:16px; padding:20px; border:1px solid #E2E8F0; box-shadow:0 4px 14px rgba(0,0,0,0.04); display:flex; flex-direction:column; justify-content:space-between; transition:transform 0.25s ease;';
-        const dishImg = item.photo ? item.photo : '/images/dining-bg.jpg';
+        card.style.cssText = 'background:#FFF; border-radius:14px; padding:16px; border:1px solid #E2E8F0; box-shadow:0 4px 14px rgba(0,0,0,0.04); display:flex; flex-direction:column; justify-content:space-between; transition:transform 0.25s ease;';
+        const dishImg = item.photo ? item.photo : '/images/room-suite.jpg';
         card.innerHTML = `
           <div>
-            <img src="${dishImg}" alt="${item.name}" onerror="this.src='/images/dining-bg.jpg'" style="height:140px; width:100%; object-fit:cover; border-radius:10px; margin-bottom:14px; background:#F8FAFC;">
-            <div style="font-weight:700; font-size:1.1rem; color:var(--navy-900); display:flex; align-items:center; justify-content:space-between; gap:8px;">
+            <img src="${dishImg}" alt="${item.name}" onerror="this.src='/images/hero-bg.jpg'" style="height:110px; width:100%; object-fit:cover; border-radius:8px; margin-bottom:10px; background:#F8FAFC;">
+            <div style="font-weight:700; font-size:1rem; color:var(--navy-900); display:flex; align-items:center; justify-content:space-between; gap:8px;">
               <span>${item.name}</span>
-              ${item.category ? `<span style="font-size:0.72rem; background:#FEF3C7; color:#92400E; padding:2px 8px; border-radius:6px; font-weight:700; white-space:nowrap;">${item.category}</span>` : ''}
+              ${item.category ? `<span style="font-size:0.72rem; background:#FEF3C7; color:#92400E; padding:2px 6px; border-radius:6px; font-weight:700; white-space:nowrap;">${item.category}</span>` : ''}
             </div>
-            <div style="font-size:0.8rem; color:var(--gold-600); font-weight:700; margin-top:4px;"><i class="fa-solid fa-leaf"></i> 100% Pure Veg Speciality</div>
+            <div style="font-size:0.8rem; color:var(--gold-600); font-weight:600; margin-top:4px;"><i class="fa-solid fa-utensils"></i> In-House Specialty</div>
           </div>
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:18px; padding-top:14px; border-top:1px dashed #E2E8F0;">
-            <span style="font-weight:800; font-size:1.25rem; color:var(--navy-900);">₹${item.price}</span>
-            <button type="button" class="btn btn-gold btn-sm" onclick="orderFoodWithRoom('${item.id}')"><i class="fa-solid fa-plus"></i> Order with Room</button>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:10px; border-top:1px dashed #E2E8F0;">
+            <span style="font-weight:800; font-size:1.15rem; color:var(--navy-900);">₹${item.price}</span>
+            <button type="button" class="btn btn-gold btn-sm" onclick="orderFoodWithRoom('${item.id}')" style="padding:6px 12px; font-size:0.8rem;"><i class="fa-solid fa-plus"></i> Order with Room</button>
           </div>
         `;
         container.appendChild(card);
@@ -2433,7 +2627,7 @@
       if (!container) return;
       container.innerHTML = '';
       if (!APP_STATE.menuItems || !APP_STATE.menuItems.length) {
-        container.innerHTML = '<div style="color:var(--slate-500); font-size:0.85rem; padding:8px;">Pure veg dining menu is available directly at the hotel front desk.</div>';
+        container.innerHTML = '<div style="color:var(--slate-500); font-size:0.85rem; padding:8px;">Dining menu options available directly at the hotel front desk.</div>';
         return;
       }
 
@@ -2451,7 +2645,7 @@
                 <span>${item.name}</span>
                 ${item.category ? `<span style="font-size:0.7rem; background:#FEF3C7; color:#92400E; padding:1px 6px; border-radius:4px; font-weight:700;">${item.category}</span>` : ''}
               </div>
-              <div style="font-size:0.78rem; color:var(--slate-500);">₹${item.price} each • Pure Veg</div>
+              <div style="font-size:0.78rem; color:var(--slate-500);">₹${item.price} each</div>
             </div>
           </div>
           <div style="display:flex; align-items:center; gap:10px;">
@@ -2613,11 +2807,11 @@
           breakdownElem.style.display = 'block';
           breakdownElem.innerHTML = `
             <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
-              <span>🛏️ Room Charge (${stay === '24hr' ? '24 Hours' : '6 Hours'}):</span>
+              <span>🛏️ Room Charge (${stay === '24hr' ? '12 Hours' : '6 Hours'}):</span>
               <strong>₹${roomPrice}</strong>
             </div>
             <div style="display:flex; justify-content:space-between; color:#D97706; margin-bottom:3px;">
-              <span>🍲 Pure Veg Dining (${totalServings} serving${totalServings > 1 ? 's' : ''}):</span>
+              <span>🍲 In-Room Meals (${totalServings} serving${totalServings > 1 ? 's' : ''}):</span>
               <strong>+₹${foodTotal}</strong>
             </div>
             <div style="display:flex; justify-content:space-between; font-weight:700; color:var(--navy-900); padding-top:4px; border-top:1px dashed #CBD5E1;">
@@ -2697,7 +2891,7 @@
               name: item.name,
               price: Number(item.price) || 0,
               qty: qty,
-              category: item.category || 'Pure Veg'
+              category: item.category || 'Menu Item'
             });
           }
         });
@@ -2730,7 +2924,7 @@
 
           const room = APP_STATE.selectedRoom || {};
           const hotel = APP_STATE.hotels.find(h => h.id === room.hotel) || {};
-          const stayText = payload.stay === '24hr' ? '24-Hour Stay' : '6-Hour Express Refresh';
+          const stayText = payload.stay === '24hr' ? '12-Hour Stay' : '6-Hour Express Refresh';
           const roomPrice = payload.stay === '24hr' ? (room.price24 || 0) : (room.price6 || 0);
           const foodTotal = selectedFood.reduce((s, f) => s + (f.price * f.qty), 0);
           const totalPrice = (data.total !== undefined) ? data.total : (roomPrice + foodTotal);
@@ -2738,7 +2932,7 @@
           let foodSummaryHtml = '';
           if (selectedFood.length > 0) {
             const foodListStr = selectedFood.map(f => `${f.name} x${f.qty} (₹${f.price * f.qty})`).join(', ');
-            foodSummaryHtml = `<div style="margin-bottom:6px; color:#D97706;"><strong>🍲 Pure Veg Dining:</strong> ${foodListStr} (+₹${foodTotal})</div>`;
+            foodSummaryHtml = `<div style="margin-bottom:6px; color:#D97706;"><strong>🍲 Meals Ordered:</strong> ${foodListStr} (+₹${foodTotal})</div>`;
           }
 
           // Populate Summary Details
@@ -2759,7 +2953,7 @@
           // Build Pre-filled WhatsApp Confirmation Message
           let waFoodLines = '';
           if (selectedFood.length > 0) {
-            waFoodLines = `\n🍲 *Pure Veg Dining Ordered:*\n` + selectedFood.map(f => `  • ${f.name} x${f.qty} (₹${f.price * f.qty})`).join('\n');
+            waFoodLines = `\n🍲 *Meals Ordered:*\n` + selectedFood.map(f => `  • ${f.name} x${f.qty} (₹${f.price * f.qty})`).join('\n');
           }
 
           const waMsg = `Hello Deepak Hotels Group! 🏨\n\nI have just submitted a room reservation on your website. Here are my booking confirmation details:\n\n📌 *Booking Reference ID:* #${data.bookingId}\n👤 *Guest Name:* ${payload.name}\n📞 *Phone Number:* ${payload.phone}\n🏨 *Hotel:* ${hotel.name || 'Deepak Hotels Group'}\n🛏️ *Room:* Room ${room.num || ''} (${room.cat || 'Standard'})\n📅 *Check-in Date:* ${payload.date}\n⏰ *Check-in Time:* ${payload.time}\n⏱️ *Stay Package:* ${stayText}\n👥 *Number of Guests:* ${payload.guests}${waFoodLines}\n💰 *Total Amount Payable:* ₹${totalPrice} (Pay at Reception)\n\nPlease confirm my room booking. Thank you!`;

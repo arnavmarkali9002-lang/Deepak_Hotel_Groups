@@ -2,61 +2,43 @@
   "is_seeded": true,
   "hotels": [
     {
-      "id": "sv1",
-      "name": "Hotel Sai View",
-      "tag": "The Original",
-      "locality": "Vivekanand nagar, Nagar, Manmad Rd, near S T Bus stand, near Holiday Park, Sai Nagar, Shirdi, Maharashtra 423109",
-      "phone": "+91 98514 15415",
-      "accent": "#E8A33D",
-      "image": "/images/hotel-sai-view.jpg",
-      "desc": "Our flagship property with 10 rooms across single, couple, family and suite categories.",
-      "exact_location": "hotel sai view ,Vivekanand nagar, Nagar, Manmad Rd, near S T Bus stand, near Holiday Park, Sai Nagar, Shirdi, Maharashtra 423109 QF6H+93 Shirdi, Maharashtra",
-      "map_url": "https://www.google.com/maps/search/?api=1&query=hotel%20sai%20view%20%2CVivekanand%20nagar%2C%20Nagar%2C%20Manmad%20Rd%2C%20near%20S%20T%20Bus%20stand%2C%20near%20Holiday%20Park%2C%20Sai%20Nagar%2C%20Shirdi%2C%20Maharashtra%20423109%20QF6H%2B93%20Shirdi%2C%20Maharashtra"
-    },
-    {
       "id": "sv2",
       "name": "Hotel Sai Santosh",
-      "tag": "The Family Wing",
+      "tag": "",
       "locality": "QF6H+WH7 city market, road gaikwad chowk, near addarsha school, Shirdi, Maharashtra 423109",
       "phone": "+91 83293 21838",
       "accent": "#2F6E62",
       "image": "/images/hotel-sai-santosh.jpg",
-      "desc": "A quieter property popular with families, 20 rooms with a bigger courtyard and parking.",
+      "desc": "A serene sanctuary popular with families, 20 spacious suites with private courtyard and ample parking.",
       "exact_location": "hotel sai santosh, QF6H+WH7 city market, road gaikwad chowk, near addarsha school, Shirdi, Maharashtra 423109",
       "map_url": "https://www.google.com/maps/search/?api=1&query=hotel%20sai%20santosh%2C%20QF6H%2BWH7%20city%20market%2C%20road%20gaikwad%20chowk%2C%20near%20addarsha%20school%2C%20Shirdi%2C%20Maharashtra%20423109"
     },
     {
+      "id": "sv1",
+      "name": "Hotel Sai View",
+      "tag": "",
+      "locality": "Vivekanand nagar, Nagar, Manmad Rd, near S T Bus stand, near Holiday Park, Sai Nagar, Shirdi, Maharashtra 423109",
+      "phone": "+91 98514 15415",
+      "accent": "#E8A33D",
+      "image": "/images/hotel-sai-view.jpg",
+      "desc": "Our flagship property featuring 10 executive rooms, 24/7 room service, and panoramic temple views.",
+      "exact_location": "hotel sai view ,Vivekanand nagar, Nagar, Manmad Rd, near S T Bus stand, near Holiday Park, Sai Nagar, Shirdi, Maharashtra 423109 QF6H+93 Shirdi, Maharashtra",
+      "map_url": "https://www.google.com/maps/search/?api=1&query=hotel%20sai%20view%20%2CVivekanand%20nagar%2C%20Nagar%2C%20Manmad%20Rd%2C%20near%20S%20T%20Bus%20stand%2C%20near%20Holiday%20Park%2C%20Sai%20Nagar%2C%20Shirdi%2C%20Maharashtra%20423109%20QF6H%2B93%20Shirdi%2C%20Maharashtra"
+    },
+    {
       "id": "sv3",
       "name": "Hotel Om Sai",
-      "tag": "The Highway Stop",
+      "tag": "",
       "locality": "Vivekanand Nagar, Nagar, Manmad Rd, Sai Nagar, Shirdi, Maharashtra 423109 QF6G+9W Shirdi, Maharashtra",
       "phone": "+91 90227 51848",
       "accent": "#7C2D2D",
       "image": "/images/hotel-om-sai.jpg",
-      "desc": "Convenient for travellers passing through, 10 rooms with easy parking and quick check-in.",
+      "desc": "Modern high-comfort express hotel for travellers, 10 rooms with instant 6-hour & 24-hour check-in.",
       "exact_location": "hotel om sai, Vivekanand Nagar, Nagar, Manmad Rd, Sai Nagar, Shirdi, Maharashtra 423109 QF6G+9W Shirdi, Maharashtra",
       "map_url": "https://www.google.com/maps/search/?api=1&query=hotel%20om%20sai%2C%20Vivekanand%20Nagar%2C%20Nagar%2C%20Manmad%20Rd%2C%20Sai%20Nagar%2C%20Shirdi%2C%20Maharashtra%20423109%20QF6G%2B9W%20Shirdi%2C%20Maharashtra"
     }
   ],
   "rooms": [
-    {
-      "id": "sv1-104",
-      "hotel": "sv1",
-      "num": "104",
-      "floor": 1,
-      "ac": true,
-      "cat": "Executive",
-      "price24": 1600,
-      "price6": 1000,
-      "photo": "https://wfxoyzrocifvtlopevjq.supabase.co/storage/v1/object/public/hotel-uploads/prof_1791134258961.jpg",
-      "maxGuests": 2,
-      "bedType": "King Bed",
-      "amenities": "Wi-Fi, AC, TV",
-      "status": "available",
-      "desc": "",
-      "video_url": "",
-      "discount_price": 0
-    },
     {
       "id": "sv1-456",
       "hotel": "sv1",
@@ -66,7 +48,25 @@
       "cat": "Family",
       "price24": 888,
       "price6": 666,
-      "photo": null,
+      "photo": "https://wfxoyzrocifvtlopevjq.supabase.co/storage/v1/object/public/hotel-uploads/1000157362_1791146449434.jpg",
+      "maxGuests": 2,
+      "bedType": "King Bed",
+      "amenities": "Wi-Fi, AC, TV",
+      "status": "available",
+      "desc": "",
+      "video_url": "",
+      "discount_price": 0
+    },
+    {
+      "id": "sv1-104",
+      "hotel": "sv1",
+      "num": "104",
+      "floor": 1,
+      "ac": true,
+      "cat": "Executive",
+      "price24": 1600,
+      "price6": 1000,
+      "photo": "https://wfxoyzrocifvtlopevjq.supabase.co/storage/v1/object/public/hotel-uploads/1000157379_1791146507034.jpg",
       "maxGuests": 2,
       "bedType": "King Bed",
       "amenities": "Wi-Fi, AC, TV",
@@ -84,7 +84,7 @@
       "cat": "Couple",
       "price24": 2200,
       "price6": 1300,
-      "photo": null,
+      "photo": "https://wfxoyzrocifvtlopevjq.supabase.co/storage/v1/object/public/hotel-uploads/1000157399_1791146336078.jpg",
       "maxGuests": 2,
       "bedType": "King Bed",
       "amenities": "Wi-Fi, AC, TV",
@@ -102,7 +102,7 @@
       "cat": "Single",
       "price24": 1700,
       "price6": 950,
-      "photo": null,
+      "photo": "https://wfxoyzrocifvtlopevjq.supabase.co/storage/v1/object/public/hotel-uploads/1000157404_1791146247192.jpg",
       "maxGuests": 2,
       "bedType": "King Bed",
       "amenities": "Wi-Fi, AC, TV",
@@ -120,7 +120,7 @@
       "cat": "Deluxe",
       "price24": 900,
       "price6": 700,
-      "photo": null,
+      "photo": "https://wfxoyzrocifvtlopevjq.supabase.co/storage/v1/object/public/hotel-uploads/1000157414_1791146277181.jpg",
       "maxGuests": 2,
       "bedType": "King Bed",
       "amenities": "Wi-Fi, Smart TV, Hot Water",
@@ -132,292 +132,73 @@
   ],
   "menuItems": [
     {
-      "id": "mmuqob1xx9e23d0",
-      "name": "tea",
-      "category": "Breakfast",
+      "id": "mmuxc7330c4e252",
+      "name": "water bottel",
+      "category": "Beverages",
       "price": 20,
-      "photo": null,
+      "photo": "https://wfxoyzrocifvtlopevjq.supabase.co/storage/v1/object/public/hotel-uploads/bottel_1791331917674.jpg",
+      "available": true
+    },
+    {
+      "id": "mmuxcshcjd997d6",
+      "name": "water bottel small",
+      "category": "Thalis",
+      "price": 10,
+      "photo": "https://wfxoyzrocifvtlopevjq.supabase.co/storage/v1/object/public/hotel-uploads/bottel_1791331946251.jpg",
       "available": true
     }
   ],
   "bookings": [
     {
-      "id": "SV10480001",
-      "hotelRoom": "sv1-101",
-      "name": "Sanika Amol Patare",
-      "phone": "9860190506",
-      "email": "sanika.patare24@sanjivani.edu.in",
-      "guests": 1,
-      "stay": "24hr",
-      "date": "2026-09-29",
-      "time": "03:00",
-      "idMethod": "hotel",
-      "idPhotoBase64": null,
-      "requests": "",
-      "food": [],
-      "status": "checkedin",
-      "createdAt": "2026-09-29T09:31:16.586Z"
-    },
-    {
       "id": "SV10480002",
-      "hotelRoom": "sv1-102",
-      "name": "arnav markali",
-      "phone": "9860190506",
-      "email": "arnavmarkali7@gmail.com",
-      "guests": 1,
-      "stay": "24hr",
-      "date": "2026-09-29",
-      "time": "00:27",
-      "idMethod": "hotel",
-      "idPhotoBase64": null,
-      "requests": "",
-      "food": [],
-      "status": "pending",
-      "createdAt": "2026-09-29T18:54:19.272Z"
-    },
-    {
-      "id": "SV10480003",
-      "hotelRoom": "sv1-104",
-      "name": "Jane Doe",
-      "phone": "9876543210",
-      "email": "janedoe@example.com",
+      "hotelRoom": "deleted-room-archive",
+      "name": "Deepak",
+      "phone": "8329321838",
+      "email": null,
       "guests": 2,
       "stay": "24hr",
-      "date": "2026-10-15",
-      "time": "14:00",
-      "idMethod": "hotel",
-      "idPhotoBase64": null,
-      "requests": "High floor room please",
-      "food": [],
-      "status": "pending",
-      "createdAt": "2026-10-02T15:46:35.916Z"
-    },
-    {
-      "id": "SV10480004",
-      "hotelRoom": "sv1-101",
-      "name": "arnav markali",
-      "phone": "9860190506",
-      "email": "arnavmarkali7@gmail.com",
-      "guests": 2,
-      "stay": "24hr",
-      "date": "2026-10-02",
+      "date": "2026-10-04",
       "time": "12:00",
-      "idMethod": "hotel",
-      "idPhotoBase64": null,
-      "requests": "",
-      "food": [],
-      "status": "pending",
-      "createdAt": "2026-10-02T15:49:05.331Z"
-    },
-    {
-      "id": "SV10480005",
-      "hotelRoom": "sv1-101",
-      "name": "arnav markali",
-      "phone": "9860190506",
-      "email": "arnavmarkali7@gmail.com",
-      "guests": 2,
-      "stay": "24hr",
-      "date": "2026-10-03",
-      "time": "12:00",
-      "idMethod": "hotel",
+      "idMethod": "reception",
       "idPhotoBase64": null,
       "requests": "",
       "food": [],
       "status": "confirmed",
-      "createdAt": "2026-10-02T16:03:00.963Z"
+      "createdAt": "2026-10-04T14:09:44.838153+00:00"
     },
     {
-      "id": "SV10480006",
-      "hotelRoom": "sv1-204",
-      "name": "arnav markali",
-      "phone": "9860190506",
-      "email": "arnavmarkali7@gmail.com",
-      "guests": 2,
-      "stay": "24hr",
-      "date": "2026-10-03",
-      "time": "12:00",
-      "idMethod": "hotel",
-      "idPhotoBase64": null,
-      "requests": "",
-      "food": [],
-      "status": "pending",
-      "createdAt": "2026-10-02T16:05:30.380Z"
-    },
-    {
-      "id": "SV10480007",
-      "hotelRoom": "sv1-202",
-      "name": "arnav markali",
-      "phone": "9860190506",
-      "email": "arnavmarkali7@gmail.com",
-      "guests": 2,
-      "stay": "24hr",
-      "date": "2026-10-03",
-      "time": "12:00",
-      "idMethod": "hotel",
-      "idPhotoBase64": null,
-      "requests": "",
-      "food": [],
-      "status": "pending",
-      "createdAt": "2026-10-02T16:06:24.464Z"
-    },
-    {
-      "id": "SV10480008",
-      "hotelRoom": "sv1-103",
-      "name": "Customer Test",
-      "phone": "9876543210",
-      "email": "test@example.com",
-      "guests": 2,
-      "stay": "24hr",
-      "date": "2026-10-20",
-      "time": "12:00",
-      "idMethod": "hotel",
-      "idPhotoBase64": null,
-      "requests": "Ground floor room",
-      "food": [],
-      "status": "pending",
-      "createdAt": "2026-10-02T16:17:35.523Z"
-    },
-    {
-      "id": "SV10480009",
-      "hotelRoom": "sv1-102",
-      "name": "arnav markali",
-      "phone": "9860190506",
-      "email": "arnavmarkali7@gmail.com",
-      "guests": 2,
-      "stay": "24hr",
-      "date": "2026-10-02",
-      "time": "12:00",
-      "idMethod": "hotel",
-      "idPhotoBase64": null,
-      "requests": "",
-      "food": [],
-      "status": "pending",
-      "createdAt": "2026-10-02T16:20:11.122Z"
-    },
-    {
-      "id": "SV10480010",
-      "hotelRoom": "sv1-205",
-      "name": "Suresh Patil",
-      "phone": "9860190506",
-      "email": "suresh@patil.com",
-      "guests": 2,
-      "stay": "24hr",
-      "date": "2026-10-25",
-      "time": "14:00",
-      "idMethod": "hotel",
-      "idPhotoBase64": null,
-      "requests": "Spiritual view suite requested",
-      "food": [],
-      "status": "pending",
-      "createdAt": "2026-10-02T16:27:35.559Z"
-    },
-    {
-      "id": "SV10480011",
-      "hotelRoom": "sv1-103",
-      "name": "arnav markali",
-      "phone": "9860190506",
-      "email": "arnavmarkali7@gmail.com",
-      "guests": 2,
-      "stay": "24hr",
-      "date": "2026-10-02",
-      "time": "12:00",
-      "idMethod": "hotel",
-      "idPhotoBase64": null,
-      "requests": "",
-      "food": [],
-      "status": "confirmed",
-      "createdAt": "2026-10-02T16:29:16.147Z"
-    },
-    {
-      "id": "SV10480012",
-      "hotelRoom": "sv1-101",
-      "name": "Automated Test Guest",
-      "phone": "9860190506",
-      "email": "",
-      "guests": 2,
-      "stay": "24hr",
-      "date": "2026-10-05",
-      "time": "14:00",
-      "idMethod": "hotel",
-      "idPhotoBase64": null,
-      "requests": "",
-      "food": [],
-      "status": "confirmed",
-      "createdAt": "2026-10-02T17:24:36.104Z"
-    },
-    {
-      "id": "SV10480013",
-      "hotelRoom": "sv1-102",
-      "name": "Rohan Sharma",
-      "phone": "9851415415",
-      "email": "",
-      "guests": 2,
-      "stay": "24hr",
-      "date": "2026-10-28",
-      "time": "12:00",
-      "idMethod": "hotel",
-      "idPhotoBase64": null,
-      "requests": "",
-      "food": [],
-      "status": "confirmed",
-      "createdAt": "2026-10-02T18:40:12.664Z"
-    },
-    {
-      "id": "SV10480014",
-      "hotelRoom": "sv1-102",
+      "id": "SV10480001",
+      "hotelRoom": "deleted-room-archive",
       "name": "Arnav Markali",
       "phone": "9860190506",
-      "email": "",
+      "email": null,
       "guests": 2,
       "stay": "24hr",
-      "date": "2026-10-09",
+      "date": "2026-10-06",
       "time": "12:00",
-      "idMethod": "hotel",
+      "idMethod": "reception",
       "idPhotoBase64": null,
       "requests": "",
       "food": [],
       "status": "confirmed",
-      "createdAt": "2026-10-02T18:43:06.807Z"
+      "createdAt": "2026-10-04T14:08:15.651264+00:00"
     },
     {
-      "id": "SV10480015",
-      "hotelRoom": "sv1-104",
-      "name": "Test Guest",
-      "phone": "9876543210",
-      "email": "",
+      "id": "SV10480019",
+      "hotelRoom": "sv1-456",
+      "name": "Arnav Markali",
+      "phone": "9860190506",
+      "email": null,
       "guests": 2,
       "stay": "24hr",
-      "date": "2026-10-28",
+      "date": "2026-10-06",
       "time": "12:00",
       "idMethod": "reception",
       "idPhotoBase64": null,
       "requests": "",
       "food": [],
-      "status": "pending",
-      "createdAt": "2026-10-03T18:39:27.476Z"
-    },
-    {
-      "id": "SV10480018",
-      "hotelRoom": "sv1-101",
-      "name": "Ramesh Sharma",
-      "phone": "9851415415",
-      "email": "",
-      "guests": 2,
-      "stay": "24hr",
-      "date": "2026-11-20",
-      "time": "14:00",
-      "idMethod": "reception",
-      "idPhotoBase64": null,
-      "requests": "",
-      "food": [
-        {
-          "name": "nnn",
-          "price": 180,
-          "qty": 2
-        }
-      ],
-      "status": "pending",
-      "createdAt": "2026-10-04T08:52:29.383Z"
+      "status": "confirmed",
+      "createdAt": "2026-10-06T23:48:55.158178+00:00"
     }
   ],
   "admins": [
@@ -432,39 +213,25 @@
     "tagline": "Experience Comfort & Spiritual Peace in Shirdi",
     "logo": "/images/deepak-hotels-logo.png",
     "favicon": "/images/deepak-hotels-logo.png",
-    "phone": "+91 98514 15415",
-    "email": "contact@deepakhotelsgroup.com",
+    "phone": "8329321838",
+    "email": "contact@deepakhotelsgroup.co.in",
     "address": "Nagar-Manmad Highway, Near ST Bus Stand, Shirdi, Maharashtra 423109",
     "facebook": "https://facebook.com",
     "instagram": "https://instagram.com",
     "whatsapp": "https://wa.me/919851415415",
     "twitter": "https://twitter.com",
-    "footer_text": "Deepak Hotels Group offers premium hospitality, executive air-conditioned suites, fine dining, and instant online room bookings just minutes away from Shirdi Sai Baba Temple.",
+    "footer_text": "Deepak Hotels Group offers premium hospitality, executive air-conditioned suites, and instant online room bookings just minutes away from Shirdi Sai Baba Temple.",
     "name": "Deepak Hotels Group Shirdi"
   },
   "hero": {
     "title": "Welcome to Deepak Hotels Group",
-    "subtitle": "Executive Air-Conditioned Rooms, Pure Veg Fine Dining & 24/7 Hospitality near Sai Baba Temple.",
+    "subtitle": "Air-Conditioned Rooms & 24/7 Hospitality near Sai Baba Temple.",
     "bg_image": "/images/hero-bg.jpg",
     "bg_video": "",
     "cta_text": "Book Your Stay Now",
     "cta_link": "#availability"
   },
   "gallery": [
-    {
-      "id": "gal2",
-      "title": "Executive Bedroom Suite",
-      "category": "Rooms",
-      "image": "/images/room-suite.jpg",
-      "display_order": 2
-    },
-    {
-      "id": "gal3",
-      "title": "Royal Vegetarian Dining",
-      "category": "Dining",
-      "image": "/images/dining-bg.jpg",
-      "display_order": 3
-    },
     {
       "id": "gal4",
       "title": "Hotel Sai View Exterior",
@@ -490,7 +257,7 @@
   "videos": [
     {
       "id": "vid_feat_hotel_tour",
-      "title": "Deepak Hotels  Walkthrough",
+      "title": "Deepak Hotels Walkthrough",
       "video_url": "/uploads/4d240ca4-e2ca-4ba9-bfc3-7b5698643ce9_1791134169893.mp4",
       "is_homepage": true,
       "is_active": true
@@ -499,7 +266,7 @@
   "amenities": [
     {
       "id": "am1",
-      "name": "Ultra High-Speed 5G Wi-Fi",
+      "name": "Free High-Speed Wi-Fi",
       "icon": "wifi",
       "category": "Technology",
       "desc": "Seamless high-speed wireless Internet coverage in all rooms and common lounges."
@@ -524,29 +291,24 @@
       "icon": "zap",
       "category": "Facility",
       "desc": "Heavy-duty silent generator backup guaranteeing uninterrupted electricity."
-    }
-  ],
-  "offers": [
+    },
     {
-      "id": "off2",
-      "title": "6-Hour Express Refresh Stay",
-      "desc": "In Shirdi for quick darshan? Book our 6-hour refresh room package at flat discounted rates.",
-      "discount": "From ₹650",
-      "image": "/images/hero-bg.jpg",
-      "valid_from": "2026-10-01",
-      "valid_to": "2026-12-31",
-      "code": "EXPRESS6",
-      "is_active": true
+      "id": "am6",
+      "name": "Free Secure Parking",
+      "icon": "parking",
+      "category": "Facility",
+      "desc": "Spacious guarded parking space for private cars, travel coaches, and SUVs."
     }
   ],
+  "offers": [],
   "reviews": [
     {
-      "id": "rev1",
-      "guest_name": "Rahul & Swati Deshmukh",
+      "id": "rev2",
+      "guest_name": "Priya Sharma",
       "rating": 5,
-      "review_text": "Outstanding experience at Hotel Sai View! Extremely clean rooms, super polite staff, and excellent food delivered to our room after late night Aarti.",
+      "review_text": "We stayed at Hotel Sai Santosh with family. Very peaceful location, spacious parking, and wonderful hospitality.",
       "guest_image": "",
-      "hotel_tag": "Hotel Sai View"
+      "hotel_tag": "Hotel Sai Santosh"
     },
     {
       "id": "rev3",
@@ -568,8 +330,8 @@
       "provider_message_id": "msg_sim_1790955995938_9nvx",
       "error_message": null,
       "attempts": 2,
-      "created_at": "2026-10-02T15:46:35.923Z",
-      "sent_at": "2026-10-02T15:46:35.938Z"
+      "created_at": "2026-10-04T06:46:08.53341+00:00",
+      "sent_at": null
     },
     {
       "id": "notif_mur51pz3_85ae59",
@@ -581,8 +343,8 @@
       "provider_message_id": "msg_sim_1790956145355_ujob",
       "error_message": null,
       "attempts": 1,
-      "created_at": "2026-10-02T15:49:05.343Z",
-      "sent_at": "2026-10-02T15:49:05.355Z"
+      "created_at": "2026-10-04T06:46:08.53341+00:00",
+      "sent_at": null
     },
     {
       "id": "notif_mur5jmra_8d9d08",
@@ -594,8 +356,8 @@
       "provider_message_id": "msg_sim_1790957099127_k43j",
       "error_message": null,
       "attempts": 4,
-      "created_at": "2026-10-02T16:03:00.982Z",
-      "sent_at": "2026-10-02T16:04:59.127Z"
+      "created_at": "2026-10-04T06:46:08.53341+00:00",
+      "sent_at": null
     },
     {
       "id": "notif_mur5mu1i_bf0d67",
@@ -607,8 +369,8 @@
       "provider_message_id": "msg_sim_1790957130402_7n1s",
       "error_message": null,
       "attempts": 1,
-      "created_at": "2026-10-02T16:05:30.390Z",
-      "sent_at": "2026-10-02T16:05:30.402Z"
+      "created_at": "2026-10-04T06:46:08.53341+00:00",
+      "sent_at": null
     },
     {
       "id": "notif_mur5nzrv_f44165",
@@ -620,8 +382,8 @@
       "provider_message_id": "msg_sim_1790957184485_n7jh",
       "error_message": null,
       "attempts": 1,
-      "created_at": "2026-10-02T16:06:24.475Z",
-      "sent_at": "2026-10-02T16:06:24.485Z"
+      "created_at": "2026-10-04T06:46:08.53341+00:00",
+      "sent_at": null
     },
     {
       "id": "notif_mur62djo_358480",
@@ -633,8 +395,8 @@
       "provider_message_id": "msg_tx_1790957855514_b9lp",
       "error_message": null,
       "attempts": 1,
-      "created_at": "2026-10-02T16:17:35.508Z",
-      "sent_at": "2026-10-02T16:17:35.514Z"
+      "created_at": "2026-10-04T06:46:08.53341+00:00",
+      "sent_at": null
     },
     {
       "id": "notif_mur62dk9_c64d44",
@@ -646,8 +408,8 @@
       "provider_message_id": "msg_tx_1790957855534_o21z",
       "error_message": null,
       "attempts": 1,
-      "created_at": "2026-10-02T16:17:35.529Z",
-      "sent_at": "2026-10-02T16:17:35.534Z"
+      "created_at": "2026-10-04T06:46:08.53341+00:00",
+      "sent_at": null
     },
     {
       "id": "notif_mur65pml_ac0efb",
@@ -659,8 +421,8 @@
       "provider_message_id": "msg_tx_1790958011145_kaba",
       "error_message": null,
       "attempts": 1,
-      "created_at": "2026-10-02T16:20:11.133Z",
-      "sent_at": "2026-10-02T16:20:11.145Z"
+      "created_at": "2026-10-04T06:46:08.53341+00:00",
+      "sent_at": null
     },
     {
       "id": "notif_mur66jn0_a709a0",
@@ -672,8 +434,8 @@
       "provider_message_id": "msg_tx_1790958069234_z3g7",
       "error_message": null,
       "attempts": 2,
-      "created_at": "2026-10-02T16:20:50.028Z",
-      "sent_at": "2026-10-02T16:21:09.234Z"
+      "created_at": "2026-10-04T06:46:08.53341+00:00",
+      "sent_at": null
     },
     {
       "id": "notif_mur6f8jc_9452f9",
@@ -685,8 +447,8 @@
       "provider_message_id": "wamid.HBgL_1790958455551_juggee",
       "error_message": null,
       "attempts": 1,
-      "created_at": "2026-10-02T16:27:35.544Z",
-      "sent_at": "2026-10-02T16:27:35.551Z"
+      "created_at": "2026-10-04T06:46:08.53341+00:00",
+      "sent_at": null
     },
     {
       "id": "notif_mur6f8jx_b551e7",
@@ -698,8 +460,8 @@
       "provider_message_id": "wamid.HBgL_1790958455570_sp0azj",
       "error_message": null,
       "attempts": 1,
-      "created_at": "2026-10-02T16:27:35.565Z",
-      "sent_at": "2026-10-02T16:27:35.570Z"
+      "created_at": "2026-10-04T06:46:08.53341+00:00",
+      "sent_at": null
     },
     {
       "id": "notif_mur6he68_5d0f57",
@@ -711,8 +473,8 @@
       "provider_message_id": "wamid.HBgL_1790958556170_qiqkkd",
       "error_message": null,
       "attempts": 1,
-      "created_at": "2026-10-02T16:29:16.160Z",
-      "sent_at": "2026-10-02T16:29:16.170Z"
+      "created_at": "2026-10-04T06:46:08.53341+00:00",
+      "sent_at": null
     },
     {
       "id": "notif_murb5san_1140e0",
@@ -724,8 +486,8 @@
       "provider_message_id": "wamid.HBgL_1790966412677_o1qa24",
       "error_message": null,
       "attempts": 1,
-      "created_at": "2026-10-02T18:40:12.671Z",
-      "sent_at": "2026-10-02T18:40:12.677Z"
+      "created_at": "2026-10-04T06:46:08.53341+00:00",
+      "sent_at": null
     },
     {
       "id": "notif_murb9io9_ff03d3",
@@ -737,8 +499,86 @@
       "provider_message_id": "wamid.HBgL_1790966586845_gzsigp",
       "error_message": null,
       "attempts": 1,
-      "created_at": "2026-10-02T18:43:06.826Z",
-      "sent_at": "2026-10-02T18:43:06.846Z"
+      "created_at": "2026-10-04T06:46:08.53341+00:00",
+      "sent_at": null
+    },
+    {
+      "id": "notif_mutjgwex_80a818",
+      "booking_id": "SV10480016",
+      "recipient_number": "919851415415",
+      "notification_type": "whatsapp",
+      "message": "🔔 NEW ROOM BOOKING - DEEPAK HOTELS GROUP\n\nBooking ID: #SV10480016\n\nCustomer: Audit Test Guest\nPhone: 9851415415\n\nHotel: Hotel Sai View\nRoom: Room 101 (Single)\n\nCheck-in: 2026-11-15 at 12:00\nCheck-out: 2026-11-16\n\nGuests: 2\nRooms: 1\n\nTotal Amount: ₹1200\n\nPlease check the admin panel for complete booking details.",
+      "status": "sent",
+      "provider_message_id": "wamid.HBgL_1791101300508_58rxni",
+      "error_message": null,
+      "attempts": 1,
+      "created_at": "2026-10-04T08:08:20.495051+00:00",
+      "sent_at": "2026-10-04T08:08:20.508+00:00"
+    },
+    {
+      "id": "notif_mutjtgzi_2c037e",
+      "booking_id": "SV10480017",
+      "recipient_number": "919851415415",
+      "notification_type": "whatsapp",
+      "message": "🔔 NEW ROOM BOOKING - DEEPAK HOTELS GROUP\n\nBooking ID: #SV10480017\n\nCustomer: Audit Test Guest\nPhone: 9851415415\n\nHotel: Hotel Sai View\nRoom: Room 101 (Single)\n\nCheck-in: 2026-12-25 at 12:00\nCheck-out: 2026-12-26\n\nGuests: 1\nRooms: 1\n\nTotal Amount: ₹1200\n\nPlease check the admin panel for complete booking details.",
+      "status": "sent",
+      "provider_message_id": "wamid.HBgL_1791101887041_fs4lso",
+      "error_message": null,
+      "attempts": 1,
+      "created_at": "2026-10-04T08:18:07.166507+00:00",
+      "sent_at": "2026-10-04T08:18:07.041+00:00"
+    },
+    {
+      "id": "notif_mutl1okv_8b993f",
+      "booking_id": "SV10480018",
+      "recipient_number": "919851415415",
+      "notification_type": "whatsapp",
+      "message": "🔔 NEW ROOM BOOKING - DEEPAK HOTELS GROUP\n\nBooking ID: #SV10480018\n\nCustomer: Ramesh Sharma\nPhone: 9851415415\n\nHotel: Hotel Sai View\nRoom: Room 101 (Single)\n\nCheck-in: 2026-11-20 at 14:00\nCheck-out: 2026-11-21\n\nGuests: 2\nRooms: 1\n\nPure Veg Dining Ordered:\n • nnn x2 (₹360)\n\nTotal Amount: ₹1560\n\nPlease check the admin panel for complete booking details.",
+      "status": "sent",
+      "provider_message_id": "wamid.HBgL_1791103949748_jfqatj",
+      "error_message": null,
+      "attempts": 1,
+      "created_at": "2026-10-04T08:52:29.86656+00:00",
+      "sent_at": "2026-10-04T08:52:29.748+00:00"
+    },
+    {
+      "id": "notif_mutl66gm_cb8e42",
+      "booking_id": "SV10480001",
+      "recipient_number": "919851415415",
+      "notification_type": "whatsapp",
+      "message": "🔔 NEW ROOM BOOKING - DEEPAK HOTELS GROUP\n\nBooking ID: #SV10480001\n\nCustomer: dfgfd\nPhone: 9860190506\n\nHotel: Hotel Sai View\nRoom: Room 1111 (Executive)\n\nCheck-in: 2026-10-04 at 12:00\nCheck-out: 2026-10-05\n\nGuests: 2\nRooms: 1\n\nPure Veg Dining Ordered:\n • nnn x1 (₹180)\n\nTotal Amount: ₹2380\n\nPlease check the admin panel for complete booking details.",
+      "status": "sent",
+      "provider_message_id": "wamid.HBgL_1791104159544_6hbki3",
+      "error_message": null,
+      "attempts": 1,
+      "created_at": "2026-10-04T08:56:00.646982+00:00",
+      "sent_at": "2026-10-04T08:55:59.544+00:00"
+    },
+    {
+      "id": "notif_mutwdo8j_87b9e5",
+      "booking_id": "SV10480002",
+      "recipient_number": "919851415415",
+      "notification_type": "whatsapp",
+      "message": "🔔 NEW ROOM BOOKING - DEEPAK HOTELS GROUP\n\nBooking ID: #SV10480002\n\nCustomer: Deepak\nPhone: 8329321838\n\nHotel: Hotel Sai View\nRoom: Room 1111 (Executive)\n\nCheck-in: 2026-10-04 at 12:00\nCheck-out: 2026-10-05\n\nGuests: 2\nRooms: 1\n\nTotal Amount: ₹2200\n\nPlease check the admin panel for complete booking details.",
+      "status": "sent",
+      "provider_message_id": "wamid.HBgL_1791122984949_s5cxce",
+      "error_message": null,
+      "attempts": 1,
+      "created_at": "2026-10-04T14:11:06.66318+00:00",
+      "sent_at": "2026-10-04T14:09:44.949+00:00"
+    },
+    {
+      "id": "notif_muxby77x_77f721",
+      "booking_id": "SV10480019",
+      "recipient_number": "919851415415",
+      "notification_type": "whatsapp",
+      "message": "🔔 NEW ROOM BOOKING - DEEPAK HOTELS GROUP\n\nBooking ID: #SV10480019\n\nCustomer: Arnav Markali\nPhone: 9860190506\n\nHotel: Hotel Sai View\nRoom: Room 456 (Family)\n\nCheck-in: 2026-10-06 at 12:00\nCheck-out: 2026-10-07\n\nGuests: 2\nRooms: 1\n\nTotal Amount: ₹888\n\nPlease check the admin panel for complete booking details.",
+      "status": "sent",
+      "provider_message_id": "wamid.HBgL_1791330535440_rrcm7e",
+      "error_message": null,
+      "attempts": 1,
+      "created_at": "2026-10-06T23:48:55.628877+00:00",
+      "sent_at": "2026-10-06T23:48:55.44+00:00"
     }
   ],
   "nextBookingSeq": 19
